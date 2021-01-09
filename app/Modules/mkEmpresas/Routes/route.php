@@ -1,8 +1,7 @@
 <?php
 
+use \App\Modules\mkBase\Mk_helpers\Mk_app;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Modules\mkBase\Mk_helpers\Mk_app;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +14,10 @@ use App\Modules\mkBase\Mk_helpers\Mk_app;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-Mk_app::loadRoutes();
+$namespace="\App\Modules\mkEmpresas\Controllers";
+
+Mk_app::setRuta('Empresas',[],$namespace);
+Mk_app::setRuta('Sucursales',[],$namespace);
+Mk_app::setRuta('Empleados',[],$namespace);
+
+
