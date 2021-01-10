@@ -215,9 +215,10 @@ trait Mk_ia_db
             $r=$datos->save();
 
             if ($r) {
-                $r=$datos->id;
+                $_key=$datos->getKeyName();
+                $r=$datos->$_key;
                 $msg='';
-                $this->afterSave($request, $datos, $r, 0);
+                $this->afterSave($request, $datos, 0, $r);
                 DB::commit();
                 $this->clearCache();
                 //modulo adicionales
@@ -232,7 +233,8 @@ trait Mk_ia_db
             DB::rollback();
             $r=_errorAlGrabar2;
             $msgError='';
-            if ($th->status==422) {
+            Mk_debug::msgApi(['Error:',$th]);
+            if (@$th->status==422) {//todo: revisar nueva estrutiura de th en laravel 8 y lumens
                 foreach ($th->errors() as $key => $value) {
                     $msgError.="\n ".$key.':'.join($value, ',');
                 }
@@ -293,13 +295,14 @@ trait Mk_ia_db
     public function update(Request $request, $id)
     {
         $this->proteger();
-        if (!$id) {
-            $id=$request->id;
-        }
+       
         DB::beginTransaction();
         try {
             $datos = new $this->__modelo();
             $_key=$datos->getKeyName();
+            if (!$id) {
+                $id=$request->$_key;
+            }
             $rules=$datos->getRules($request);
             if (!empty($rules)) {
                 $validatedData = $request->validate($rules);
@@ -355,13 +358,15 @@ trait Mk_ia_db
         DB::beginTransaction();
         try {
             $datos = new $this->__modelo();
+            $_key=$datos->getKeyName();
+
             $this->beforeDel($id, $datos);
             if ($recycled==1) {
-                $r=$datos->onlyTrashed()->wherein('id', $id)
+                $r=$datos->onlyTrashed()->wherein($_key, $id)
                 ->forceDelete();
             } else {
                 $datos->runCascadingDeletes($id);
-                $r=$datos->wherein('id', $id)
+                $r=$datos->wherein($_key, $id)
                 ->delete();
             }
             $msg='';
@@ -397,9 +402,11 @@ trait Mk_ia_db
                 throw new Exception("Debe estar en Papelera de Reciclaje", 1);
             }
             $datos = new $this->__modelo();
+            $_key=$datos->getKeyName();
+
             $this->beforeRestore($id, $datos);
             $datos->runCascadingDeletes($id, true);
-            $r=$datos->onlyTrashed()->wherein('id', $id)
+            $r=$datos->onlyTrashed()->wherein($_key, $id)
                 ->restore();
             $msg='';
             if ($r==0) {
@@ -429,8 +436,11 @@ trait Mk_ia_db
         $newStatus=$request->status;
         $id=explode(',', $request->id);
         DB::beginTransaction();
+        $datos = new $this->__modelo();
+            $_key=$datos->getKeyName();
 
-        $r=$this->__modelo::wherein('id', $id)
+        
+        $r=$datos->wherein($_key, $id)
         ->update([
         'status' => $newStatus,
         ]);

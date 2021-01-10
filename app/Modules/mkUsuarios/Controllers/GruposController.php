@@ -23,8 +23,9 @@ class GruposController extends Controller
     public function afterSave(Request $request, $modelo, $error=0, $id=0)
     {
         if ($error>=0) {
-            $modelo->id=$id;
-
+            $_key=$modelo->getKeyName();
+            $modelo->$_key=$id;
+            
                 if (isset($request->paramsExtra['permisos'])) {
                 if ($id>0) {//modificar
                         $modelo->permisos()->detach();

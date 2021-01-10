@@ -1,0 +1,17 @@
+poner el time zone en config/app.php 
+ 'timezone' => 'America/La_Paz',
+poner el name o ttile de la app
+crear un link 
+
+en 
+y poner esto en htacess del root
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteCond %{REQUEST_URI} !^public
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+en modulemix del front
+const _storage = 'http://unicef.test/storage/'
+
+ejecutar el cache create cada qure se suba el back para mejorarmla carga
+

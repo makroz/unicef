@@ -84,7 +84,7 @@ class CreateModUsuariosV1 extends Migration
             $table->increments('id');
             $table->string('name', 100);
             $table->string('email', 100)>unique();
-            $table->string('pass', 30);
+            $table->string('pass', 40);
             $table->smallInteger('rolActivo')->default(0);
             $table->rememberToken();
 

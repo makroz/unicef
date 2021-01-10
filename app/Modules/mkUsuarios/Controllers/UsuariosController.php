@@ -2,11 +2,12 @@
 
 namespace App\Modules\mkUsuarios\Controllers;
 
-use App\Modules\mkBase\Controller;
-use App\Modules\mkBase\Mk_ia_db;
 use Illuminate\Http\Request;
-use App\Modules\mkBase\Mk_Helpers\Mk_Auth\Mk_Auth;
+use App\Modules\mkBase\Mk_ia_db;
+use App\Modules\mkBase\Controller;
 use App\Modules\mkBase\Mk_Helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_debug;
+use App\Modules\mkBase\Mk_Helpers\Mk_Auth\Mk_Auth;
 
 class UsuariosController extends Controller
 {
@@ -32,8 +33,11 @@ class UsuariosController extends Controller
 
     public function afterSave(Request $request, $modelo, $error=0, $id=0)
     {
+
+        Mk_debug::msgApi(['afterSave:',$request,  $error, $id]);
         if ($error>=0) {
-            $modelo->id=$id;
+            $_key=$modelo->getKeyName();
+            $modelo->$_key=$id;
 
             if (isset($request->paramsExtra['permisos'])) {
                 if ($id>0) {//modificar
@@ -57,6 +61,7 @@ class UsuariosController extends Controller
             }
         }
     }
+    
 
     public function permisos(Request $request, $usuarios_id)
     {
