@@ -12,12 +12,10 @@ class SucursalesController extends Controller
 {
     use Mk_ia_db;
     //public $_autorizar='';
-
-    private $__modelo='App\Modules\mkEmpresas\Sucursales';
-
+    protected $__modelo='';
     public function __construct(Request $request)
     {
-        $this->__init($request);
+        parent::__construct($request);
         return true;
     }
 }

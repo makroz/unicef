@@ -6,26 +6,23 @@ class Mk_app
     public static function loadRoutes($path=''){
         if (empty($path)){
             $path=__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Modules'.DIRECTORY_SEPARATOR;
-            if (is_dir($path)) {
-                if ($dh = opendir($path)) {
-                   while (($file = readdir($dh)) !== false) {
-                      if (is_dir($path . $file) && $file!="." && $file!=".."){
-                          $routeFile=$path . $file.DIRECTORY_SEPARATOR.'Routes'.DIRECTORY_SEPARATOR.'route.php';
-                         if (file_exists($routeFile)){
-                            require ($routeFile);
-                         }
-                      }
-                   }
-                closedir($dh);
-                }
-             }else{
-                 echo "No es ruta valida";
-             }
-
-
         }
-
-
+            
+        if (is_dir($path)) {
+            if ($dh = opendir($path)) {
+                while (($file = readdir($dh)) !== false) {
+                    if (is_dir($path . $file) && $file!="." && $file!=".."){
+                        $routeFile=$path . $file.DIRECTORY_SEPARATOR.'Routes'.DIRECTORY_SEPARATOR.'route.php';
+                        if (file_exists($routeFile)){
+                        require ($routeFile);
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        }else{
+            echo "No es ruta valida";
+        }
     }
     public static function setRuta($modulo, $extras=[],$namespace='')
     {
@@ -56,6 +53,48 @@ class Mk_app
             }
         });
      }
-}
 
-//join(array_slice(explode("\\", $class), 0, -1), "\\"); consigue el namespace de una clase
+     public static function loadControllers($path=''){
+        if (empty($path)){
+            return false;
+        }
+        $nameSpace=explode(DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR,$path);
+        $nameSpace = array_pop($nameSpace);
+        $nameSpace= 'App'.DIRECTORY_SEPARATOR.self::getNameSpace($nameSpace,2).DIRECTORY_SEPARATOR.'Controllers';
+        $path=self::getNameSpace($path,2).DIRECTORY_SEPARATOR.'Controllers';
+        //echo $path;
+
+        if (is_dir($path)) {
+            foreach (glob($path.DIRECTORY_SEPARATOR."*Controller.php") as $filename) {
+                $filename=pathinfo($filename, PATHINFO_FILENAME);
+                $filename=str_replace('Controller','',$filename);
+                //echo $filename.'*';
+                Mk_app::setRuta($filename,[],$nameSpace);
+            }
+            return $nameSpace;
+        }else{
+            echo "No es ruta valida";
+        }
+        return false;
+    }
+    public static function getNameSpace($name,$desnivel=0)
+    {
+        $nodos=explode('\\',$name);
+        while ($desnivel>0){
+            array_pop($nodos);
+            $desnivel--;
+        }
+        return join('\\',$nodos);
+    }
+    public static function getNameModel($clase)
+    {
+        $nameSpace=explode('\\',get_class($clase));
+        $model=array_pop($nameSpace);
+        array_pop($nameSpace);
+        $nameSpace=join('\\',$nameSpace);
+        $model=explode('Controller',$model);
+        $model=$model[0];
+        //print_r($nodos);
+        return $nameSpace.'\\'.$model;
+    }
+}

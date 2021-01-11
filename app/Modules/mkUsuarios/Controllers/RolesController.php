@@ -9,10 +9,10 @@ class RolesController extends controller
 {
     use Mk_ia_db;
 
-    private $__modelo='\App\Modules\mkUsuarios\Roles';
+    protected $__modelo='';
     public function __construct(Request $request)
     {
-        $this->__init($request);
+        parent::__construct($request);
         return true;
     }
 }

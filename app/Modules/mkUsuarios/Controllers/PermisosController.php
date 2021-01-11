@@ -9,10 +9,10 @@ class PermisosController extends Controller
 {
     use Mk_ia_db;
 
-    private $__modelo='\App\Modules\mkUsuarios\Permisos';
+    protected $__modelo='';
     public function __construct(Request $request)
     {
-        $this->__init($request);
+        parent::__construct($request);
         return true;
     }
 }

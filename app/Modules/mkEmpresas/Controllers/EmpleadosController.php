@@ -12,12 +12,10 @@ class EmpleadosController extends Controller
 {
     use Mk_ia_db;
     //public $_autorizar='';
-
-    private $__modelo='App\Modules\mkEmpresas\Empleados';
-
+    protected $__modelo='';
     public function __construct(Request $request)
     {
-        $this->__init($request);
+        parent::__construct($request);
         return true;
     }
 }

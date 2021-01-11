@@ -11,14 +11,12 @@ class GruposController extends Controller
     use Mk_ia_db;
 
 
-    private $__modelo='\App\Modules\mkUsuarios\Grupos';
-
+    protected $__modelo='';
     public function __construct(Request $request)
     {
-        $this->__init($request);
+        parent::__construct($request);
         return true;
     }
-
 
     public function afterSave(Request $request, $modelo, $error=0, $id=0)
     {

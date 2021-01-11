@@ -16,11 +16,10 @@ class UsuariosController extends Controller
     //public $_validators=[];
 
 
-    private $__modelo='App\Modules\mkUsuarios\Usuarios';
-
+    protected $__modelo='';
     public function __construct(Request $request)
     {
-        $this->__init($request);
+        parent::__construct($request);
         return true;
     }
 
