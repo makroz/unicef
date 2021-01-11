@@ -47,7 +47,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('nom', 60);
+            $table->string('name', 60);
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
