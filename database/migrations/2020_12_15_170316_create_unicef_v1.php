@@ -21,7 +21,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('nom', 60);
+            $table->string('name', 60);
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
@@ -34,7 +34,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('nom', 60);
+            $table->string('name', 60);
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
@@ -60,7 +60,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('nom', 60);
+            $table->string('name', 60);
             $table->string('obs', 250)->nullable();;
             $table->char('status', 1)->default('1');
 
@@ -74,14 +74,14 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('nom', 60);
+            $table->string('name', 60);
             $table->integer('epsa')->unsigned();
-            $table->char('autoriza', 1)->default('1');
-            $table->char('protec', 1)->default('1');
+            $table->char('autoriza', 1)->nullable();
+            $table->char('protec', 1)->nullable();
             $table->string('dir', 250)->nullable();
             $table->string('lat', 32)->nullable();
             $table->string('long', 32)->nullable();
-            $table->char('nivel', 1)->default('1');
+            $table->char('nivel', 1)->default('0');
             $table->char('status', 1)->default('1');
 
             $table->integer('distritos_id')->unsigned();
@@ -99,7 +99,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('nom', 60);
+            $table->string('name', 60);
             $table->string('desc', 250)->nullable();
             $table->char('status', 1)->default('1');
 

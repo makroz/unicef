@@ -97,4 +97,10 @@ class Mk_app
         //print_r($nodos);
         return $nameSpace.'\\'.$model;
     }
+
+    public static function getNSModules()
+    {
+        return "App\Modules\\";
+    }
 }
+//TODO: hacer que las rutas base y directorios sean configradas en Constantes y desde el ENV

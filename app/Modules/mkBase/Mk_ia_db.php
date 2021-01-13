@@ -337,7 +337,7 @@ trait Mk_ia_db
             $msgError='';
             if ((!empty($th->status))&&($th->status==422)) {
                 foreach ($th->errors() as $key => $value) {
-                    $msgError.="\n ".$key.':'.join($value, ',');
+                    $msgError.="\n ".$key.':'.join(',',$value);
                 }
                 Mk_debug::error($msgError, 'Validacion');
             } else {
