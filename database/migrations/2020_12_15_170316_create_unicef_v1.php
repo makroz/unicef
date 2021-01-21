@@ -61,7 +61,8 @@ class CreateUnicefV1 extends Migration
 
             $table->increments('id');
             $table->string('name', 60);
-            $table->string('obs', 250)->nullable();;
+            $table->string('obs', 250)->nullable();
+            $table->char('cant', 1)->default('0');
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
