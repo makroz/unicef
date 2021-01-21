@@ -102,5 +102,24 @@ class Mk_app
     {
         return "App\Modules\\";
     }
+
+    
+    public static function recurse_copy_dir(string $src, string $dest) : int {
+    $count = 0;
+    $src = rtrim($dest, "/\\") . "/";
+    $dest = rtrim($dest, "/\\") . "/";
+    $list = dir($src);
+    @mkdir($dest);
+    while(($file = $list->read()) !== false) {
+        if($file === "." || $file === "..") continue;
+        if(is_file($src . $file)) {
+            copy($src . $file, $dest . $file);
+            $count++;
+        } elseif(is_dir($src . $file)) {
+            $count += recurse_copy_dir($src . $file, $dest . $file);
+        }
+    }
+    return $count;
+}
 }
 //TODO: hacer que las rutas base y directorios sean configradas en Constantes y desde el ENV

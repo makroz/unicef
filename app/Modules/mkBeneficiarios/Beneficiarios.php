@@ -9,15 +9,18 @@ class Beneficiarios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['nom','epsa','autoriza', 'protec', 'dir', 'lat', 'long', 'nivel', 'distritos_id', 'entidades_id','status'];
+    protected $fillable = ['name','epsa','autoriza', 'protec', 'dir', 'lat', 'long', 'nivel', 'rutas_id','distritos_id', 'entidades_id','status'];
     protected $attributes = ['status' => 1];
-
+    public $_cachedRelations = [
+        ['App\Modules\mkRutas\rutas','rutas_id']
+    ];
 
     public function getRules($request){
         return [
-            'nom' => 'required_with:nom',
+            'name' => 'required_with:name',
             'distritos_id' => 'integer',
             'entidades_id' => 'integer',
+            'rutas_id' => 'sometimes|integer',
             'status' => 'in:0,1'
         ];
     }
@@ -32,4 +35,9 @@ class Beneficiarios extends Model
         return $this->hasOne('\App\Modules\mkBeneficiarios\distritos');
     }
 
+    public function ruta()
+    {
+        return $this->belongsTo('\App\Modules\mkRutas\rutas');
+        
+    }
 }

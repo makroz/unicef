@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use \App\Modules\mkBase\Mk_helpers\Mk_db;
-use Illuminate\Support\Facades\Validator;
 use \App\Modules\mkBase\Mk_helpers\Mk_debug;
 use \App\Modules\mkBase\Mk_helpers\Mk_forms;
 use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
@@ -18,12 +17,9 @@ const _errorLogin=-1000;
 const _errorNoAutenticado=-1001;
 
 const _maxRowTable=1000;
-const _cacheQueryDebugInactive=false;
+const _cacheQueryDebugInactive=true;
 const _cachedQuerys='cachedQuerys_';
 const _cachedTime=30*24*60*60;
-
-
-
 
 trait Mk_ia_db
 {
@@ -65,13 +61,13 @@ trait Mk_ia_db
         $disabled=$request->disabled;
         
 
-        $prefix=$this->addCacheList([$this->__modelo,$page,$perPage,$sortBy,$order,$buscarA,$recycled,$cols,$disabled]);
+        $prefix=$this->addCacheList($this->__modelo,[$page,$perPage,$sortBy,$order,$buscarA,$recycled,$cols,$disabled]);
         if (_cacheQueryDebugInactive) {
             Cache::forget($prefix);
             Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
         }
 
-        Mk_debug::msgApi(['Se busca si Existe Item Cache:'.$prefix,'Existe o no:'.Cache::has($prefix)]);
+        //Mk_debug::msgApi(['Se busca si Existe Item Cache:'.$prefix,'Existe o no:'.Cache::has($prefix)]);
         $datos=Cache::remember($prefix, _cachedTime, function () use ($prefix,$page,$perPage,$sortBy,$order,$buscarA,$recycled,$cols,$disabled) {
             $modelo=new $this->__modelo();
             $table=$modelo->getTable();
@@ -96,9 +92,9 @@ trait Mk_ia_db
                 if (!empty($modelo->_joins)) {
                     //Mk_debug::msgApi('Entro a modelo Joins')
                     foreach ($modelo->_joins as $t => $d) {
-                        Mk_debug::msgApi(['Entro a modelo Joins'.$t,((empty($d['onSearh']))||(($d['onSearh']===true)&&($d[joined]===true)))]);
+                        //Mk_debug::msgApi(['Entro a modelo Joins'.$t,((empty($d['onSearh']))||(($d['onSearh']===true)&&($d[joined]===true)))]);
                         if ((empty($d['onSearh']))||(($d['onSearh']===true)&&($d[joined]===true))) {
-                            Mk_debug::msgApi(['Entro al if ',$d['on']]);
+                            //Mk_debug::msgApi(['Entro al if ',$d['on']]);
                             switch ($d['type']) {
                         case 'left':
                             $consulta=$consulta->leftJoin($t, ...$d['on']);
@@ -137,14 +133,17 @@ trait Mk_ia_db
 
 
             if (isset($modelo->_withRelations)) {
+                //Mk_debug::msgApi(['Entro a la relaciomn:',$modelo->_withRelations]);
                 $consulta = $consulta->with($modelo->_withRelations);
             }
 
             $cols=array_merge($cols, $colsJoin);
-            Mk_debug::msgApi(['Se añadio Item Cache:'.$prefix,$cols,Mk_db::tableCol($cols, $modelo)]);
+//            Mk_debug::msgApi(['Datos:',$result]);
+            //Mk_debug::msgApi(['Se añadio Item Cache:'.$prefix,$cols,Mk_db::tableCol($cols, $modelo)]);
             return $consulta->paginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
+            
         });
-
+        
         if ($request->ajax()) {
             return  $datos;
         } else {
@@ -308,12 +307,12 @@ trait Mk_ia_db
                 $validatedData = $request->validate($rules);
             }
             $this->beforeSave($request, $datos, $id);
-            Mk_debug::msgApi(['request',$request->only($datos->getfill())]);
+            //Mk_debug::msgApi(['request',$request->only($datos->getfill())]);
             $dataUpdate=$request->only($datos->getfill());
             if (!empty($dataUpdate)) {
                 $r=$datos->where($_key, '=', $id)
              ->update(
-                 $request->only($datos->getfill())
+                $dataUpdate//$request->only($datos->getfill())
              );
             }else{
                 $r=1000000;
@@ -324,6 +323,7 @@ trait Mk_ia_db
                 $msg='Registro ya NO EXISTE';
                 DB::rollback();
             } else {
+
                 $this->afterSave($request, $datos, $r, $id);
                 DB::commit();
                 $this->clearCache();
@@ -354,7 +354,7 @@ trait Mk_ia_db
     {
         $this->proteger();
         $recycled=$request->recycled;
-        $id=explode(',', $request->id);
+        $id=explode(',', $request->id);//TODO::bajar mas abajoy cambiar id por $key
         DB::beginTransaction();
         try {
             $datos = new $this->__modelo();
@@ -458,19 +458,61 @@ trait Mk_ia_db
         }
     }
 
-    private function addCacheList($key=['ok'])
+
+    public function getDatosDbCache(Request $request,$model,$cols='',$filtros=[],$_debug=true){
+
+        $perPage=_maxRowTable;
+        $page=1;
+
+        $prefix=$this->addCacheList($model,[$page,$perPage,'id','desc','',0,$cols,1]);
+        if (_cacheQueryDebugInactive) {
+            Cache::forget($prefix);
+            Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
+        }
+
+        $datos=Cache::remember($prefix, _cachedTime, function () use ($cols, $model,$page,$perPage, $filtros) {
+            $modelo=new $model();
+            $cols=explode(',', $cols);
+            $cols=array_merge([$modelo->getKeyName()], $cols);
+            foreach ($filtros as $key => $filtro){
+                if ($filtro[0]!='OR'){
+                    $modelo=$modelo->where($filtro[0],$filtro[1],$filtro[2]);
+                }else{
+                    $modelo=$modelo->
+                    where(function($query) use ($filtro) {
+                        $query->where($filtro[1][0],$filtro[1][1],$filtro[1][2])
+                              ->orWhere($filtro[2][0],$filtro[2][1],$filtro[2][2]);
+                    });
+                }
+                
+            }
+            return $modelo->paginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
+        });
+
+        if ($request->ajax()) {
+            return  $datos;
+        } else {
+            $d=$datos->toArray();
+            $d['data']=$this->isCachedFront($d['data']);
+            return Mk_db::sendData($d['total'], $d['data'], '', $_debug, true);
+        }
+
+    }
+
+    private function addCacheList($model,$key=['ok'])
     {
-        $prefixList=$this->getCacheKey();//_cachedQuerys.basename($this->__modelo);
-        $prefix=md5(collect($key)->__toString());
+        
+        $prefixList=$this->getCacheKey($model);//_cachedQuerys.basename($this->__modelo);
+        $prefix=md5($model.collect($key)->__toString());
         $cached=Cache::get($prefixList, []);
         //$cachedToken=Cache::get($prefixList.'Token', 1);
         //Mk_debug::msgApi(['Intentando Añadir: '.$prefix.'('.$cachedToken.')',$cached]);
-        Mk_debug::msgApi(['Intentando Añadir: '.$prefix,$cached]);
+        //Mk_debug::msgApi(['Intentando Añadir: '.$prefix,$cached]);
         if (!in_array($prefix, $cached)) {
             array_push($cached, $prefix);
             Cache::put($prefixList, $cached, _cachedTime);
             Cache::forget($prefix);
-            Mk_debug::msgApi(['Cache Lista Añadido: '.$prefix,Cache::get($prefixList, []),$cached]);
+            //Mk_debug::msgApi(['Cache Lista Añadido: '.$prefix,Cache::get($prefixList, []),$cached]);
         }
         return $prefix;
     }
@@ -498,29 +540,48 @@ trait Mk_ia_db
     //     return $Cache::put($this.getCacheTokenKey(), $valor);
     // }
 
-    private function clearCache($cascade=false)
+    private function clearCache($cascade=false)//mientras pondremos a true hasta ver las relaciones de cache entre modulos
     {
+
         $lista[]=$this->__modelo;
+        $modelo=new $this->__modelo();
         //$this->getCacheKey();
         if ($cascade) {
-            $lista=(new $this->__modelo)->getCascadingTables();
+            $lista=$modelo->getCascadingTables();
+        }
+        Mk_debug::msgApi(['ClearCache: ',$modelo->_cachedRelations],$this->__modelo);
+        if (!empty($modelo->_cachedRelations)){
+            foreach ($modelo->_cachedRelations as $key => $relation) {
+                Mk_debug::msgApi(['ClearCache Request: ',request()->has($relation[1])]);
+                if (request()->has($relation[1])){
+                    $lista[]=$relation[0];
+                }
+            }    
         }
         foreach ($lista as $key => $model) {
             $prefixList=$this->getCacheKey($model);
             $cached=Cache::get($prefixList, []);
             //$cachedToken=$this->getCacheToken();
-            Mk_debug::msgApi(['se limpia cache de: '.$prefixList,$cached]);
+            Mk_debug::msgApi(['se limpia cache de: '.$model]);
+            //Mk_debug::msgApi(['se limpia cache de: '.$prefixList,$cached]);
             foreach ($cached as $key => $value) {
-                //Cache::add($value,'',1);
                 Cache::forget($value);
-                Mk_debug::msgApi(['limpiando '.$value,Cache::get($value, 'No existe')]);
+                //Mk_debug::msgApi(['limpiando '.$value,Cache::get($value, 'No existe')]);
             }
             Cache::forget($prefixList, []);
-            //$cachedToken++;
-            //$this->setCacheToken($cachedToken);
-            Mk_debug::msgApi(['se limpio '.$prefixList,Cache::get($prefixList, 'Vacio')]);
+            //Mk_debug::msgApi(['se limpio '.$prefixList,Cache::get($prefixList, 'Vacio')]);
         }
 
         return true;
     }
 }
+
+// public function is_cacheQueryDebugInactive(){
+    //     return _cacheQueryDebugInactive;
+    // }
+    // public function get_maxRowTable(){
+    //     return _maxRowTable;
+    // }
+    // public function get_cachedTime(){
+    //     return _cachedTime;
+    // }

@@ -85,9 +85,11 @@ class CreateUnicefV1 extends Migration
             $table->char('status', 1)->default('1');
 
             $table->integer('distritos_id')->unsigned();
-            $table->foreign('distritos_id')->references('id')->on('distritos')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('distritos_id')->references('id')->on('distritos')->onUpdate('cascade');
             $table->integer('entidades_id')->unsigned();
-            $table->foreign('entidades_id')->references('id')->on('entidades')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('entidades_id')->references('id')->on('entidades')->onUpdate('cascade');
+            $table->integer('rutas_id')->unsigned();
+            $table->foreign('rutas_id')->references('id')->on('rutas')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -100,34 +102,17 @@ class CreateUnicefV1 extends Migration
 
             $table->increments('id');
             $table->string('name', 60);
-            $table->string('desc', 250)->nullable();
+            $table->string('descrip', 250)->nullable();
             $table->char('status', 1)->default('1');
 
-            $table->bigInteger('users_id')->unsigned();
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->bigInteger('usuarios_id')->unsigned();
+            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
         });
 
-        $nTable='ruta_beneficiario';
-        Schema::dropIfExists($nTable);
-        Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
-
-            $table->increments('id');
-            $table->tinyInteger('orden');
-            $table->char('status', 1)->default('1');
-
-            $table->integer('rutas_id')->unsigned();
-            $table->foreign('rutas_id')->references('id')->on('rutas')->onDelete('cascade')->onUpdate('cascade');
-            $table->integer('beneficiarios_id')->unsigned();
-            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
+       
         $nTable='preguntas';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {

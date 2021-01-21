@@ -39,8 +39,6 @@ class Mk_db
             }
         }
 
-
-
         if ((Mk_debug::isDebug())&&($_debug)) {
             if (Mk_debug::isDebugDb()) {
                 $res['_queryLog']=DB::getQueryLog();

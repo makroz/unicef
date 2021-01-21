@@ -5,7 +5,7 @@ namespace App\Modules\mkBase\Mk_helpers;
 class Mk_debug
 {
     private static $_mk_debug=-1;
-    private static $_mk_debugDb=false;
+    private static $_mk_debugDb=true;
     private static $msgApi=array();
     private static $msgWarning=array();
     private static $counter=0;
@@ -13,8 +13,8 @@ class Mk_debug
 
     public static function __init()
     {
-        self::$_mk_debug = env('IA_DEBUG', false);
-        self::$_mk_debugDb=env('IA_DEBUG_DB', false);
+        self::$_mk_debug = env('IA_DEBUG', true);
+        self::$_mk_debugDb=env('IA_DEBUG_DB', true);
     }
 
     public static function msgApi($msg='', $force=false)

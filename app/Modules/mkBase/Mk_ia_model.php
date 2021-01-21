@@ -12,10 +12,23 @@ trait Mk_ia_model
 
     public $joined=false;
 
+    //public $_cachedRelations=[];
+    //protected $_cachedRelations = [];
+
     public function getFill()
     {
         return $this->fillable;
     }
+
+    public function scopeEnabled($query)
+    {
+        return $query->where('status', '<>', 0);
+    }
+    public function scopeDisabled($query)
+    {
+        return $query->where('status', '=', 0);
+    }
+
     public function getJoinFields()
     {
         $colsJoin=[];
@@ -112,6 +125,7 @@ trait Mk_ia_model
     }
 
     //****softdelete cascade ***
+
     public function getCascadingTables($first=null)
     {
         $cascade[]=get_class($this);
