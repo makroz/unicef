@@ -107,7 +107,7 @@ class CreateUnicefV1 extends Migration
             $table->char('status', 1)->default('1');
 
             $table->bigInteger('usuarios_id')->unsigned();
-            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -126,7 +126,7 @@ class CreateUnicefV1 extends Migration
             $table->char('status', 1)->default('1');
 
             $table->integer('categ_id')->unsigned();
-            $table->foreign('categ_id')->references('id')->on('categ')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('categ_id')->references('id')->on('categ')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -150,11 +150,11 @@ class CreateUnicefV1 extends Migration
             $table->char('status', 1)->default('1');
 
             $table->integer('rutas_id')->unsigned();
-            $table->foreign('rutas_id')->references('id')->on('rutas')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('rutas_id')->references('id')->on('rutas')->onUpdate('cascade');
             $table->bigInteger('users_id')->unsigned();
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('users_id')->references('id')->on('users')->onUpdate('cascade');
             $table->bigInteger('verif_id')->unsigned();
-            $table->foreign('verif_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('verif_id')->references('id')->on('users')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -166,19 +166,28 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->timestamp('fecha');
+            $table->integer('usuarios_id_1')->unsigned()->nullable();
+            $table->timestamp('fecha_1')->nullable();
+            $table->integer('usuarios_id_2')->unsigned()->nullable();
+            $table->timestamp('fecha_2')->nullable();
+            $table->integer('usuarios_id_3')->unsigned()->nullable();
+            $table->timestamp('fecha_3')->nullable();
+            $table->integer('usuarios_id_4')->unsigned()->nullable();
+            $table->timestamp('fecha_4')->nullable();
+            $table->integer('usuarios_id_5')->unsigned()->nullable();
+            $table->timestamp('fecha_5')->nullable();
+            $table->integer('usuarios_id_6')->unsigned()->nullable();
+            $table->timestamp('fecha_6')->nullable();
             $table->tinyInteger('cant'); 
             $table->char('estado', 1)->default('1');
             $table->char('status', 1)->default('1');
 
             $table->integer('servicios_id')->unsigned();
-            $table->foreign('servicios_id')->references('id')->on('servicios')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('servicios_id')->references('id')->on('servicios')->onUpdate('cascade');
             $table->integer('beneficiarios_id')->unsigned();
-            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onDelete('cascade')->onUpdate('cascade');
-            $table->bigInteger('users_id')->unsigned();
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
             $table->integer('evaluaciones_id')->unsigned();
-            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -196,11 +205,11 @@ class CreateUnicefV1 extends Migration
             $table->char('status', 1)->default('1');
 
             $table->integer('preguntas_id')->unsigned();
-            $table->foreign('preguntas_id')->references('id')->on('preguntas')->onDelete('cascade')->onUpdate('cascade');
-            $table->integer('evaluaciones_id')->unsigned();
-            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onDelete('cascade')->onUpdate('cascade');
-            $table->integer('beneficiarios_id')->unsigned();
-            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('preguntas_id')->references('id')->on('preguntas')->onUpdate('cascade');
+            $table->integer('evaluaciones_beneficiarios_id')->unsigned();
+            $table->foreign('evaluaciones_beneficiarios_id')->references('id')->on('evaluaciones_beneficiarios')->onUpdate('cascade');
+//            $table->integer('beneficiarios_id')->unsigned();
+//            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -216,15 +225,16 @@ class CreateUnicefV1 extends Migration
             $table->point('ubic');
             $table->text('obs')->nullable();
             $table->timestamp('fec_verif')->nullable();
+            $table->integer('verif_id')->unsigned()->nullable();
             $table->char('estado', 1)->default('1'); 
             $table->char('status', 1)->default('1');
 
             $table->integer('evaluaciones_id')->unsigned();
-            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onUpdate('cascade');
             $table->integer('beneficiarios_id')->unsigned();
-            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onDelete('cascade')->onUpdate('cascade');
-            $table->bigInteger('verif_id')->unsigned();
-            $table->foreign('verif_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
+            $table->bigInteger('usuarios_id')->unsigned();
+            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
