@@ -106,7 +106,7 @@ class CreateUnicefV1 extends Migration
             $table->string('descrip', 250)->nullable();
             $table->char('status', 1)->default('1');
 
-            $table->bigInteger('usuarios_id')->unsigned();
+            $table->integer('usuarios_id')->unsigned();
             $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
 
             $table->timestamps();
@@ -142,6 +142,7 @@ class CreateUnicefV1 extends Migration
             $table->timestamp('fec_cerrado')->nullable();
             $table->timestamp('fec_sincro')->nullable();
             $table->timestamp('fec_verif')->nullable();
+            $table->integer('verif_id')->unsigned()->nullable();
             $table->tinyInteger('semana');
             $table->text('obs')->nullable();
             $table->point('cabierto');
@@ -151,10 +152,8 @@ class CreateUnicefV1 extends Migration
 
             $table->integer('rutas_id')->unsigned();
             $table->foreign('rutas_id')->references('id')->on('rutas')->onUpdate('cascade');
-            $table->bigInteger('users_id')->unsigned();
-            $table->foreign('users_id')->references('id')->on('users')->onUpdate('cascade');
-            $table->bigInteger('verif_id')->unsigned();
-            $table->foreign('verif_id')->references('id')->on('users')->onUpdate('cascade');
+            $table->integer('usuarios_id')->unsigned();
+            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -233,7 +232,7 @@ class CreateUnicefV1 extends Migration
             $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onUpdate('cascade');
             $table->integer('beneficiarios_id')->unsigned();
             $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
-            $table->bigInteger('usuarios_id')->unsigned();
+            $table->integer('usuarios_id')->unsigned();
             $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
 
             $table->timestamps();

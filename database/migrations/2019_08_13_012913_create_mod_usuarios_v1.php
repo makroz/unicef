@@ -83,7 +83,7 @@ class CreateModUsuariosV1 extends Migration
 
             $table->increments('id');
             $table->string('name', 100);
-            $table->string('email', 100)>unique();
+            $table->string('email', 100)->unique();
             $table->string('pass', 40);
             $table->smallInteger('rolActivo')->default(0);
             $table->rememberToken();
@@ -93,7 +93,7 @@ class CreateModUsuariosV1 extends Migration
             $table->softDeletes();
 
             $table->smallInteger('roles_id')->unsigned();
-            $table->foreign('roles_id')->references('id')->on('roles')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('roles_id')->references('id')->on('roles')->onUpdate('cascade');
         });
 
 
