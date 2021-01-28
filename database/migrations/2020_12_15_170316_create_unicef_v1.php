@@ -89,7 +89,7 @@ class CreateUnicefV1 extends Migration
             $table->foreign('distritos_id')->references('id')->on('distritos')->onUpdate('cascade');
             $table->integer('entidades_id')->unsigned();
             $table->foreign('entidades_id')->references('id')->on('entidades')->onUpdate('cascade');
-            $table->integer('rutas_id')->unsigned();
+            $table->integer('rutas_id')->unsigned()->nullable();
             $table->foreign('rutas_id')->references('id')->on('rutas')->onUpdate('cascade');
 
             $table->timestamps();
@@ -185,7 +185,7 @@ class CreateUnicefV1 extends Migration
             $table->foreign('servicios_id')->references('id')->on('servicios')->onUpdate('cascade');
             $table->integer('beneficiarios_id')->unsigned();
             $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
-            $table->integer('evaluaciones_id')->unsigned();
+            $table->integer('evaluaciones_id')->unsigned()->nullable();
             $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onUpdate('cascade');
 
             $table->timestamps();

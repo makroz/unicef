@@ -184,6 +184,7 @@ trait Mk_ia_db
 
     public function beforeSave(Request $request, $modelo, $id=0)
     {
+        
     }
     public function afterSave(Request $request, $modelo, $error=0, $id=0)
     {
@@ -208,14 +209,23 @@ trait Mk_ia_db
             if (!empty($rules)) {
                 $validatedData = $request->validate($rules);
             }
-
             $datos->fill($request->only($datos->getfill()));
-            $this->beforeSave($request, $datos, 0);
-            $r=$datos->save();
-
+            $grabar=$this->beforeSave($request, $datos, 0);
+            Mk_debug::msgApi(['Grabar:',$grabar]);
+            if ((!$grabar)or($grabar==1)){
+                Mk_debug::msgApi(['Entro a Save:',$request]);
+                $r=$datos->save();
+            }else{
+                $r=$grabar;    
+                if ($grabar<0){
+                    $r=false;    
+                }
+            }
             if ($r) {
-                $_key=$datos->getKeyName();
-                $r=$datos->$_key;
+                if ($grabar==1){
+                    $_key=$datos->getKeyName();
+                    $r=$datos->$_key;
+                }
                 $msg='';
                 $this->afterSave($request, $datos, 0, $r);
                 DB::commit();
@@ -235,12 +245,13 @@ trait Mk_ia_db
             Mk_debug::msgApi(['Error:',$th]);
             if (@$th->status==422) {//todo: revisar nueva estrutiura de th en laravel 8 y lumens
                 foreach ($th->errors() as $key => $value) {
-                    $msgError.="\n ".$key.':'.join($value, ',');
+                    $msgError.="\n ".$key.':'.join('.',$value);
                 }
                 Mk_debug::error($msgError, 'Validacion');
-            } else {
-                Mk_debug::msgApi(['Error:',$th]);
             }
+            //  else {
+            //     Mk_debug::msgApi(['Error:',$th]);
+            // }
 
             $msg="Error mientras se Grababa: \n".$th->getMessage().$msgError;
         }
@@ -575,7 +586,7 @@ trait Mk_ia_db
         return true;
     }
 }
-
+//TODO: hacer que la Autorizacion en la variablke autproizar, cada caracter represente a un metodo de resource del controlador si esta vacio es todos, sino se mete cada uno que se desee, tal vez con un -cuando sea uno que no desee
 // public function is_cacheQueryDebugInactive(){
     //     return _cacheQueryDebugInactive;
     // }
