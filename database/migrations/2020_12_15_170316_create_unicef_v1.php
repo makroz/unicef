@@ -132,7 +132,7 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='evaluaciones';
+        $nTable='ruteos';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
             $table->engine ='InnoDB';
@@ -152,6 +152,31 @@ class CreateUnicefV1 extends Migration
 
             $table->integer('rutas_id')->unsigned();
             $table->foreign('rutas_id')->references('id')->on('rutas')->onUpdate('cascade');
+            $table->integer('usuarios_id')->unsigned();
+            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        $nTable='evaluaciones';
+        Schema::dropIfExists($nTable);
+        Schema::create($nTable, function (Blueprint $table) {
+            $table->engine ='InnoDB';
+
+            $table->increments('id');
+            $table->timestamp('fecha');
+            $table->point('ubic');
+            $table->text('obs')->nullable();
+            $table->timestamp('fec_verif')->nullable();
+            $table->integer('verif_id')->unsigned()->nullable();
+            $table->char('estado', 1)->default('1'); 
+            $table->char('status', 1)->default('1');
+
+            $table->integer('ruteos_id')->unsigned();
+            $table->foreign('ruteos_id')->references('id')->on('ruteos')->onUpdate('cascade');
+            $table->integer('beneficiarios_id')->unsigned();
+            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
             $table->integer('usuarios_id')->unsigned();
             $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
 
@@ -205,8 +230,8 @@ class CreateUnicefV1 extends Migration
 
             $table->integer('preguntas_id')->unsigned();
             $table->foreign('preguntas_id')->references('id')->on('preguntas')->onUpdate('cascade');
-            $table->integer('evaluaciones_beneficiarios_id')->unsigned();
-            $table->foreign('evaluaciones_beneficiarios_id')->references('id')->on('evaluaciones_beneficiarios')->onUpdate('cascade');
+            $table->integer('evaluaciones_id')->unsigned();
+            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onUpdate('cascade');
 //            $table->integer('beneficiarios_id')->unsigned();
 //            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
 
@@ -214,30 +239,7 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='evaluaciones_beneficiarios';
-        Schema::dropIfExists($nTable);
-        Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
-
-            $table->increments('id');
-            $table->timestamp('fecha');
-            $table->point('ubic');
-            $table->text('obs')->nullable();
-            $table->timestamp('fec_verif')->nullable();
-            $table->integer('verif_id')->unsigned()->nullable();
-            $table->char('estado', 1)->default('1'); 
-            $table->char('status', 1)->default('1');
-
-            $table->integer('evaluaciones_id')->unsigned();
-            $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onUpdate('cascade');
-            $table->integer('beneficiarios_id')->unsigned();
-            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
-            $table->integer('usuarios_id')->unsigned();
-            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onUpdate('cascade');
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        
 
         Schema::enableForeignKeyConstraints();
     }
@@ -258,12 +260,11 @@ class CreateUnicefV1 extends Migration
         Schema::dropIfExists('beneficiarios');
         Schema::dropIfExists('rutas');
         Schema::dropIfExists('ruta_beneficiario');
+        Schema::dropIfExists('ruteos');
         Schema::dropIfExists('evaluaciones');
         Schema::dropIfExists('solicitud_servicios');
         Schema::dropIfExists('preguntas');
         Schema::dropIfExists('respuestas');
-        Schema::dropIfExists('evaluaciones_beneficiarios');
-
         Schema::enableForeignKeyConstraints();
     }
 }
