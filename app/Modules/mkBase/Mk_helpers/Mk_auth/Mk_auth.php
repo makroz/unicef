@@ -89,7 +89,8 @@ class Mk_auth
     }
     public function getUser()
     {
-        return $this->user;
+        return $user=$this->auth->usuario();
+        //return $this->user;
     }
 
     public function setToken($token=false)

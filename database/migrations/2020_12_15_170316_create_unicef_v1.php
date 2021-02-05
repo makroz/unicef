@@ -138,7 +138,6 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->timestamp('fec_abierto');
             $table->timestamp('fec_cerrado')->nullable();
             $table->timestamp('fec_sincro')->nullable();
             $table->timestamp('fec_verif')->nullable();

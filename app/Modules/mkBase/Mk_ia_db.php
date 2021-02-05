@@ -67,7 +67,6 @@ trait Mk_ia_db
             Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
         }
 
-        //Mk_debug::msgApi(['Se busca si Existe Item Cache:'.$prefix,'Existe o no:'.Cache::has($prefix)]);
         $datos=Cache::remember($prefix, _cachedTime, function () use ($prefix,$page,$perPage,$sortBy,$order,$buscarA,$recycled,$cols,$disabled) {
             $modelo=new $this->__modelo();
             $table=$modelo->getTable();
@@ -90,11 +89,8 @@ trait Mk_ia_db
             $colsJoin=[];
             if ($modelo->joined) {
                 if (!empty($modelo->_joins)) {
-                    //Mk_debug::msgApi('Entro a modelo Joins')
                     foreach ($modelo->_joins as $t => $d) {
-                        //Mk_debug::msgApi(['Entro a modelo Joins'.$t,((empty($d['onSearh']))||(($d['onSearh']===true)&&($d[joined]===true)))]);
                         if ((empty($d['onSearh']))||(($d['onSearh']===true)&&($d[joined]===true))) {
-                            //Mk_debug::msgApi(['Entro al if ',$d['on']]);
                             switch ($d['type']) {
                         case 'left':
                             $consulta=$consulta->leftJoin($t, ...$d['on']);
@@ -108,7 +104,6 @@ trait Mk_ia_db
                          }
                             if (!empty($d['fields'])) {
                                 $colsJoin=array_merge($colsJoin, $d['fields']);
-                                //$consulta=$consulta->addSelect(...$d['fields']);
                             }
                         }
                     }
@@ -131,27 +126,27 @@ trait Mk_ia_db
                 $perPage=_maxRowTable;
             }
 
-
             if (isset($modelo->_withRelations)) {
-                //Mk_debug::msgApi(['Entro a la relaciomn:',$modelo->_withRelations]);
                 $consulta = $consulta->with($modelo->_withRelations);
             }
-
             $cols=array_merge($cols, $colsJoin);
-//            Mk_debug::msgApi(['Datos:',$result]);
-            //Mk_debug::msgApi(['Se añadio Item Cache:'.$prefix,$cols,Mk_db::tableCol($cols, $modelo)]);
-            return $consulta->paginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
+             $cols=Mk_db::tableCol($cols, $modelo);
+            $consulta=$consulta->select($cols);
+             if (!empty($modelo->_customFields)){
+                 foreach ($modelo->_customFields as $field){
+                    $consulta=$consulta->addSelect(DB::raw($field));
+                 }
+            }
+            return $consulta->paginate($perPage);
             
         });
         
         if ($request->ajax()) {
             return  $datos;
         } else {
-//            dd($datos,DB::getQueryLog());
             $d=$datos->toArray();
-            //Mk_debug::msgApi([$request->input('_ct_', ''),md5(json_encode($d['data']))]);
             $d['data']=$this->isCachedFront($d['data']);
-
+            $d=$this->isCachedFront($d);
             return Mk_db::sendData($d['total'], $d['data'], '', $_debug, true);
         }
     }
@@ -470,7 +465,7 @@ trait Mk_ia_db
     }
 
 
-    public function getDatosDbCache(Request $request,$model,$cols='',$filtros=[],$_debug=true){
+    public function getDatosDbCache(Request $request,$model,$cols='',$filtros=[],$_send=true){
 
         $perPage=_maxRowTable;
         $page=1;
@@ -497,7 +492,7 @@ trait Mk_ia_db
                 }
                 
             }
-            return $modelo->paginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
+            return $modelo->simplePaginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
         });
 
         if ($request->ajax()) {
@@ -505,7 +500,12 @@ trait Mk_ia_db
         } else {
             $d=$datos->toArray();
             $d['data']=$this->isCachedFront($d['data']);
-            return Mk_db::sendData($d['total'], $d['data'], '', $_debug, true);
+            if ($_send){
+                return Mk_db::sendData(count($d['data']), $d['data'], '');
+            }else{
+                return $d['data'];
+            }
+            
         }
 
     }

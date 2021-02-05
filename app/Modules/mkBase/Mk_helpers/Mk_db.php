@@ -58,6 +58,7 @@ class Mk_db
             unset($res['_queryLog']);
             $res['msg']=(Mk_auth::get())->getMsgError();
         }
+        //dd($res);
         return (response()->json($res))->original;
     }
 
