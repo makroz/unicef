@@ -4,5 +4,8 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"intelephense.compatibility.correctForBaseClassStaticUnionTypes":false,
+		"intelephense.diagnostics.undefinedMethods":false
+	}
 }

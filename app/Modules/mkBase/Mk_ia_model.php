@@ -139,7 +139,7 @@ trait Mk_ia_model
     public function runCascadingDeletes($ids, $restore=false)
     {
         if ($invalidCascadingRelationships = $this->hasInvalidCascadingRelationships()) {
-            throw \exception($invalidCascadingRelationships);
+            throw new \Exception($invalidCascadingRelationships);
         }
         foreach ($this->getActiveCascadingDeletes() as $relationship) {
             $this->cascadeSoftDeletes($relationship, $ids, $restore);
