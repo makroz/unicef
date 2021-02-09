@@ -68,21 +68,21 @@ class JWT
         $timestamp = is_null(static::$timestamp) ? time() : static::$timestamp;
 
         if (empty($key)) {
-            throw new \Exception('Key may not be empty');
+            throw new \Exception('Key may not be empty',-403);
         }
         if (!is_array($allowed_algs)) {
-            throw new \Exception('Algorithm not allowed');
+            throw new \Exception('Algorithm not allowed',-403);
         }
         $tks = explode('.', $jwt);
         if (count($tks) != 3) {
-            throw new \Exception('Wrong number of segments');
+            throw new \Exception('Wrong number of segments',-403);
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
-            throw new \Exception('Invalid header encoding');
+            throw new \Exception('Invalid header encoding',-403);
         }
         if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
-            throw new \Exception('Invalid claims encoding');
+            throw new \Exception('Invalid claims encoding',-403);
         }
         $sig = static::urlsafeB64Decode($cryptob64);
 
@@ -90,29 +90,29 @@ class JWT
             throw new \Exception('Empty algorithm');
         }
         if (empty(static::$supported_algs[$header->alg])) {
-            throw new \Exception('Algorithm not supported');
+            throw new \Exception('Algorithm not supported',-403);
         }
         if (!in_array($header->alg, $allowed_algs)) {
-            throw new \Exception('Algorithm not allowed');
+            throw new \Exception('Algorithm not allowed',-403);
         }
         if (is_array($key) || $key instanceof \ArrayAccess) {
             if (isset($header->kid)) {
                 $key = $key[$header->kid];
             } else {
-                throw new \Exception('"kid" empty, unable to lookup correct key');
+                throw new \Exception('"kid" empty, unable to lookup correct key',-403);
             }
         }
 
         // Check the signature
         if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
-            throw new \Exception('Signature verification failed');
+            throw new \Exception('Signature verification failed',-403);
         }
 
         // Check if the nbf if it is defined. This is the time that the
         // token can actually be used. If it's not yet that time, abort.
         if (isset($payload->nbf) && $payload->nbf > ($timestamp+static::$leeway)) {
             throw new \Exception(
-                'Cannot handle token prior to ' . date(DateTime::ISO8601, $payload->nbf)
+                'Cannot handle token prior to ' . date(DateTime::ISO8601, $payload->nbf),-403
             );
         }
 
@@ -121,13 +121,13 @@ class JWT
         // correctly used the nbf claim).
         if (isset($payload->iat) && $payload->iat > ($timestamp+static::$leeway)) {
             throw new \Exception(
-                'Cannot handle token prior to ' . date(DateTime::ISO8601, $payload->iat)
+                'Cannot handle token prior to ' . date(DateTime::ISO8601, $payload->iat),-403
             );
         }
 
         // Check if this token has expired.
         if (isset($payload->exp) && ($timestamp-static::$leeway) >= $payload->exp) {
-            throw new \Exception('Expired token');
+            throw new \Exception('Expired token',-404);
         }
 
         return $payload;

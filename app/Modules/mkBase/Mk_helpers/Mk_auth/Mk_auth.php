@@ -39,11 +39,12 @@ class Mk_auth
         define('_errorLogin',-1001);
 
         $this->auth  = FactoryAuth::getInstance();
-        if (empty($user)) {
-            $this->__init();
-        } else {
-            $this->setUser($user);
-        }
+        $this->__init();
+        // if (empty($user)) {
+        //     $this->__init();
+        // } else {
+        //     $this->setUser($user);
+        // }
         return true;
     }
 

@@ -10,6 +10,8 @@ use \App\Modules\mkBase\Mk_helpers\Mk_debug;
 use \App\Modules\mkBase\Mk_helpers\Mk_forms;
 use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
+use function PHPUnit\Framework\isEmpty;
+
 const _errorNoExiste=-1;
 const _errorAlGrabar=-10;
 const _errorAlGrabar2=-11;
@@ -75,7 +77,10 @@ trait Mk_ia_db
                 $cols=explode(',', $cols);
                 $cols=array_merge([$modelo->getKeyName()], $cols);
             } else {
-                $cols=array_merge([$modelo->getKeyName()], $modelo->getFill());
+                if (!$modelo->_listable){
+                    $modelo->_listable=$modelo->getFill();
+                }
+                $cols=array_merge([$modelo->getKeyName()], $modelo->_listable);
             }
             $modelo->isJoined($buscarA);
 
@@ -90,7 +95,7 @@ trait Mk_ia_db
             if ($modelo->joined) {
                 if (!empty($modelo->_joins)) {
                     foreach ($modelo->_joins as $t => $d) {
-                        if ((empty($d['onSearh']))||(($d['onSearh']===true)&&($d[joined]===true))) {
+                        if ((empty($d['onSearh']))||(($d['onSearh']===true)&&($d['joined']===true))) {
                             switch ($d['type']) {
                         case 'left':
                             $consulta=$consulta->leftJoin($t, ...$d['on']);
@@ -123,7 +128,7 @@ trait Mk_ia_db
             }
 
             if ($perPage<0) {
-                $perPage=_maxRowTable;
+                //$perPage=_maxRowTable;
             }
 
             if (isset($modelo->_withRelations)) {
@@ -137,17 +142,33 @@ trait Mk_ia_db
                     $consulta=$consulta->addSelect(DB::raw($field));
                  }
             }
-            return $consulta->paginate($perPage);
+            Mk_debug::msgApi(['listar index perpage',$perPage]);
+            if ($perPage<0){
+                $result = $consulta->get()->toArray();
+                $result = [
+                    'total'=> count($result),
+                    'data' => $result
+                ];
+            }else{
+                $result= $consulta->paginate($perPage)->toArray();
+            }
+            return $result;
+            
             
         });
         
         if ($request->ajax()) {
             return  $datos;
         } else {
-            $d=$datos->toArray();
-            $d['data']=$this->isCachedFront($d['data']);
-            $d=$this->isCachedFront($d);
-            return Mk_db::sendData($d['total'], $d['data'], '', $_debug, true);
+            // if ($perPage>0){
+            //     $d=$datos->toArray();
+            // }else{
+            //     $d=$datos;
+            // }
+            
+            $datos['data']=$this->isCachedFront($datos['data']);
+            $datos=$this->isCachedFront($datos);
+            return Mk_db::sendData($datos['total'], $datos['data'], '', $_debug, true);
         }
     }
     public function isCachedFront($data, $ct=1)
@@ -252,6 +273,9 @@ trait Mk_ia_db
         }
 
         if (!$request->ajax()) {
+            if ($request->has('_noData')){
+                return Mk_db::sendData($r, [], $msg);
+            }
             return Mk_db::sendData($r, $this->index($request, false), $msg);
         }
     }
@@ -312,9 +336,14 @@ trait Mk_ia_db
             if (!empty($rules)) {
                 $validatedData = $request->validate($rules);
             }
-            $this->beforeSave($request, $datos, $id);
-            //Mk_debug::msgApi(['request',$request->only($datos->getfill())]);
+            
+            
+            Mk_debug::msgApi(['request antesd',$request]);
+            //$newDatos=new stdobjet();
             $dataUpdate=$request->only($datos->getfill());
+            $this->beforeSave($request, $dataUpdate, $id);
+            
+            Mk_debug::msgApi(['request',$dataUpdate]);
             if (!empty($dataUpdate)) {
                 $r=$datos->where($_key, '=', $id)
              ->update(
@@ -352,6 +381,9 @@ trait Mk_ia_db
             $msg='Error mientras se Actualizaba: '.$th->getLine().':'.$th->getFile().'='.$th->getMessage();
         }
         if (!$request->ajax()) {
+            if ($request->has('_noData')){
+                return Mk_db::sendData($r, [], $msg);
+            }
             return Mk_db::sendData($r, $this->index($request, false), $msg);
         }
     }
@@ -465,19 +497,26 @@ trait Mk_ia_db
     }
 
 
-    public function getDatosDbCache(Request $request,$model,$cols='',$filtros=[],$_send=true){
+    public function getDatosDbCache(Request $request,$model,$cols='',$options=[]){
+        $filtros=!empty($options['filtros'])?$options['filtros']:[];
+        $relations=!empty($options['relations'])?$options['relations']:[];
+        $_send=!empty($options['send'])?$options['send']:true;
+        $perPage=!empty($options['perPage'])?$options['perPage']:_maxRowTable;
+        $page=!empty($options['page'])?$options['page']:1;
+        $_customFields=!empty($options['_customFields'])?$options['_customFields']:false;
+       
 
-        $perPage=_maxRowTable;
-        $page=1;
-
-        $prefix=$this->addCacheList($model,[$page,$perPage,'id','desc','',0,$cols,1]);
+        $prefix=$this->addCacheList($model,[$page,$perPage,'id','desc','',0,$cols,$options]);
         if (_cacheQueryDebugInactive) {
             Cache::forget($prefix);
             Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
         }
 
-        $datos=Cache::remember($prefix, _cachedTime, function () use ($cols, $model,$page,$perPage, $filtros) {
+        $datos=Cache::remember($prefix, _cachedTime, function () use ($cols, $model,$page,$perPage, $filtros, $relations,$_customFields) {
             $modelo=new $model();
+             if ($_customFields==1){
+                $_customFields=!empty($modelo->_customFields)?$modelo->_customFields:[];
+                }
             $cols=explode(',', $cols);
             $cols=array_merge([$modelo->getKeyName()], $cols);
             foreach ($filtros as $key => $filtro){
@@ -492,6 +531,28 @@ trait Mk_ia_db
                 }
                 
             }
+
+            if ($relations) {
+                $modelo = $modelo->with($relations);
+            }
+
+            //$cols=array_merge($cols, $colsJoin);
+            $cols=Mk_db::tableCol($cols, $modelo);
+            $modelo=$modelo->select($cols);
+            //Mk_debug::warning('CustumFields2', 'CACHE', $_customFields);
+            if (!empty($_customFields)){
+                //Mk_debug::warning('CustumFields!', 'CACHE', $modelo->_customFields);
+                 foreach ($_customFields as $field){
+                    $modelo=$modelo->addSelect(DB::raw($field));
+                 }
+            }
+            // if ($_customFields==1) && !empty($modelo->_customFields)){
+            //     Mk_debug::warning('CustumFields!', 'CACHE', $modelo->_customFields);
+            //      foreach ($modelo->_customFields as $field){
+            //         $modelo=$modelo->addSelect(DB::raw($field));
+            //      }
+            // }
+
             return $modelo->simplePaginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
         });
 
@@ -560,7 +621,8 @@ trait Mk_ia_db
         if ($cascade) {
             $lista=$modelo->getCascadingTables();
         }
-        Mk_debug::msgApi(['ClearCache: ',$modelo->_cachedRelations],$this->__modelo);
+        Mk_debug::msgApi(['ClearCache: ',$this->__modelo,$modelo->_cachedRelations]);
+        Mk_debug::Warning(['ClearCache: ',$this->__modelo]);
         if (!empty($modelo->_cachedRelations)){
             foreach ($modelo->_cachedRelations as $key => $relation) {
                 Mk_debug::msgApi(['ClearCache Request: ',request()->has($relation[1])]);

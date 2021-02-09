@@ -21,9 +21,9 @@ class Auth implements IAuth
     public function autenticar($usuario)
     {
         if (!is_object($usuario)) {
-            throw new \Exception("Fallo autenticación");
+            throw new \Exception("Fallo autenticación",-401);
         } elseif (empty($usuario->id)) {
-            throw new \Exception("Fallo autenticación");
+            throw new \Exception("Fallo autenticación",-401);
         }
 
         $time = time();
@@ -42,7 +42,7 @@ class Auth implements IAuth
 
         $token=$this->getToken();
         if ($token==null) {
-            throw new \Exception('No esta autenticado');
+            throw new \Exception('No esta autenticado',-401);
             //return false;
         }
 //        $token=$_SERVER['HTTP_AUTHORIZATION'];
@@ -52,7 +52,7 @@ class Auth implements IAuth
             $this->encrypt
         );
         if ($decode->aud !== Mk_auth::tokenPorCliente()) {
-            throw new \Exception("No esta autenticado");
+            throw new \Exception("No esta autenticado",-401);
             //return false;
         }
         return true;

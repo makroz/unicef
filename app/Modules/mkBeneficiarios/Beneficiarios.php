@@ -9,8 +9,10 @@ class Beneficiarios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['name','epsa','autoriza', 'protec', 'dir', 'lat', 'long', 'nivel', 'rutas_id','distritos_id', 'entidades_id','status'];
+    protected $fillable = ['name','epsa','autoriza', 'protec', 'dir','nivel', 'rutas_id','distritos_id','entidades_id','status'];
     protected $attributes = ['status' => 1];
+    public $_customFields = ["ST_X(coord) as lat, ST_Y(coord) as lng"];
+
     public $_cachedRelations = [
         ['App\Modules\mkRutas\rutas','rutas_id']
     ];

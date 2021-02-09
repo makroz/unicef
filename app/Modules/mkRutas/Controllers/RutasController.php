@@ -43,19 +43,19 @@ class RutasController extends Controller
             ['roles_id','=','2',],
             ['status','<>',0]
         ];
-        return $this->getDatosDbCache($request,$modelo,$cols,$filtros);
+        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros]);
         
     }
 
     public function beneficiarios(Request $request,$id)
     { 
         $modelo = 'App\Modules\MkBeneficiarios\Beneficiarios';
-        $cols='id,name,lat,long';
+        $cols='id,name';
         $filtros=[
             ['OR',['rutas_id','=',null],['rutas_id','=',$id]],
             ['status','<>',0]
         ];
-        return $this->getDatosDbCache($request,$modelo,$cols,$filtros);
+        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'_customFields'=>1]);
         
     }
     

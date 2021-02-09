@@ -80,8 +80,9 @@ class CreateUnicefV1 extends Migration
             $table->char('autoriza', 1)->nullable();
             $table->char('protec', 1)->nullable();
             $table->string('dir', 250)->nullable();
-            $table->string('lat', 32)->nullable();
-            $table->string('long', 32)->nullable();
+            // $table->string('lat', 32)->nullable();
+            // $table->string('lng', 32)->nullable();
+            $table->point('coord')->nullable();
             $table->char('nivel', 1)->default('0');
             $table->char('status', 1)->default('1');
 
@@ -91,6 +92,7 @@ class CreateUnicefV1 extends Migration
             $table->foreign('entidades_id')->references('id')->on('entidades')->onUpdate('cascade');
             $table->integer('rutas_id')->unsigned()->nullable();
             $table->foreign('rutas_id')->references('id')->on('rutas')->onUpdate('cascade');
+            $table->index('coord');
 
             $table->timestamps();
             $table->softDeletes();
@@ -146,7 +148,7 @@ class CreateUnicefV1 extends Migration
             $table->text('obs')->nullable();
             $table->point('cabierto');
             $table->point('ccerrado')->nullable();
-            $table->char('estado', 1)->default('1');
+            $table->char('estado', 1)->default('0');
             $table->char('status', 1)->default('1');
 
             $table->integer('rutas_id')->unsigned();
@@ -156,6 +158,7 @@ class CreateUnicefV1 extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+            $table->index('cabierto');
         });
 
         $nTable='evaluaciones';
@@ -169,7 +172,7 @@ class CreateUnicefV1 extends Migration
             $table->text('obs')->nullable();
             $table->timestamp('fec_verif')->nullable();
             $table->integer('verif_id')->unsigned()->nullable();
-            $table->char('estado', 1)->default('1'); 
+            $table->char('estado', 1)->default('0'); 
             $table->char('status', 1)->default('1');
 
             $table->integer('ruteos_id')->unsigned();
@@ -202,7 +205,7 @@ class CreateUnicefV1 extends Migration
             $table->integer('usuarios_id_6')->unsigned()->nullable();
             $table->timestamp('fecha_6')->nullable();
             $table->tinyInteger('cant'); 
-            $table->char('estado', 1)->default('1');
+            $table->char('estado', 1)->default('0');
             $table->char('status', 1)->default('1');
 
             $table->integer('servicios_id')->unsigned();

@@ -187,3 +187,4 @@ trait Mk_ia_model
     }
 }
 //TODO: hacer que el restore solo recupere los borrados en el momento del destroy en este habra que guardar la misma fecha en todos y al restaurar verificar que sea de la misma fecha
+//TODO: Revisar cuando el token esta vencido que el frotn actue de acuerdo, tambien sino esta autenticado o no tiene permisos para mostrar ciertos datos
