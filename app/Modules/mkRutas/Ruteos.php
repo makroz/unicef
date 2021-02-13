@@ -12,7 +12,7 @@ class Ruteos extends Model
     protected $attributes = ['estado' => 0, 'status' => 1];
     public $_customFields = ["ST_X(cabierto) as lat, ST_Y(cabierto) as lng"];
 
-    //public $_withRelations = ['beneficiarios:rutas_id,id,name'];
+    public $_withRelations = ['evaluaciones:id,obs,beneficiarios_id,estado'];
     //public $_pivot2Array = ['beneficiarios'];
     //protected $cascadeDeletes = ['permisos','grupos'];
 
@@ -41,6 +41,11 @@ class Ruteos extends Model
             'App\Modules\mkBeneficiarios\Beneficiarios',
             'App\Modules\mkRutas\Rutas'
         );
+    }
+
+    public function evaluaciones()
+    {
+        return $this->hasMany('App\Modules\mkEvaluaciones\Evaluaciones');
     }
 
 }

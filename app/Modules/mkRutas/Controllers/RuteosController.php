@@ -28,7 +28,7 @@ class RuteosController extends Controller
             if (!$modelo){
                 $modelo=[];
             }
-            $modelo['coord'] = DB::raw(
+            $modelo['cabierto'] = DB::raw(
                 "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
             );
         }
@@ -86,7 +86,7 @@ class RuteosController extends Controller
                 ['status', '<>', 0],
             ];
             $ruteos = $this->getDatosDbCache(
-                $request, $modelo, $cols,['filtros'=>$filtros,'send'=>false]);
+                $request, $modelo, $cols,['filtros'=>$filtros,'relations'=>['evaluaciones:id,fecha,obs,beneficiarios_id,estado'],'send'=>false]);
                // dd($rutas);
             $cantRuteos=count($ruteos['data']);
             if ($cantRuteos>0){
