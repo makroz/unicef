@@ -48,6 +48,7 @@ class CreateUnicefV1 extends Migration
 
             $table->increments('id');
             $table->string('name', 60);
+            $table->tinyInteger('orden')->default(0);
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
