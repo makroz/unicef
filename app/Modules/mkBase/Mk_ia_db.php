@@ -202,7 +202,7 @@ trait Mk_ia_db
     {
         
     }
-    public function afterSave(Request $request, $modelo, $error=0, $id=0)
+    public function afterSave(Request $request, $modelo, $action=0, $id=0)
     {
     }
 
@@ -533,6 +533,7 @@ trait Mk_ia_db
             }
 
             if ($relations) {
+                Mk_debug::warning('Entro a relation', 'CACHE', $relations);
                 $modelo = $modelo->with($relations);
             }
 

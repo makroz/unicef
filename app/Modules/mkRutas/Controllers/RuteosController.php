@@ -86,7 +86,7 @@ class RuteosController extends Controller
                 ['status', '<>', 0],
             ];
             $ruteos = $this->getDatosDbCache(
-                $request, $modelo, $cols,['filtros'=>$filtros,'relations'=>['evaluaciones:id,fecha,obs,beneficiarios_id,estado'],'send'=>false]);
+                $request, $modelo, $cols,['filtros'=>$filtros,'relations'=>['evaluaciones:ruteos_id,id,obs,beneficiarios_id,estado'],'send'=>false]);
                // dd($rutas);
             $cantRuteos=count($ruteos['data']);
             if ($cantRuteos>0){
