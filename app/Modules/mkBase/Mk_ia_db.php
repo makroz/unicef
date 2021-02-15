@@ -72,8 +72,8 @@ trait Mk_ia_db
         $datos=Cache::remember($prefix, _cachedTime, function () use ($prefix,$page,$perPage,$sortBy,$order,$buscarA,$recycled,$cols,$disabled) {
             $modelo=new $this->__modelo();
             $table=$modelo->getTable();
-
-            if ($cols!='') {
+            Mk_debug::warning('Columnas', 'CACHE', $cols);
+            if (!empty($cols)) {
                 $cols=explode(',', $cols);
                 $cols=array_merge([$modelo->getKeyName()], $cols);
             } else {
