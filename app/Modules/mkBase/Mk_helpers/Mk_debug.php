@@ -9,6 +9,7 @@ class Mk_debug
     private static $msgApi=array();
     private static $msgWarning=array();
     private static $counter=0;
+    private static $global=array();
 
 
     public static function __init()
@@ -33,6 +34,18 @@ class Mk_debug
         self::$msgApi[$call]=$msg;
 
         return true;
+    }
+    public static function setGlobal($msg='',$categ='all')
+    {
+        if (empty(self::$global[$categ])){
+            self::$global[$categ]=[];
+        }
+        self::$global[$categ][]= $msg;
+        return true;
+    }
+    public static function getGlobal($categ='all')
+    {
+        return self::$global[$categ];
     }
     public static function error($msg='',$mod='all')
     {

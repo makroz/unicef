@@ -155,15 +155,25 @@ trait Mk_ia_model
         //Mk_debug::msgApi(['cacadedelete1',$this->{$relationship}()->getExistenceCompareKey()]);
         try {
             $table=$this->{$relationship}()->getTable();
-            $id=$this->{$relationship}()->getForeignPivotKeyName();
+            $idrel=$this->{$relationship}()->getForeignPivotKeyName();
+            $id=$this->{$relationship}()->getKeyName();
         } catch (\Throwable $th) {
             $table=$this->{$relationship}()->getRelated()->getTable();
-            $id=$this->{$relationship}()->getExistenceCompareKey();
+            $idrel=$this->{$relationship}()->getExistenceCompareKey();
+            $id=$this->{$relationship}()->getRelated()->getKeyName();
         }
 
         //Mk_debug::msgApi(['cacadedelete2',$table, $id]);
+        //$this->{$relationship}()->
+        $lids=DB::table($table)
+               ->whereIn($idrel, $ids)
+               ->select([$id])->get();
+               $lids=array_column($lids->toArray(), $id);
+        Mk_debug::msgApi(['cacadedelete2',$table, get_class($this->{$relationship}()->getRelated())]);
+        Mk_debug::setGlobal(get_class($this->{$relationship}()->getRelated()),'cascadeDelete');
+        $this->{$relationship}()->getRelated()->runCascadingDeletes($lids,$restore);
         DB::table($table)
-               ->whereIn($id, $ids)
+               ->whereIn($idrel, $ids)
                ->update([$this->getDeletedAtColumn() =>  $dato]);
     }
 

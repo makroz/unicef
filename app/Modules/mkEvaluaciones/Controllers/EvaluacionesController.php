@@ -41,14 +41,27 @@ class EvaluacionesController extends Controller
     public function afterSave(Request $request, $modelo, $action=0, $id=0)
     {
         if ($request->has('respuestas')) {
+            $now=date('Y-m-d H:i:s');
             if ($action==0) {
-                $now=date('Y-m-d H:i:s');
+                $values=[];
                 foreach ($request->respuestas as $key=>$respuesta) {
-                    $data=[$now,$now,$id,$key,$respuesta,1];
-
-                    DB::insert('insert into respuestas (created_at,updated_at,evaluaciones_id,preguntas_id,r_s,status) values (?,?,?,?,?,?)', $data);
+                    //$data=[$now,$now,$id,$key,$respuesta,1];
+                    //DB::insert('insert into respuestas (created_at,updated_at,evaluaciones_id,preguntas_id,r_s,status) values (?,?,?,?,?,?)', $data);
+                    $data[]=$now;
+                    $data[]=$now;
+                    $data[]=$id;
+                    $data[]=$key;
+                    $data[]=$respuesta;
+                    $data[]=1;
+                    $values[]='(?,?,?,?,?,?)';
                 }
+                $values=join(',',$values);
+                DB::insert('insert into respuestas (created_at,updated_at,evaluaciones_id,preguntas_id,r_s,status) values '.$values, $data);
                 $this->clearCache('respuestas');
+            }else{
+                foreach ($request->respuestas as $key=>$respuesta) {
+                    DB::update('update respuestas set r_s=? where evaluaciones_id=? and preguntas_id=? ', [$respuesta,$id,$key]);
+                }
             }
         }
     }

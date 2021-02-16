@@ -16,9 +16,9 @@ class Evaluaciones extends Model
     // public $_cachedRelations = [
     //     ['App\Modules\mkE\rutas','rutas_id']
     // ];
-    //public $_withRelations = ['ruteo','beneficiarios','usuario'];
+    public $_withRelations = ['respuestas'];
     //public $_pivot2Array = ['beneficiarios'];
-    //protected $cascadeDeletes = ['permisos','grupos'];
+    protected $cascadeDeletes = ['respuestas'];
 
 
     public function getRules($request){
@@ -38,5 +38,11 @@ class Evaluaciones extends Model
     {
         return $this->hasOne('App\Modules\mkUsuarios\Usuarios');
     }
+    public function respuestas()
+    {
+        return $this->hasMany('App\Modules\mkEvaluaciones\Respuestas')->select(['respuestas.id','r_s','preguntas_id','evaluaciones_id','respuestas.status']);
+    }
+
+   
 
 }

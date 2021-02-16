@@ -14,7 +14,7 @@ class Ruteos extends Model
 
     public $_withRelations = ['evaluaciones:id,obs,beneficiarios_id,estado'];
     //public $_pivot2Array = ['beneficiarios'];
-    //protected $cascadeDeletes = ['permisos','grupos'];
+    protected $cascadeDeletes = ['evaluaciones'];
 
     public function getRules($request)
     {
@@ -46,6 +46,10 @@ class Ruteos extends Model
     public function evaluaciones()
     {
         return $this->hasMany('App\Modules\mkEvaluaciones\Evaluaciones');
+    }
+    public function respuestas()
+    {
+        return $this->hasManyThrough('App\Modules\mkEvaluaciones\Respuestas', 'App\Modules\mkEvaluaciones\Evaluaciones')->select(['respuestas.id','r_s','preguntas_id']);
     }
 
 }
