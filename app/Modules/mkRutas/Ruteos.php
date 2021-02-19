@@ -8,11 +8,11 @@ use \App\Modules\mkBase\Mk_ia_model;
 class Ruteos extends Model
 {
     use Mk_ia_model;
-    protected $fillable   = ['obs', 'rutas_id', 'usuarios_id', 'estado', 'status'];
+    protected $fillable   = ['obs', 'rutas_id', 'usuarios_id', 'estado', 'status','created_at'];
     protected $attributes = ['estado' => 0, 'status' => 1];
     public $_customFields = ["ST_X(cabierto) as lat, ST_Y(cabierto) as lng"];
 
-    public $_withRelations = ['evaluaciones:id,obs,beneficiarios_id,estado'];
+    public $_withRelations = ['evaluaciones:ruteos_id,id,obs,beneficiarios_id,estado'];
     //public $_pivot2Array = ['beneficiarios'];
     protected $cascadeDeletes = ['evaluaciones'];
 
