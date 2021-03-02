@@ -47,6 +47,12 @@ class Ruteos extends Model
     {
         return $this->hasMany('App\Modules\mkEvaluaciones\Evaluaciones');
     }
+
+    public function servicios()
+    {
+        return $this->hasManyThrough('App\Modules\mkServicios\SolicitudServicios', 'App\Modules\mkEvaluaciones\Evaluaciones')->select(['solicitud_servicios.id','cant','servicios_id','evaluaciones_id','estado','status']);
+    }
+
     public function respuestas()
     {
         return $this->hasManyThrough('App\Modules\mkEvaluaciones\Respuestas', 'App\Modules\mkEvaluaciones\Evaluaciones')->select(['respuestas.id','r_s','preguntas_id']);

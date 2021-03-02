@@ -1,14 +1,15 @@
 <?php
 namespace App\Modules\mkBase;
 
-use Illuminate\Support\Facades\Cache;
+use Exception;
+use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 use \App\Modules\mkBase\Mk_helpers\Mk_db;
 use \App\Modules\mkBase\Mk_helpers\Mk_debug;
 use \App\Modules\mkBase\Mk_helpers\Mk_forms;
-use \Illuminate\Http\Request;
+use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
 const _errorNoExiste      = -1;
 const _errorAlGrabar      = -10;
@@ -411,7 +412,7 @@ trait Mk_ia_db
             } else {
                 $this->afterDel($id, $datos, $r);
                 DB::commit();
-                $this->clearCache(true);
+                $this->clearCache(null,true);
 
             }
         } catch (\Throwable $th) {
@@ -447,12 +448,12 @@ trait Mk_ia_db
             if ($r == 0) {
                 $r   = _errorNoExiste;
                 $msg = 'Registro ya NO EXISTE';
-                $this->clearCache();
+                $this->clearCache(null,true);
                 DB::rollback();
             } else {
                 $this->afterRestore($id, $datos, $r);
                 DB::commit();
-                $this->clearCache(true);
+                $this->clearCache(null,true);
             }
         } catch (\Throwable $th) {
             DB::rollback();
@@ -590,28 +591,32 @@ trait Mk_ia_db
         return _cachedQuerys . strtolower(basename($modelo));
     }
 
-    private function clearCache($cascade = false) //mientras pondremos a true hasta ver las relaciones de cache entre modulos
+    private function clearCache($modelCached=null,$cascade = false) //mientras pondremos a true hasta ver las relaciones de cache entre modulos
 
     {
-        $lista[] = $this->__modelo;
-        $modelo  = new $this->__modelo();
         if ($cascade) {
             $lista   = Mk_debug::getGlobal('cascadeDelete');
-            $lista[] = $this->__modelo;
         }
-        if (!empty($modelo->_cachedRelations)) {
-            foreach ($modelo->_cachedRelations as $key => $relation) {
-                Mk_debug::msgApi(['ClearCache Request: ', request()->has($relation[1])]);
-                if (request()->has($relation[1])) {
-                    $lista[] = $relation[0];
+        if (empty($modelCached)){
+            $modelCached=$this->__modelo;
+            $modelo  = new $modelCached();
+            if (!empty($modelo->_cachedRelations)) {
+                foreach ($modelo->_cachedRelations as $key => $relation) {
+                    Mk_debug::msgApi(['ClearCache Request: ', request()->has($relation[1])]);
+                    if (request()->has($relation[1])) {
+                        $lista[] = $relation[0];
+                    }
                 }
             }
         }
+
+        $lista[] = $modelCached;
+        
         foreach ($lista as $key => $model) {
             $prefixList = $this->getCacheKey($model);
             $cached     = Cache::get($prefixList, []);
             //Mk_debug::msgApi(['ClearCache: ', $prefixList]);
-            //Mk_debug::Warning(['ClearCache: ', $prefixList]);
+            Mk_debug::Warning(['ClearCache: ', $prefixList]);
             foreach ($cached as $key => $value) {
                 Cache::forget($value);
                 //Mk_debug::msgApi(['limpiando '.$value,Cache::get($value, 'No existe')]);

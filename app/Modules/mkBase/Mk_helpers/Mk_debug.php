@@ -45,7 +45,11 @@ class Mk_debug
     }
     public static function getGlobal($categ='all')
     {
-        return self::$global[$categ];
+        $valor=null;
+        if (!empty(self::$global[$categ])){
+            $valor=self::$global[$categ];
+        }
+        return $valor;
     }
     public static function error($msg='',$mod='all')
     {

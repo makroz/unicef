@@ -42,6 +42,11 @@ class Evaluaciones extends Model
     {
         return $this->hasMany('App\Modules\mkEvaluaciones\Respuestas')->select(['respuestas.id','r_s','preguntas_id','evaluaciones_id','respuestas.status']);
     }
+    public function servicios()
+    {
+        return $this->hasMany('App\Modules\mkServicios\SolicitudServicios')->select(['solicitud_servicios.id','cant','servicios_id','evaluaciones_id','solicitud_servicios.estado']);
+        
+    }
 
    
 
