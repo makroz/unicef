@@ -8,5 +8,6 @@ Route::get('monitores', $fileController.'monitores');
 Route::get('Rutas/beneficiarios/{id}', $fileController.'beneficiarios');
 $fileController=$namespace.DIRECTORY_SEPARATOR.'RuteosController@';
 Route::get('RuteosMonitor', $fileController.'rutas');
+Route::post('RuteosMonitor/setClose', $fileController.'setClose');
 
 

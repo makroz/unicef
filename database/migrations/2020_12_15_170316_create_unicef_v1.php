@@ -149,6 +149,8 @@ class CreateUnicefV1 extends Migration
             $table->text('obs')->nullable();
             $table->point('cabierto');
             $table->point('ccerrado')->nullable();
+            $table->integer('open_id')->unsigned();
+            $table->integer('close_id')->unsigned()->nullable();
             $table->char('estado', 1)->default('0');
             $table->char('status', 1)->default('1');
 

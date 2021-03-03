@@ -25,35 +25,81 @@ class RuteosController extends Controller
     public function beforeSave(Request $request, &$modelo, $id = 0)
     {
         if (!empty($request->lat)&&!empty($request->lng)) {
+            $user   = Mk_auth::get()->getUser()->id;
             if (!$modelo){
                 $modelo=[];
             }
-            $modelo['cabierto'] = DB::raw(
-                "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
-            );
+            if ($id==0){
+                $modelo['open_id']=$user;
+                $modelo['cabierto'] = DB::raw(
+                    "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
+                );
+            }else{
+                if ($request->has('close')) {
+                    $modelo['close_id']=$user;
+                    $modelo['fec_cerrado']=date('Y-m-d H:i:s');
+                    $modelo['ccerrado'] = DB::raw(
+                        "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
+                    );
+                }
+            }
+            
         }
         return true;
     }
 
+    public function setClose(Request $request)
+    {
+        $this->proteger('edit');
+
+        if (!empty($request->lat)&&!empty($request->lng)) {
+            $user   = Mk_auth::get()->getUser()->id;
+            $modelo['close_id']=$user;
+            $modelo['fec_cerrado']=date('Y-m-d H:i:s');
+            $modelo['ccerrado'] = DB::raw(
+                "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
+            );
+            $id        = explode(',', $request->id);
+            DB::beginTransaction();
+            $datos = new $this->__modelo();
+            $_key  = $datos->getKeyName();
+            $r = $datos->wherein($_key, $id)
+            ->update($modelo);
+            $msg = '';
+            if ($r == 0) {
+                $r   = _errorNoExiste;
+                $msg = 'Registro ya NO EXISTE';
+                DB::rollback();
+            } else {
+                DB::commit();
+                $this->clearCache();
+            }
+            if (!$request->ajax()) {
+                return Mk_db::sendData($r, $this->index($request, false), $msg);
+            }
+        }
+    }
+
     public function rutas(Request $request)
     {
+        $this->proteger('edit');
         $modelo = 'App\Modules\MkRutas\Rutas';
         $cols   = 'id,id as rutas_id,name,descrip,usuarios_id,status';
     try{
-        $user   = Mk_auth::get()->getUser();
-    } catch (\Throwable $th) {
-        Mk_debug::msgApi('Error de Logueo rutas:'.$th->getMessage().' >>'.$th->getFile().':'.$th->getLine().':'.$th->getCode());
+        $userId   = Mk_auth::get()->getUser()->id;
+     } catch (\Throwable $th) {
+         $userId=null;
+         Mk_debug::msgApi('Error de Logueo rutas:'.$th->getMessage().' >>'.$th->getFile().':'.$th->getLine().':'.$th->getCode());
         return Mk_db::sendData($th->getCode());
-        
+    //    $userId=$user->id;
     }
         
-        if (empty($user)) {
-            $userId=null;
-        }else{
-            $userId=$user->id;
-        }
+        // if (empty($user)) {
+        //     $userId=null;
+        // }else{
+        //     $userId=$user->id;
+        // }
         $fi = date('oWN');
-        // Mk_debug::msgApi(['Fecha',$fi]);
         $filtros = [
             ['usuarios_id', '=', $userId],
             ['status', '<>', 0],
@@ -75,11 +121,12 @@ class RuteosController extends Controller
         $rDispon = [];
         $rOpen = [];
         $rClosed = [];
+        $rRetrased = [];
         //dd($rutas);
         foreach ($rutas['data'] as $key => $ruta) {
             //dd($ruta);
             $filtros = [
-                ['created_at', '>=', $f1],
+                //['created_at', '>=', $f1],
                 //['created_at', '<=', $f2],
                 //['fec_cerrado', '=', null],
                 ['rutas_id', '=', $ruta['id']],
@@ -92,7 +139,11 @@ class RuteosController extends Controller
             if ($cantRuteos>0){
                 foreach ($ruteos['data'] as $key => $ruteo) {
                     if (empty($ruteo['fec_cerrado'])){
-                        $rOpen[] = $ruteo;
+                        if ($ruteo['created_at']>=$f1) {
+                            $rOpen[] = $ruteo;
+                        }else{
+                            $rRetrased[] = $ruteo;
+                        }
                     }else{
                         $rClosed[] = $ruteo;
                     }
@@ -113,6 +164,10 @@ class RuteosController extends Controller
             'closed' => [
                 'ok'=> count($rClosed),
                 'data' => $rClosed
+            ],
+            'retrased' => [
+                'ok'=> count($rRetrased),
+                'data' => $rRetrased
             ]
         ];
         return Mk_db::sendData(count($result), $result, '');

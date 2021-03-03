@@ -67,7 +67,7 @@ class EvaluacionesController extends Controller
             }
         }
 
-        if ($request->has('servicios')) {
+        if ($request->has('servicios') && is_array($request->servicios)) {
             $benef=$request->beneficiarios_id;
             $user_id=0;
             if (Mk_auth::get()->isLogin()){
@@ -78,23 +78,26 @@ class EvaluacionesController extends Controller
                 $benef=$request->benef;
                 DB::delete('delete from solicitud_servicios where evaluaciones_id=? and beneficiarios_id=? and estado=1', [$id,$benef]);
             }
-            $values=[];
-            $data=[];
-            foreach ($request->servicios as $key=>$servicio) {
-                $data[]=$now;
-                $data[]=$now;
-                $data[]=$user_id;
-                $data[]=$now;
-                $data[]=$id;
-                $data[]=$key;
-                $data[]=$benef;
-                $data[]=$servicio;
-                $data[]=1;
-                $data[]=1;
-                $values[]='(?,?,?,?,?,?,?,?,?,?)';
+
+            if (count($request->servicios)>0) {
+                $values=[];
+                $data=[];
+                foreach ($request->servicios as $key=>$servicio) {
+                    $data[]=$now;
+                    $data[]=$now;
+                    $data[]=$user_id;
+                    $data[]=$now;
+                    $data[]=$id;
+                    $data[]=$key;
+                    $data[]=$benef;
+                    $data[]=$servicio;
+                    $data[]=1;
+                    $data[]=1;
+                    $values[]='(?,?,?,?,?,?,?,?,?,?)';
+                }
+                $values=join(',', $values);
+                DB::insert('insert into solicitud_servicios (created_at,updated_at,usuarios_id_1,fecha_1,evaluaciones_id,servicios_id,beneficiarios_id,cant,estado,status) values '.$values, $data);
             }
-            $values=join(',',$values);
-            DB::insert('insert into solicitud_servicios (created_at,updated_at,usuarios_id_1,fecha_1,evaluaciones_id,servicios_id,beneficiarios_id,cant,estado,status) values '.$values, $data);
             $this->clearCache('solicitud_servicios');
         }
     }

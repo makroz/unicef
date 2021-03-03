@@ -627,6 +627,7 @@ trait Mk_ia_db
     }
 }
 //TODO: hacer que la Autorizacion en la variablke autproizar, cada caracter represente a un metodo de resource del controlador si esta vacio es todos, sino se mete cada uno que se desee, tal vez con un -cuando sea uno que no desee
+//TODO: pasar todas las Constantes a una clase propia que se pueda importar
 // public function is_cacheQueryDebugInactive(){
 //     return _cacheQueryDebugInactive;
 // }
