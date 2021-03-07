@@ -58,7 +58,9 @@ class EvaluacionesController extends Controller
                 }
                 $values=join(',',$values);
                 DB::insert('insert into respuestas (created_at,updated_at,evaluaciones_id,preguntas_id,r_s,status) values '.$values, $data);
+                DB::update('update ruteos set estado=2 where id=?', [$request->ruteos_id]);
                 $this->clearCache('respuestas');
+                $this->clearCache('ruteos');
             }else{
                 foreach ($request->respuestas as $key=>$respuesta) {
                     DB::update('update respuestas set r_s=? where evaluaciones_id=? and preguntas_id=? ', [$respuesta,$id,$key]);
