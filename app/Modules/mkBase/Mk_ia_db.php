@@ -74,10 +74,10 @@ trait Mk_ia_db
                 $cols = explode(',', $cols);
                 $cols = array_merge([$modelo->getKeyName()], $cols);
             } else {
-                if (!$modelo->_listable) {
-                    $modelo->_listable = $modelo->getFill();
+                if (!$modelo->_listTable) {
+                    $modelo->_listTable = $modelo->getFill();
                 }
-                $cols = array_merge([$modelo->getKeyName()], $modelo->_listable);
+                $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
             }
             $modelo->isJoined($buscarA);
 

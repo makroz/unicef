@@ -31,7 +31,7 @@ class RuteosController extends Controller
             }
             if ($id == 0) {
                 $modelo['open_id']  = $user;
-                $modelo['cabierto'] = DB::raw(
+                $modelo['gps_open'] = DB::raw(
                     "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
                 );
             }
@@ -48,7 +48,7 @@ class RuteosController extends Controller
             $modelo['close_id']    = $user;
             $modelo['estado']    = 2;
             $modelo['fec_cerrado'] = date('Y-m-d H:i:s');
-            $modelo['ccerrado']    = DB::raw(
+            $modelo['gps_close']    = DB::raw(
                 "ST_GeomFromText('POINT({$request->lat} {$request->lng})')"
             );
             $id = explode(',', $request->id);

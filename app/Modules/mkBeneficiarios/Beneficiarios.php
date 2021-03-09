@@ -13,6 +13,8 @@ class Beneficiarios extends Model
     protected $attributes = ['status' => 1];
     public $_customFields = ["ST_X(coord) as lat, ST_Y(coord) as lng"];
 
+    //public $_withRelations = ['evaluaciones:beneficiarios_id,id'];
+
     public $_cachedRelations = [
         ['App\Modules\mkRutas\rutas','rutas_id']
     ];
@@ -29,17 +31,25 @@ class Beneficiarios extends Model
     
     public function entidades()
     {
-        return $this->hasOne('\App\Modules\mkBeneficiarios\entidades');
+        return $this->hasOne('\App\Modules\mkBeneficiarios\Entidades');
     }
 
     public function distritos()
     {
-        return $this->hasOne('\App\Modules\mkBeneficiarios\distritos');
+        return $this->hasOne('\App\Modules\mkBeneficiarios\Distritos');
     }
 
     public function ruta()
     {
-        return $this->belongsTo('\App\Modules\mkRutas\rutas');
+        return $this->belongsTo('\App\Modules\mkRutas\Rutas');
         
     }
+
+    public function evaluaciones()
+    {
+        return $this->hasMany('\App\Modules\mkEvaluaciones\evaluaciones');
+        
+    }
+
+    
 }

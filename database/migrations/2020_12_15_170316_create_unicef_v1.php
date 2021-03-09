@@ -147,8 +147,8 @@ class CreateUnicefV1 extends Migration
             $table->integer('verif_id')->unsigned()->nullable();
             $table->tinyInteger('semana');
             $table->text('obs')->nullable();
-            $table->point('cabierto');
-            $table->point('ccerrado')->nullable();
+            $table->point('gps_open');
+            $table->point('gps_close')->nullable();
             $table->integer('open_id')->unsigned();
             $table->integer('close_id')->unsigned()->nullable();
             $table->char('estado', 1)->default('0');
@@ -161,7 +161,7 @@ class CreateUnicefV1 extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $table->index('cabierto');
+            $table->index('gps_open');
         });
 
         $nTable='evaluaciones';

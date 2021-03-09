@@ -116,7 +116,7 @@ class Mk_app
             copy($src . $file, $dest . $file);
             $count++;
         } elseif(is_dir($src . $file)) {
-            $count += recurse_copy_dir($src . $file, $dest . $file);
+            $count += self::recurse_copy_dir($src . $file, $dest . $file);
         }
     }
     return $count;
