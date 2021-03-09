@@ -145,7 +145,7 @@ class CreateUnicefV1 extends Migration
             $table->timestamp('fec_sincro')->nullable();
             $table->timestamp('fec_verif')->nullable();
             $table->integer('verif_id')->unsigned()->nullable();
-            $table->tinyInteger('semana');
+            $table->tinyInteger('semana')->default(0);
             $table->text('obs')->nullable();
             $table->point('gps_open');
             $table->point('gps_close')->nullable();
