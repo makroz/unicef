@@ -170,8 +170,8 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->timestamp('fecha');
-            $table->point('ubic');
+            //$table->timestamp('fecha');
+            $table->point('coord');
             $table->text('obs')->nullable();
             $table->timestamp('fec_verif')->nullable();
             $table->integer('verif_id')->unsigned()->nullable();

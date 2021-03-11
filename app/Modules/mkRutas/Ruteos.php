@@ -25,7 +25,7 @@ class Ruteos extends Model
         "CONCAT(ST_X(gps_close),' ', ST_Y(gps_close)) as gps_close",
     ];
 
-    //public $_withRelations = ['evaluaciones:ruteos_id,id,obs,beneficiarios_id,estado','evaluaciones.beneficiario:id,name'];
+    public $_withRelations = ['evaluaciones:ruteos_id,id,obs,beneficiarios_id,estado','evaluaciones.beneficiario:id,name'];
     //public $_pivot2Array = ['beneficiarios'];
     protected $cascadeDeletes = ['evaluaciones'];
 
