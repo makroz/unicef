@@ -1,6 +1,7 @@
 <?php
 
 use \App\Modules\mkBase\Mk_helpers\Mk_app;
+use Illuminate\Support\Facades\Route;
 
 $namespace=Mk_app::loadControllers(__FILE__);
 $fileController=$namespace.DIRECTORY_SEPARATOR.'RutasController@';
