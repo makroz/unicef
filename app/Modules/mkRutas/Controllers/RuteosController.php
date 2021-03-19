@@ -129,6 +129,7 @@ class RuteosController extends Controller
                 ['created_at', '>=', $f2],
                 //['fec_cerrado', '=', null],
                 ['rutas_id', '=', $ruta['id']],
+                ['usuarios_id', '=', $userId],
                 ['status', '<>', 0],
             ];
             $options['filtros'] = $filtros;
@@ -143,7 +144,7 @@ class RuteosController extends Controller
             $cantRuteos = count($ruteos['data']);
             if ($cantRuteos > 0) {
                 foreach ($ruteos['data'] as $key => $ruteo) {
-                    //Mk_debug::msgApi(['Fechas:',$ruteo['id'],Mk_date::dateToUTC($ruteo['created_at']),Mk_date::dateToUTC($ruteo['fec_cerrado']),Mk_date::dateToUTC($ruteo['created_at']) >= Mk_date::dateToUTC($ruteo['fec_cerrado'])]);
+                    Mk_debug::msgApi(['Fechas:',$userId,$ruteo['id'],Mk_date::dateToUTC($ruteo['created_at']),Mk_date::dateToUTC($ruteo['fec_cerrado']),Mk_date::dateToUTC($ruteo['created_at']) >= Mk_date::dateToUTC($ruteo['fec_cerrado'])]);
                     if (empty($ruteo['fec_cerrado'])) {
                         if (Mk_date::dateToLocal($ruteo['created_at']) >= Mk_date::dateToLocal($f1)){
                             $rOpen[] = $ruteo;
