@@ -173,8 +173,8 @@ trait Mk_ia_db
         if ($ct != 1) {
             $_ct = '_ct2_';
         }
-        if (Request::has($_ct)) {
-            if (Request::input($_ct, '') == md5(json_encode($data))) {
+        if (request()->has($_ct)) {
+            if (request()->input($_ct, '') == md5(json_encode($data))) {
                 $data = '_ct_';
             }
         }

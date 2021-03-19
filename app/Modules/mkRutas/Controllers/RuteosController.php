@@ -2,13 +2,14 @@
 
 namespace App\Modules\mkRutas\Controllers;
 
-use App\Modules\mkBase\Controller;
-use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
-use App\Modules\mkBase\Mk_helpers\Mk_db;
-use App\Modules\mkBase\Mk_helpers\Mk_debug;
-use App\Modules\mkBase\Mk_ia_db;
 use Illuminate\Http\Request;
+use App\Modules\mkBase\Mk_ia_db;
+use App\Modules\mkBase\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_date;
+use App\Modules\mkBase\Mk_helpers\Mk_debug;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
 class RuteosController extends Controller
 {
@@ -142,38 +143,15 @@ class RuteosController extends Controller
             $cantRuteos = count($ruteos['data']);
             if ($cantRuteos > 0) {
                 foreach ($ruteos['data'] as $key => $ruteo) {
+                    //Mk_debug::msgApi(['Fechas:',$ruteo['id'],Mk_date::dateToUTC($ruteo['created_at']),Mk_date::dateToUTC($ruteo['fec_cerrado']),Mk_date::dateToUTC($ruteo['created_at']) >= Mk_date::dateToUTC($ruteo['fec_cerrado'])]);
                     if (empty($ruteo['fec_cerrado'])) {
-                        if ($ruteo['created_at'] >= $f1) {
+                        if (Mk_date::dateToLocal($ruteo['created_at']) >= Mk_date::dateToLocal($f1)){
                             $rOpen[] = $ruteo;
                         } else {
                             $rRetrased[] = $ruteo;
                         }
                     }else {
-                        //if (date("Ymd", strtotime($ruteo['created_at']))>=date("Ymd", strtotime($f2))){
-                            //$ruteo['created_at']>= $f2) {
-//                        if ($ruteo['created_at'] >= $f1) {
                             $rClosed[] = $ruteo;
-  //                      }
-                        // if (date("Ymd", strtotime($ruteo['created_at']))<date("Ymd", strtotime($f1))){
-                        // //if ($ruteo['created_at'] < $f1) {
-                        //     $rDispon[] = $ruta;
-                        // }
-                        // Mk_debug::msgApi(['Entro a create at', date("Ymd", strtotime($f1)),date("Ymd", strtotime($ruteo['created_at'])),(date("Ymd", strtotime($ruteo['created_at']))>=date("Ymd", strtotime($f1)))]);
-                        // if (date("Ymd", strtotime($ruteo['created_at']))>=date("Ymd", strtotime($f1))){
-                        // //if ($ruteo['created_at'] > $f1) {
-                        //     Mk_debug::msgApi(['Entro a create at', $ruteo]);
-                        //     $rDispon1=[];
-                        //     foreach ($rDispon as $keyD=>$dis){
-                        //         if ($dis->id!=$ruteo['rutas_id']){
-                        //             $rDispon1[] = $dis;
-                        //         }
-                        //     }
-                        //     $rDispon=$rDispon1;
-                        // }
-                        // if ($ruteo['created_at'] < $f1) {
-                        //     $rDispon[] = $ruta;
-                        // }
-
                     }
                 }
             } 
