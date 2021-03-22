@@ -17,6 +17,7 @@ class Ruteos extends Model
         'status',
         'created_at',
     ];
+    
     protected $attributes = [
         'estado' => 0,
         'status' => 1,
@@ -24,6 +25,18 @@ class Ruteos extends Model
     public $_customFields = [
         "CONCAT(ST_X(gps_open),' ', ST_Y(gps_open)) as gps_open",
         "CONCAT(ST_X(gps_close),' ', ST_Y(gps_close)) as gps_close",
+    ];
+
+    public $_listTable=[
+        'obs',
+        'rutas_id',
+        'usuarios_id',
+        'estado',
+        'status',
+        'fec_cerrado',
+        'open_id',
+        'close_id',
+        'created_at',
     ];
 
     public $_withRelations = ['evaluaciones:ruteos_id,id,obs,beneficiarios_id,estado','evaluaciones.beneficiario:id,name'];
