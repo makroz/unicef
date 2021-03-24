@@ -52,15 +52,6 @@ class Ruteos extends Model
         ];
     }
 
-    // public function getCreatedAtAttribute($value){
-    //     return Carbon::parse($value)->toDateTimeString();
-    //     //format('Y-m-d H:i:s');
-    // }
-
-    // public function getUpdatedAtAttribute($value){
-    //     return Carbon::parse($value)->toDateTimeString();
-    // }
-    
     public function rutas()
     {
         return $this->hasOne('App\Modules\mkRutas\Rutas');
