@@ -29,6 +29,11 @@ class Rutas extends Model
         return $this->hasOne('App\Modules\mkUsuarios\Usuarios');
     }
 
+    public function ruteos()
+    {
+        return $this->hasOne('App\Modules\mkRutas\Ruteos');
+    }
+
     public function beneficiarios(){
         return $this->hasMany('App\Modules\mkBeneficiarios\Beneficiarios');
     }

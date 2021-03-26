@@ -54,20 +54,12 @@ class Ruteos extends Model
 
     public function rutas()
     {
-        return $this->hasOne('App\Modules\mkRutas\Rutas');
+        return $this->belongsTo('App\Modules\mkRutas\Rutas');
     }
 
     public function monitor()
     {
         return $this->hasOne('App\Modules\mkUsuarios\Usuarios');
-    }
-
-    public function beneficiarios()
-    {
-        return $this->hasOneThrough(
-            'App\Modules\mkBeneficiarios\Beneficiarios',
-            'App\Modules\mkRutas\Rutas'
-        );
     }
 
     public function evaluaciones()
