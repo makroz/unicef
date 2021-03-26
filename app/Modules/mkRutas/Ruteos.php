@@ -39,7 +39,7 @@ class Ruteos extends Model
         'created_at',
     ];
 
-    public $_withRelations = ['evaluaciones:ruteos_id,id,obs,beneficiarios_id,estado','evaluaciones.beneficiario:id,name','evaluaciones.servicios', 'evaluaciones.respuestas'];
+    public $_withRelations = ['evaluaciones','evaluaciones.beneficiarioCoord','evaluaciones.servicios', 'evaluaciones.respuestas'];
     //public $_pivot2Array = ['beneficiarios'];
     protected $cascadeDeletes = ['evaluaciones'];
 
@@ -64,7 +64,7 @@ class Ruteos extends Model
 
     public function evaluaciones()
     {
-        return $this->hasMany('App\Modules\mkEvaluaciones\Evaluaciones');
+        return $this->hasMany('App\Modules\mkEvaluaciones\Evaluaciones')->selectRaw("*, CONCAT(ST_X(coord),' ', ST_Y(coord)) as coord");
     }
 
     public function servicios()

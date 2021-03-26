@@ -67,6 +67,18 @@ class Evaluaciones extends Model
             DB::raw("CONCAT(ST_X(coord),' ', ST_Y(coord)) as coord"),
         ]);
     }
+
+    public function beneficiarioCoord()
+    {
+        return $this->belongsTo(
+            'App\Modules\mkBeneficiarios\beneficiarios',
+            'beneficiarios_id'
+        )->select([
+            'id',
+            'name',
+            DB::raw("ST_X(coord) as lat, ST_Y(coord) as lng"),
+        ]);
+    }
     public function usuario()
     {
         return $this->belongsTo('App\Modules\mkUsuarios\Usuarios');
