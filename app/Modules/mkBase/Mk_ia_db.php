@@ -18,7 +18,7 @@ const _errorLogin         = -1000;
 const _errorNoAutenticado = -1001;
 
 const _maxRowTable             = 1000;
-const _cacheQueryDebugInactive = true;
+const _cacheQueryDebugInactive = false;
 const _cachedQuerys            = 'cachedQuerys_';
 const _cachedTime              = 30 * 24 * 60 * 60;
 
@@ -556,9 +556,10 @@ trait Mk_ia_db
             return $datos;
         } else {
             $d         = $datos->toArray();
+            $total=count($d['data']);
             $d['data'] = $this->isCachedFront($d['data']);
             if ($_send) {
-                return Mk_db::sendData(count($d['data']), $d['data'], '');
+                return Mk_db::sendData($total, $d['data'], '');
             } else {
                 return $d['data'];
             }
