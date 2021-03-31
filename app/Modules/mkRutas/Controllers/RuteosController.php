@@ -14,7 +14,7 @@ use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 class RuteosController extends Controller
 {
     use Mk_ia_db;
-    //public $_autorizar='';
+    public $_autorizar='';
 
     protected $__modelo = '';
     public function __construct(Request $request)

@@ -12,7 +12,7 @@ use App\Modules\mkBase\Mk_Helpers\Mk_Auth\Mk_Auth;
 class UsuariosController extends Controller
 {
     use Mk_ia_db;
-    //public $_autorizar='';
+    public $_autorizar='';
     //public $_validators=[];
 
 
