@@ -22,7 +22,7 @@ class Evaluaciones extends Model
         'status' => 1,
         'estado' => 0,
     ];
-    public $_customFields = ["CONCAT(ST_X(coord),' ', ST_Y(coord)) as coord"];
+    public $_customFields = ["CONCAT(ST_X(evaluaciones.coord),' ', ST_Y(evaluaciones.coord)) as coord"];
 
     // public $_cachedRelations = [
     //     ['App\Modules\mkE\rutas','rutas_id']
@@ -37,15 +37,20 @@ class Evaluaciones extends Model
     //public $_pivot2Array = ['beneficiario:name'];
     protected $cascadeDeletes = ['respuestas'];
     public $_joins = ['ruteos' =>
-    [
-        'joined' => true,
-        'onSearch' => true,
-        'type' => 'left',
-        'fields' => ['ruteos.rutas_id'],
-        'on' => ['ruteos.id', '=', 'evaluaciones.ruteos_id'],
-    ],
-];
-
+        [
+            'onSearch' => true,
+            'type' => 'left',
+            'fields' => ['ruteos.rutas_id'],
+            'on' => ['ruteos.id', '=', 'evaluaciones.ruteos_id'],
+        ],
+        'beneficiarios' =>
+        [
+            'onSearch' => true,
+            'type' => 'left',
+            'fields' => ['beneficiarios.name'],
+            'on' => ['beneficiarios.id', '=', 'evaluaciones.beneficiarios_id'],
+        ],
+    ];
 
     public function getRules($request)
     {
@@ -55,7 +60,7 @@ class Evaluaciones extends Model
     }
     public function ruteos()
     {
-        return $this->belongsTo('App\Modules\mkRutas\Ruteos','ruteos_id');
+        return $this->belongsTo('App\Modules\mkRutas\Ruteos', 'ruteos_id');
     }
     public function beneficiario()
     {
@@ -91,7 +96,7 @@ class Evaluaciones extends Model
     }
     public function usuario()
     {
-        return $this->belongsTo('App\Modules\mkUsuarios\Usuarios','usuarios_id');
+        return $this->belongsTo('App\Modules\mkUsuarios\Usuarios', 'usuarios_id');
     }
     public function respuestas()
     {

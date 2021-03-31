@@ -15,6 +15,15 @@ class Rutas extends Model
     public $_withRelations = ['beneficiarios:rutas_id,id'];
     public $_pivot2Array = ['beneficiarios'];
     //protected $cascadeDeletes = ['permisos','grupos'];
+    public $_joins = ['beneficiarios' =>
+    [
+        'onSearch' => true,
+        'type' => 'left',
+        'groupBy' => 'rutas.id',
+        'fields' => ['count(beneficiarios.id) as nBene'],
+        'on' => ['beneficiarios.rutas_id', '=', 'rutas.id'],
+    ],
+];
 
     public function getRules($request){
         return [

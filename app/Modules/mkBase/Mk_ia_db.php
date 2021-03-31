@@ -79,7 +79,7 @@ trait Mk_ia_db
                 }
                 $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
             }
-            $modelo->isJoined($buscarA);
+            $modelo->isJoined($buscarA,$sortBy);
 
             $consulta = $modelo->orderBy(Mk_db::tableCol($sortBy, $modelo), $order);
 
@@ -92,7 +92,9 @@ trait Mk_ia_db
             if ($modelo->joined) {
                 if (!empty($modelo->_joins)) {
                     foreach ($modelo->_joins as $t => $d) {
-                        if ((empty($d['onSearh'])) || (($d['onSearh'] === true) && ($d['joined'] === true))) {
+                        //echo "onsearh: ".$d['onSearch']." joined:"+$d['joined'];
+                        if ((empty($d['onSearch'])) || (($d['onSearch'] === true) && ($d['joined'] === true))) {
+                          //  echo "entro onsearh: ";
                             switch ($d['type']) {
                                 case 'left':
                                     $consulta = $consulta->leftJoin($t, ...$d['on']);
@@ -103,6 +105,9 @@ trait Mk_ia_db
                                 default:
                                     $consulta = $consulta->join($t, ...$d['on']);
                                     break;
+                            }
+                            if(!empty($d['groupBy'])){
+                                $consulta = $consulta->groupBy($d['groupBy']);
                             }
                             if (!empty($d['fields'])) {
                                 $colsJoin = array_merge($colsJoin, $d['fields']);
@@ -131,7 +136,8 @@ trait Mk_ia_db
             if (isset($modelo->_withRelations)) {
                 $consulta = $consulta->with($modelo->_withRelations);
             }
-            $cols     = array_merge($cols, $colsJoin);
+            //$cols     = array_merge($cols, $colsJoin);
+            $colsJoin     = Mk_db::tableCol($colsJoin, $modelo);
             $cols     = Mk_db::tableCol($cols, $modelo);
             $consulta = $consulta->select($cols);
             if (!empty($modelo->_customFields)) {
@@ -139,6 +145,13 @@ trait Mk_ia_db
                     $consulta = $consulta->addSelect(DB::raw($field));
                 }
             }
+
+            if (!empty($colsJoin)) {
+                foreach ($colsJoin as $field) {
+                    $consulta = $consulta->addSelect(DB::raw($field));
+                }
+            }
+
             Mk_debug::msgApi(['listar index perpage', $perPage]);
             if ($perPage < 0) {
                 $result = $consulta->get()->toArray();

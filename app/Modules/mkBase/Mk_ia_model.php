@@ -42,18 +42,27 @@ trait Mk_ia_model
         return $colsJoin;
     }
 
-    public function isJoined($buscar=null)
+    public function isJoined($buscar=null,$orderBy=null)
     {
 
-        $r=true;
+        $r=false;
 //        $colsJoin=[];
         $cols=[];
+        // echo "antes:";
+        // print_r($buscar);
         if (!empty($buscar)) {
             $buscar=json_decode($buscar, true);
             foreach ($buscar as $key => $value) {
                 $cols[]=$value['campo'];
             }
         }
+        // echo "despues:";
+        // print_r($cols);
+
+        if (!empty($orderBy)) {
+                $cols[]=$orderBy;
+        }
+        
 
         if (!empty($this->_joins)) {
             foreach ($this->_joins as $table => $join) {
@@ -73,6 +82,8 @@ trait Mk_ia_model
                             $nameField1=$nameField1[0];
                         }
                         if ((\in_array($nameField1,$cols))||(\in_array($nameField2,$cols))){
+                            // echo "$nameField1,$nameField2";
+                            // print_r($cols);
                             $r=true;
                             $join['joined']=true;
                         }else{
