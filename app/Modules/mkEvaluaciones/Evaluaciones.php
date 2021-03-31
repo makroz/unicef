@@ -31,11 +31,21 @@ class Evaluaciones extends Model
         'respuestas',
         'beneficiario',
         'usuario',
-        'ruteo:id,rutas_id',
+        'ruteos:id,rutas_id',
         'servicios',
     ];
     //public $_pivot2Array = ['beneficiario:name'];
     protected $cascadeDeletes = ['respuestas'];
+    public $_joins = ['ruteos' =>
+    [
+        'joined' => true,
+        'onSearch' => true,
+        'type' => 'left',
+        'fields' => ['ruteos.rutas_id'],
+        'on' => ['ruteos.id', '=', 'evaluaciones.ruteos_id'],
+    ],
+];
+
 
     public function getRules($request)
     {
@@ -43,7 +53,7 @@ class Evaluaciones extends Model
             'status' => 'in:0,1',
         ];
     }
-    public function ruteo()
+    public function ruteos()
     {
         return $this->belongsTo('App\Modules\mkRutas\Ruteos','ruteos_id');
     }
@@ -81,7 +91,7 @@ class Evaluaciones extends Model
     }
     public function usuario()
     {
-        return $this->belongsTo('App\Modules\mkUsuarios\Usuarios');
+        return $this->belongsTo('App\Modules\mkUsuarios\Usuarios','usuarios_id');
     }
     public function respuestas()
     {

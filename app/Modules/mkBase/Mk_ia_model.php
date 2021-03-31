@@ -45,7 +45,7 @@ trait Mk_ia_model
     public function isJoined($buscar=null)
     {
 
-        $r=false;
+        $r=true;
 //        $colsJoin=[];
         $cols=[];
         if (!empty($buscar)) {

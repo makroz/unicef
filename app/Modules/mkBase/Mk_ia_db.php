@@ -18,7 +18,7 @@ const _errorLogin         = -1000;
 const _errorNoAutenticado = -1001;
 
 const _maxRowTable             = 1000;
-const _cacheQueryDebugInactive = false;
+const _cacheQueryDebugInactive = true;
 const _cachedQuerys            = 'cachedQuerys_';
 const _cachedTime              = 30 * 24 * 60 * 60;
 

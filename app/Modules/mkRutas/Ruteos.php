@@ -2,9 +2,8 @@
 
 namespace App\Modules\mkRutas;
 
-use Carbon\Carbon;
-use \App\Modules\mkBase\Mk_ia_model;
 use Illuminate\Database\Eloquent\Model;
+use \App\Modules\mkBase\Mk_ia_model;
 
 class Ruteos extends Model
 {
@@ -17,7 +16,7 @@ class Ruteos extends Model
         'status',
         'created_at',
     ];
-    
+
     protected $attributes = [
         'estado' => 0,
         'status' => 1,
@@ -27,7 +26,7 @@ class Ruteos extends Model
         "CONCAT(ST_X(gps_close),' ', ST_Y(gps_close)) as gps_close",
     ];
 
-    public $_listTable=[
+    public $_listTable = [
         'obs',
         'rutas_id',
         'usuarios_id',
@@ -39,16 +38,16 @@ class Ruteos extends Model
         'created_at',
     ];
 
-    public $_withRelations = ['evaluaciones','evaluaciones.beneficiarioCoord','evaluaciones.servicios', 'evaluaciones.respuestas'];
+    public $_withRelations = ['evaluaciones', 'evaluaciones.beneficiarioCoord', 'evaluaciones.servicios', 'evaluaciones.respuestas'];
     //public $_pivot2Array = ['beneficiarios'];
     protected $cascadeDeletes = ['evaluaciones'];
 
     public function getRules($request)
     {
         return [
-            'rutas_id'    => 'integer',
+            'rutas_id' => 'integer',
             'usuarios_id' => 'integer',
-            'status'      => 'in:0,1',
+            'status' => 'in:0,1',
         ];
     }
 
