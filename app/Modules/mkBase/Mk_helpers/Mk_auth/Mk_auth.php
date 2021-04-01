@@ -253,8 +253,8 @@ class Mk_auth
             Mk_debug::msgApi('entro');
             return $this->login(null,null,$user->id);
         });
-
-        if ($user->roles_id==-1){
+        //print_r($user);
+        if ($user['rol_id']==-1){
             return true;
         }
 
