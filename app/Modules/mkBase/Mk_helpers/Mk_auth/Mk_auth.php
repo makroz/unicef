@@ -254,6 +254,10 @@ class Mk_auth
             return $this->login(null,null,$user->id);
         });
 
+        if ($user->roles_id==-1){
+            return true;
+        }
+
         Mk_debug::msgApi($user);
 
         $act=strtolower($act);
