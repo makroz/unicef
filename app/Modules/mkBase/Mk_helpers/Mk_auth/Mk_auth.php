@@ -254,7 +254,7 @@ class Mk_auth
             return $this->login(null,null,$user->id);
         });
         //print_r($user);
-        if ($user['rol_id']==-1){
+        if ($user['rol']=='superAdmin'){
             return true;
         }
 
