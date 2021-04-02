@@ -153,22 +153,27 @@ class Mk_auth
         $model='App\Modules\mkUsuarios\Permisos';
         $permisos = new $model();
         if (!empty($grupos_id)){
-            $datos= $permisos->select('permisos.slug', DB::raw('BIT_OR(grupos_permisos.valor|usuarios_permisos.valor) as valor'))->leftJoin('usuarios_permisos', function ($join) use ($usuarios_id) {
+            $datos= $permisos->select('permisos.slug', DB::raw('BIT_OR(grupos_permisos.valor|COALESCE(usuarios_permisos.valor, 0)) as valor'))->leftJoin('usuarios_permisos', function ($join) use ($usuarios_id) {
                 $join->on('permisos.id', '=', 'usuarios_permisos.permisos_id')
                      ->where('usuarios_id', '=', $usuarios_id);
             })->leftJoin('grupos_permisos', function ($join) use ($grupos_id) {
                 $join->on('permisos.id', '=', 'grupos_permisos.permisos_id')
                      ->wherein('grupos_id', $grupos_id);
             })->groupBy('permisos.slug')->orderBy('permisos.name')->get();
+            //Mk_debug::msgApi(['Permisos Con Grupos: ',$datos]);
         }else{
             $datos= $permisos->select('permisos.slug', DB::raw('BIT_OR(usuarios_permisos.valor) as valor'))->leftJoin('usuarios_permisos', function ($join) use ($usuarios_id) {
                 $join->on('permisos.id', '=', 'usuarios_permisos.permisos_id')
                      ->where('usuarios_id', '=', $usuarios_id);
             })->groupBy('permisos.slug')->orderBy('permisos.name')->get();
-
+            //Mk_debug::msgApi(['Permisos sin Grupos: ',$datos]);
         }
 
         $d=$datos->toArray();
+        // array_walk($d, function(&$el,$clave){
+        //     $el['slug']=strtolower($el['slug']);
+        // });
+
         return Mk_db::sendData(count($d), $d, '', $debug);
     }
 
@@ -220,7 +225,9 @@ class Mk_auth
         }
         return true;
     }
-
+    public static function forgetUser($id){
+        Cache::forget('get.user.'.$id);
+    }
     public function canAccess($act='',$controller='')
     {
         if ($this->_access) return true;
@@ -249,7 +256,8 @@ class Mk_auth
             return false;
         }
 
-        $user=Cache::remember($this->getToken().'.user', $this->timeCache, function () use ($user) {
+        //$user=Cache::remember($this->getToken().'.user', $this->timeCache, function () use ($user) {
+        $user=Cache::remember('get.user.'.$user->id, $this->timeCache, function () use ($user) {
             Mk_debug::msgApi('entro');
             return $this->login(null,null,$user->id);
         });

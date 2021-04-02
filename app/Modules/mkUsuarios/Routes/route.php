@@ -5,7 +5,7 @@ use \App\Modules\mkBase\Mk_helpers\Mk_app;
 $namespace=Mk_app::loadControllers(__FILE__);
 
 $fileController=$namespace.DIRECTORY_SEPARATOR.'GruposController@';
-Route::post('Grupos/permisos/{grupos_id}', $fileController.'permisos');
+Route::get('Grupos/permisos/{grupos_id}', $fileController.'permisos');
 
 $fileController=$namespace.DIRECTORY_SEPARATOR.'UsuariosController@';
 Route::post('login', $fileController.'login');

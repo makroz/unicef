@@ -47,6 +47,7 @@ class UsuariosController extends Controller
                         $modelo->permisos()->attach($value['id'], ['valor' => $value['valor']]);
                     }
                 }
+                Mk_Auth::forgetUser($id);
             }
             if (isset($request->paramsExtra['grupos'])) {
                 if ($id>0) {//modificar
@@ -57,6 +58,7 @@ class UsuariosController extends Controller
                         $modelo->grupos()->attach($value);
                     }
                 }
+                Mk_Auth::forgetUser($id);
             }
         }
     }
