@@ -61,6 +61,7 @@ class Evaluaciones extends Model
     public function ruteos()
     {
         return $this->belongsTo('App\Modules\mkRutas\Ruteos', 'ruteos_id');
+        //return $this->belongsTo('App\Modules\mkRutas\Ruteos', 'ruteos_id')->withTrashed();
     }
     public function beneficiario()
     {
