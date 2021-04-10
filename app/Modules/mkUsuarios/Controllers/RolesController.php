@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class RolesController extends controller
 {
     use Mk_ia_db;
-
+    public $_autorizar='';
     protected $__modelo='';
     public function __construct(Request $request)
     {
