@@ -37,7 +37,7 @@ class RutasController extends Controller
     }
     public function monitores(Request $request)
     { 
-        $modelo = 'App\Modules\MkUsuarios\Usuarios';
+        $modelo = 'App\Modules\mkUsuarios\Usuarios';
         $cols='id,name';
         $filtros=[
             ['roles_id','=','2',],
@@ -49,7 +49,7 @@ class RutasController extends Controller
 
     public function beneficiarios(Request $request,$id)
     { 
-        $modelo = 'App\Modules\MkBeneficiarios\Beneficiarios';
+        $modelo = 'App\Modules\mkBeneficiarios\Beneficiarios';
         $cols='id,name';
         $filtros=[
             ['OR',['rutas_id','=',null],['rutas_id','=',$id]],

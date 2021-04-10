@@ -76,7 +76,7 @@ class RuteosController extends Controller
     public function rutas(Request $request)
     {
         $this->proteger('edit');
-        $modelo = 'App\Modules\MkRutas\Rutas';
+        $modelo = 'App\Modules\mkRutas\Rutas';
         $cols = 'id,id as rutas_id,name,descrip,usuarios_id,status';
         try {
             $userId = Mk_auth::get()->getUser()->id;
@@ -99,7 +99,7 @@ class RuteosController extends Controller
         ];
 
         $rutas = $this->getDatosDbCache($request, $modelo, $cols, ['filtros' => $filtros, 'relations' => ['beneficiarios:rutas_id,id'], 'send' => false]);
-        $modelo = 'App\Modules\MkRutas\Ruteos';
+        $modelo = 'App\Modules\mkRutas\Ruteos';
         $cantRutas = count($rutas['data']);
 
         $fecha_actual = date("d-m-Y");

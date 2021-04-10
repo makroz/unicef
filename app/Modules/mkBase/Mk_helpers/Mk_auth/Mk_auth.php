@@ -357,7 +357,7 @@ class FactoryAuth
 {
     public static function getInstance()
     {
-        $rut=sprintf('App\Modules\mkBase\MK_helpers\Mk_auth\auth\%s\Auth', __AUTH__);
+        $rut=sprintf('App\Modules\mkBase\Mk_helpers\Mk_auth\auth\%s\Auth', __AUTH__);
         return new $rut();
     }
 }

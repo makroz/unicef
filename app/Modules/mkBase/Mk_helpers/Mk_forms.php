@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\mkbase\Mk_helpers;
+namespace App\Modules\mkBase\Mk_helpers;
 
 use Request;
 use Session;
