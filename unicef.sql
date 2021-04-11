@@ -10,8 +10,8 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
-SET time_zone = "+00:00";
-
+SET time_zone = "-00:00";
+SET FOREIGN_KEY_CHECKS=0;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -103,6 +103,7 @@ INSERT INTO `usuarios_grupos` (`deleted_at`, `usuarios_id`, `grupos_id`) VALUES
 INSERT INTO `usuarios_permisos` (`valor`, `deleted_at`, `usuarios_id`, `permisos_id`) VALUES
 (15, NULL, 1, 1),
 (15, NULL, 1, 2);
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
