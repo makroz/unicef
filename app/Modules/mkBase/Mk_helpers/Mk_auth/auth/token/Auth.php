@@ -3,7 +3,7 @@ namespace App\Modules\mkBase\Mk_helpers\Mk_auth\auth\token;
 
 use App\Modules\mkBase\Mk_helpers\Mk_auth\JWT\JWT;
 use App\Modules\mkBase\Mk_helpers\Mk_auth\IAuth;
-use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_Auth;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
 class Auth implements IAuth
 {

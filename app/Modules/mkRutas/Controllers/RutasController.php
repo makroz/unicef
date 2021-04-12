@@ -7,7 +7,7 @@ use App\Modules\mkBase\Mk_ia_db;
 use App\Modules\mkBase\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use App\Modules\mkBase\Mk_Helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
 use App\Modules\mkBase\Mk_helpers\Mk_debug;
 
 class RutasController extends Controller

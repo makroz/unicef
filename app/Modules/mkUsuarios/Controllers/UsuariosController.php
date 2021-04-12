@@ -5,9 +5,9 @@ namespace App\Modules\mkUsuarios\Controllers;
 use Illuminate\Http\Request;
 use App\Modules\mkBase\Mk_ia_db;
 use App\Modules\mkBase\Controller;
-use App\Modules\mkBase\Mk_Helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
 use App\Modules\mkBase\Mk_helpers\Mk_debug;
-use App\Modules\mkBase\Mk_Helpers\Mk_Auth\Mk_Auth;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
 class UsuariosController extends Controller
 {
@@ -47,7 +47,7 @@ class UsuariosController extends Controller
                         $modelo->permisos()->attach($value['id'], ['valor' => $value['valor']]);
                     }
                 }
-                Mk_Auth::forgetUser($id);
+                Mk_auth::forgetUser($id);
             }
             if (isset($request->paramsExtra['grupos'])) {
                 if ($id>0) {//modificar
@@ -58,7 +58,7 @@ class UsuariosController extends Controller
                         $modelo->grupos()->attach($value);
                     }
                 }
-                Mk_Auth::forgetUser($id);
+                Mk_auth::forgetUser($id);
             }
         }
     }

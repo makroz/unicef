@@ -5,8 +5,8 @@ namespace App\Modules\mkEmpresas\Controllers;
 use App\Modules\mkBase\Controller;
 use App\Modules\mkBase\Mk_ia_db;
 use Illuminate\Http\Request;
-use App\Modules\mkBase\Mk_Helpers\Mk_Auth\Mk_Auth;
-use App\Modules\mkBase\Mk_Helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
 
 class EmpresasController extends Controller
 {

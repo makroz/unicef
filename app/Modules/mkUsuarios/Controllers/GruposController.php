@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 use App\Modules\mkBase\Mk_ia_db;
 use Illuminate\Support\Facades\DB;
 use  App\Modules\mkBase\Controller;
-use App\Modules\mkBase\Mk_Helpers\Mk_db;
-use App\Modules\mkBase\Mk_Helpers\Mk_Auth\Mk_Auth;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
 class GruposController extends Controller
 {
@@ -38,7 +38,7 @@ class GruposController extends Controller
                 $users=DB::select('select usuarios_id from usuarios_grupos  where grupos_id=?', [$id]);
                 //print_r($users);
                 foreach ($users as $user){
-                    Mk_Auth::forgetUser($user->usuarios_id);
+                    Mk_auth::forgetUser($user->usuarios_id);
                 }
                 
             }
