@@ -41,7 +41,7 @@ class SolicitudServiciosController extends Controller
                     'servicios_id'=>$servicios['id'],
                     'beneficiarios_id'=>$request->beneficiarios_id,
                     'cant'=>$servicios['cant'],
-                    'estado'=>1,
+                    'estado'=>0,
                     'status'=>1,
                 ];
             }

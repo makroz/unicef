@@ -200,4 +200,132 @@ class RuteosController extends Controller
         ];
         return Mk_db::sendData(count($result), $result, '');
     }
+
+    // public function datosAnexos(Request $request)
+    // {
+    //     $this->proteger('ver');
+    //     $modelo = 'App\Modules\mkRutas\Rutas';
+    //     $cols = 'id,id as rutas_id,name,descrip,usuarios_id,status';
+    //     try {
+    //         $userId = Mk_auth::get()->getUser()->id;
+    //     } catch (\Throwable $th) {
+    //         $userId = null;
+    //         Mk_debug::msgApi('Error de Logueo rutas:' . $th->getMessage() . ' >>' . $th->getFile() . ':' . $th->getLine() . ':' . $th->getCode());
+    //         return Mk_db::sendData($th->getCode());
+    //         //    $userId=$user->id;
+    //     }
+
+    //     // if (empty($user)) {
+    //     //     $userId=null;
+    //     // }else{
+    //     //     $userId=$user->id;
+    //     // }
+    //     $fi = date('oWN');
+    //     $filtros = [
+    //         ['usuarios_id', '=', $userId],
+    //         ['status', '<>', 0],
+    //     ];
+
+    //     $rutas = $this->getDatosDbCache($request, $modelo, $cols, ['filtros' => $filtros, 'relations' => ['beneficiarios:rutas_id,id'], 'send' => false]);
+    //     $modelo = 'App\Modules\mkRutas\Ruteos';
+    //     $cantRutas = count($rutas['data']);
+
+    //     $fecha_actual = date("d-m-Y");
+    //     $ds = date('N');
+    //     $dt = $ds - 1;
+    //     $f1 = date("Y-m-d", strtotime($fecha_actual . "- {$dt} day"));
+    //     $dt = $dt + 7;
+    //     $f2 = date("Y-m-d", strtotime($fecha_actual . "- {$dt} day"));
+    //     $cols = 'id,rutas_id,obs,usuarios_id,status,created_at,fec_cerrado';
+    //     $rDispon = [];
+    //     $rOpen = [];
+    //     $rClosed = [];
+    //     $rRetrased = [];
+    //     $options = [
+    //         'filtros' => $filtros,
+    //         'relations' => [
+    //             'evaluaciones:ruteos_id,id,obs,beneficiarios_id,fec_verif,estado',
+    //             'evaluaciones.respuestas',
+    //             'evaluaciones.servicios',
+    //         ],
+    //         'send' => false,
+    //     ];
+
+    //     foreach ($rutas['data'] as $key => $ruta) {
+    //         $filtros = [
+    //             //['created_at', '>=', $f1],
+    //             ['created_at', '>=', $f2],
+    //             //['fec_cerrado', '=', null],
+    //             ['rutas_id', '=', $ruta['id']],
+    //             ['usuarios_id', '=', $userId],
+    //             ['status', '<>', 0],
+    //         ];
+    //         $options['filtros'] = $filtros;
+    //         $ruteos = $this->getDatosDbCache(
+    //             $request,
+    //             $modelo,
+    //             $cols,
+    //             $options
+    //         );
+
+    //         $disp=[];
+    //         $cantRuteos = count($ruteos['data']);
+    //         if ($cantRuteos > 0) {
+    //             foreach ($ruteos['data'] as $key => $ruteo) {
+    //                 Mk_debug::msgApi(['Fechas:',$userId,$ruteo['id'],Mk_date::dateToUTC($ruteo['created_at']),Mk_date::dateToUTC($ruteo['fec_cerrado']),Mk_date::dateToUTC($ruteo['created_at']) >= Mk_date::dateToUTC($ruteo['fec_cerrado'])]);
+    //                 if (empty($ruteo['fec_cerrado'])) {
+    //                     if (Mk_date::dateToLocal($ruteo['created_at']) >= Mk_date::dateToLocal($f1)){
+    //                         $rOpen[] = $ruteo;
+    //                     } else {
+    //                         $rRetrased[] = $ruteo;
+    //                     }
+    //                 }else {
+    //                         $rClosed[] = $ruteo;
+    //                 }
+    //             }
+    //         } 
+    //     }
+
+    //     foreach ($rutas['data'] as $key => $ruta) {
+    //         $filtros = [
+    //             ['created_at', '>=', $f1],
+    //             //['created_at', '<=', $f2],
+    //             //['fec_cerrado', '<>', null],
+    //             ['rutas_id', '=', $ruta['id']],
+    //             ['status', '<>', 0],
+    //         ];
+    //         $options['filtros']=$filtros;
+    //         $ruteos = $this->getDatosDbCache(
+    //             $request,
+    //             $modelo,
+    //             $cols,
+    //             $options
+    //         );
+
+    //         $cantRuteos = count($ruteos['data']);
+    //         if ($cantRuteos == 0) {
+    //                 $rDispon[] = $ruta;
+    //         }
+    //     }
+
+    //     $result = [
+    //         'dispon' => [
+    //             'ok' => count($rDispon),
+    //             'data' => $rDispon,
+    //         ],
+    //         'open' => [
+    //             'ok' => count($rOpen),
+    //             'data' => $rOpen,
+    //         ],
+    //         'closed' => [
+    //             'ok' => count($rClosed),
+    //             'data' => $rClosed,
+    //         ],
+    //         'retrased' => [
+    //             'ok' => count($rRetrased),
+    //             'data' => $rRetrased,
+    //         ],
+    //     ];
+    //     return Mk_db::sendData(count($result), $result, '');
+    // }
 }

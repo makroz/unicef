@@ -21,7 +21,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 250);
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
@@ -34,7 +34,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 250);
             $table->char('status', 1)->default('1');
 
             $table->timestamps();
@@ -47,7 +47,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 250);
             $table->tinyInteger('orden')->default(0);
             $table->char('status', 1)->default('1');
 
@@ -61,7 +61,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 250);
             $table->string('obs', 250)->nullable();
             $table->char('cant', 1)->nullable();
             $table->char('status', 1)->default('1');
@@ -76,7 +76,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 250);
             $table->integer('epsa')->unsigned();
             $table->char('autoriza', 1)->nullable();
             $table->char('protec', 1)->nullable();
@@ -105,7 +105,7 @@ class CreateUnicefV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 250);
             $table->string('descrip', 250)->nullable();
             $table->char('status', 1)->default('1');
 
