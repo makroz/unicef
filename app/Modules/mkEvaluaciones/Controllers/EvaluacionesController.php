@@ -93,7 +93,7 @@ class EvaluacionesController extends Controller
                     $data[]=$key;
                     $data[]=$benef;
                     $data[]=$servicio;
-                    $data[]=1;
+                    $data[]=0;
                     $data[]=1;
                     $values[]='(?,?,?,?,?,?,?,?,?,?)';
                 }

@@ -66,7 +66,7 @@ class Evaluaciones extends Model
     public function beneficiario()
     {
         return $this->belongsTo(
-            'App\Modules\mkBeneficiarios\beneficiarios',
+            'App\Modules\mkBeneficiarios\Beneficiarios',
             'beneficiarios_id'
         )->select([
             'id',
@@ -87,7 +87,7 @@ class Evaluaciones extends Model
     public function beneficiarioCoord()
     {
         return $this->belongsTo(
-            'App\Modules\mkBeneficiarios\beneficiarios',
+            'App\Modules\mkBeneficiarios\Beneficiarios',
             'beneficiarios_id'
         )->select([
             'id',
