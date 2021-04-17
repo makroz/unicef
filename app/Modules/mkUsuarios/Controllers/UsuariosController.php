@@ -25,7 +25,7 @@ class UsuariosController extends Controller
 
     public function beforeSave(Request $request, $modelo, $id=0)
     {
-        if ($id==0){
+        if (!empty($modelo->pass)){
             $modelo->pass= sha1($modelo->pass);
         }
     }

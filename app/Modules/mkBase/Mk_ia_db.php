@@ -18,7 +18,7 @@ const _errorLogin         = -1000;
 const _errorNoAutenticado = -1001;
 
 const _maxRowTable             = 1000;
-const _cacheQueryDebugInactive = true;
+const _cacheQueryDebugInactive = false;
 const _cachedQuerys            = 'cachedQuerys_';
 const _cachedTime              = 30 * 24 * 60 * 60;
 
@@ -70,6 +70,7 @@ trait Mk_ia_db
         $datos = Cache::remember($prefix, _cachedTime, function () use ($prefix, $page, $perPage, $sortBy, $order, $buscarA, $recycled, $cols, $disabled) {
             $modelo = new $this->__modelo();
             $table  = $modelo->getTable();
+            Mk_debug::warning('Se cargo de la BD! '.$table, 'CACHE ACTIVO', 'BackEnd');
             if (!empty($cols)) {
                 $cols = explode(',', $cols);
                 $cols = array_merge([$modelo->getKeyName()], $cols);
@@ -522,6 +523,7 @@ trait Mk_ia_db
         }
 
         $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page, $perPage, $filtros, $relations, $_customFields) {
+            Mk_debug::warning('Se cargo de la BD! '.$model, 'CACHE ACTIVO', 'BackEnd');
             $modelo = new $model();
             if ($_customFields == 1) {
                 $_customFields = !empty($modelo->_customFields) ? $modelo->_customFields : [];
