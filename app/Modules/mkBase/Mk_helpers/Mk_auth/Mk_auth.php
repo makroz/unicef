@@ -269,7 +269,8 @@ class Mk_auth
         Mk_debug::msgApi($user);
 
         $act=strtolower($act);
-        $controller=end(explode('\\',$controller));
+        $controller=explode('\\',$controller);
+        $controller=end($controller);
         $controller=strtolower($controller);
 
         $actions=['leer'=>'1','ver'=>'1','show'=>'1','index'=>'1','1'=>'1',
