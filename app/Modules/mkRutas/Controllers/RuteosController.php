@@ -10,7 +10,7 @@ use App\Modules\mkBase\Mk_helpers\Mk_db;
 use App\Modules\mkBase\Mk_helpers\Mk_date;
 use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
-
+const _errorNoExiste      = -1;
 class RuteosController extends Controller
 {
     use Mk_ia_db;
