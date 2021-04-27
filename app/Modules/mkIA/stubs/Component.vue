@@ -25,15 +25,6 @@
         @grabarItem="grabarItem"
       >
 {{**Formulario**}}
-        <v-text-field
-          label="Nombre"
-          v-model="item.name"
-          :rules="[rules.required]"
-          ref="focus"
-          validate-on-blur
-          autofocus
-          :readonly="accion == 'show'"
-        ></v-text-field>
       </mk-form>
     </v-container>
   </div>
@@ -53,22 +44,6 @@ export default {
       //titModulo: '',
       campos: [
 {{**Lista**}}        
-        {
-          text: 'Id',
-          value: 'id',
-          align: 'left',
-          width: '100px',
-          headers: true,
-          type: 'num',
-          search: true,
-        },
-        {
-          text: 'Nombre',
-          value: 'name',
-          headers: true,
-          type: 'text',
-          search: true,
-        },
       ],
     }
   },

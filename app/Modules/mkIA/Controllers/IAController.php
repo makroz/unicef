@@ -103,7 +103,14 @@ class IAController extends BaseController
         $lista=$t['cols'];
         $campos = "";
         $formulario="";
+        $attributes=[];
+
+
         foreach ($lista as $col){
+
+            if (!empty($col['COLUMN_DEFAULT'])) {
+                $attributes[]="'".$col['COLUMN_NAME']."' => '".$col['COLUMN_DEFAULT']."'";
+            }
             if ($col['form']){
                 $fillable[]="'".$col['COLUMN_NAME']."'";
                 $lRules=[];
@@ -169,11 +176,16 @@ class IAController extends BaseController
                 },";
             }
         }
+        if (count($attributes)>0){
+            $attributes="protected \$attributes = [".join(',',$attributes)."];";
+        }else{
+            $attributes='';
+        }
 
         //protected $attributes = ['status' => 1];
         $fillable=join(',',$fillable);
         $rules=join(",\r\n".$this->tabs(3),$rules);
-        $model=str_replace(['{{**NameSpace**}}','{{**NameClass**}}','{{**Fillable**}}','{{**Rules**}}'],[$moduloBack,$Clase,$fillable,$rules],$model);
+        $model=str_replace(['{{**NameSpace**}}','{{**NameClass**}}','{{**Fillable**}}','{{**Attributes**}}','{{**Rules**}}'],[$moduloBack,$Clase,$fillable,$attributes,$rules],$model);
         $controler=str_replace(['{{**NameSpace**}}','{{**NameClass**}}'],[$moduloBack,$Clase],$controler);
         $component=str_replace(['{{**NameClass**}}','{{**Formulario**}}','{{**Lista**}}'],[$Clase,$formulario,$campos],$component);
 
