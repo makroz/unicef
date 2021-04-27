@@ -144,13 +144,25 @@ class IAController extends BaseController
                 //Formulario
 
             }
-            if ($col['list']) {
+            $ancho='';
+            if (!empty($col['ancho'])){
+                $ancho="width: '".$col['ancho']."',";
+            }
+            $alineacion='';
+            if (!empty($col['align'])){
+                $lAlign['-1']='left';
+                $lAlign['l']='left';
+                $lAlign['r']='right';
+                $lAlign['c']='center';
+                $alineacion="align: '".$lAlign[$col['align']]."',";
+            }
+            if ($col['list'] && $col['COLUMN_NAME']!='status') {
                 $campos=$campos."
                 {
                     text: '".$col['lList']."',
                     value: '".$col['COLUMN_NAME']."',
-                    align: '".$col['COLUMN_NAME']."',
-                    width: '".$col['COLUMN_NAME']."',
+                    $alineacion
+                    $ancho
                     headers: true,
                     type: '".$col['typeF']."',
                     search: ".($col['search']?'true':'false').",
@@ -168,11 +180,12 @@ class IAController extends BaseController
 
         //echo '<br>MEnu <hr>';
         $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'].'../../unicef-Front/api/menu.js');
-        $p=strpos($menu,"component: '$moduloFront'");
-        $p=strpos($menu,"]",$p);
-        $menu1=substr($menu,0,$p-13);
-        $menu2=substr($menu,$p+2);
-        $menu=$menu1.
+        if (strpos($menu, "/{$moduloFront}/{$modulo}/")===false) {
+            $p=strpos($menu, "component: '$moduloFront'");
+            $p=strpos($menu, "]", $p);
+            $menu1=substr($menu, 0, $p-13);
+            $menu2=substr($menu, $p+2);
+            $menu=$menu1.
         ",\n".
         "                {\n".
         "                     name: '{$modulo}',\n".
@@ -181,7 +194,8 @@ class IAController extends BaseController
         "                 }\n".
         "             ]\n".
         $menu2;
-        file_put_contents($_SERVER['DOCUMENT_ROOT'].'../../unicef-Front/api/menu.js',$menu);
+            file_put_contents($_SERVER['DOCUMENT_ROOT'].'../../unicef-Front/api/menu.js', $menu);
+        }
         file_put_contents($_SERVER['DOCUMENT_ROOT']."../../unicef-Front/pages/$moduloFront/$modulo.vue",$component);
         file_put_contents($_SERVER['DOCUMENT_ROOT']."../app/Modules/$moduloBack/$Clase.php",$model);
         file_put_contents($_SERVER['DOCUMENT_ROOT']."../app/Modules/$moduloBack/Controllers/$Clase"."Controller.php",$controler);
