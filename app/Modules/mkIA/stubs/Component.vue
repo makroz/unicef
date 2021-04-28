@@ -23,32 +23,32 @@
         :accion="accion"
         @closeDialog="closeDialog"
         @grabarItem="grabarItem"
-      >
-{{**Formulario**}}
+      >{{**Formulario**}}
       </mk-form>
     </v-container>
   </div>
 </template>
 
 <script>
-import MkModuloMix from '@/components/mkComponentes/mixins/MkModuloMix'
+import MkModuloMix from "@/components/mkComponentes/mixins/MkModuloMix";
 
 export default {
-  middleware: ['authAccess'],
+  middleware: ["authAccess"],
 
   mixins: [MkModuloMix],
-  name: '{{**NameClass**}}',
+  name: "{{**NameClass**}}",
   data() {
     return {
       //urlModulo: '',
-      //titModulo: '',
-      campos: [
-{{**Lista**}}        
-      ],
-    }
+      titModulo: "{{**titModulo**}}",
+      campos: [{{**Lista**}}
+      ],{{**dataRel**}}
+    };
   },
   methods: {},
-}
+  async mounted() {{{**RelMounted**}}
+  },
+};
 </script>
 
 <style lang="stylus"></style>

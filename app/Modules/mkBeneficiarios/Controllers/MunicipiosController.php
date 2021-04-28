@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Modules\mkBase\Mk_ia_db;
 use App\Modules\mkBase\Controller;
 
-class DistritosController extends Controller
+class MunicipiosController extends Controller
 {
     use Mk_ia_db;
     public $_autorizar='';
