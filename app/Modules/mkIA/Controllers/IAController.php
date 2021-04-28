@@ -41,18 +41,20 @@ class IAController extends BaseController
     }
     public function index(Request $request)
     {
+//        echo config('DB_DATABASE'); 
+        $DB=env('DB_DATABASE');
         $tablas = [];
-        $lista  = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = 'unicef'");
+        $lista  = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '$DB'");
 
         foreach ($lista as $table) {
             $t         = [];
             $t['name'] = $table->TABLE_NAME;
             $tabla     = DB::select("SELECT * FROM INFORMATION_SCHEMA.COLUMNS
             WHERE table_name = '$table->TABLE_NAME'
-            AND table_schema = 'unicef'");
+            AND table_schema = '$DB'");
             $t['cols']  = $tabla;
             $relaciones = DB::select("select CONSTRAINT_NAME,COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
-             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE CONSTRAINT_SCHEMA='unicef'
+             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE CONSTRAINT_SCHEMA='$DB'
              AND TABLE_NAME='$table->TABLE_NAME' and
              REFERENCED_TABLE_NAME IS NOT NULL");
             $t['rels'] = $relaciones;
