@@ -121,6 +121,7 @@ class IAController extends BaseController
             /* relaciones  */
             $relCol = '';
             if (!empty($col['relTable'])) {
+//              echo "0 rel table: ".$col['COLUMN_NAME'].' '.$col['relTable'];
                 $refTable = ucfirst($col['relTable']);
                 $colRel   = $col['relField'];
                 $relMounted .= "
@@ -131,6 +132,7 @@ class IAController extends BaseController
 ";
 
                 $relCol = "lista: this.l{$refTable},";
+               // echo "1 rel table: $refTable";
             }
             /* relaciones  */
 
@@ -207,8 +209,10 @@ class IAController extends BaseController
           </v-text-field>
 ";
                 }
-
+                
                 if ($col['typeF'] == 'selDB') {
+                  // echo "2 rel table ".$col['COLUMN_NAME'];
+                  // echo "2.1 rel table ".$refTable;
                     $addInput = true;
                     $formul   = "
           <v-select

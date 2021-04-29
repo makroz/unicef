@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use App\Modules\mkBase\Mk_ia_db;
 use App\Modules\mkBase\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Modules\mkBase\Mk_helpers\Mk_db;
-use App\Modules\mkBase\Mk_helpers\Mk_debug;
 
 class BeneficiariosController extends Controller
 {
