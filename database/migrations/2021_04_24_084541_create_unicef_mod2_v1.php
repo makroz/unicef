@@ -217,11 +217,11 @@ class CreateUnicefMod2V1 extends Migration
             $table->decimal('c_otra', 8, 2)->nullable();
             $table->decimal('c_otra_p', 5, 2)->nullable();
 
-            $table->integer('dpto_id')->unsigned();
+            $table->integer('dpto_id')->unsigned()->nullable();
             $table->foreign('dpto_id')->references('id')->on('dptos');
-            $table->integer('municipio_id')->unsigned();
+            $table->integer('municipio_id')->unsigned()->nullable();
             $table->foreign('municipio_id')->references('id')->on('municipios');
-            $table->integer('zona_id')->unsigned()->nullable();
+            $table->integer('zona_id')->unsigned()->nullable()->nullable();
             $table->foreign('zona_id')->references('id')->on('zonas');
             $table->integer('descom_id')->unsigned()->nullable();
             $table->foreign('descom_id')->references('id')->on('descoms');
