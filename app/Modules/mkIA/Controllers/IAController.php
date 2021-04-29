@@ -107,6 +107,7 @@ class IAController extends BaseController
         $controler = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Controller.php');
         $component = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Component.vue');
 
+        $backRel='';
         $fillable   = [];
         $rules      = [];
         $lista      = $t['cols'];
@@ -269,7 +270,7 @@ class IAController extends BaseController
         //protected $attributes = ['status' => 1];
         $fillable  = join(',', $fillable);
         $rules     = join(",\r\n" . $this->tabs(3), $rules);
-        $model     = str_replace(['{{**NameSpace**}}', '{{**NameClass**}}', '{{**Fillable**}}', '{{**Attributes**}}', '{{**Rules**}}'], [$moduloBack, $Clase, $fillable, $attributes, $rules], $model);
+        $model     = str_replace(['{{**NameSpace**}}', '{{**NameClass**}}', '{{**Fillable**}}', '{{**Attributes**}}', '{{**Rules**}}','{{**BackRel**}}'], [$moduloBack, $Clase, $fillable, $attributes, $rules,$backRel], $model);
         $controler = str_replace(['{{**NameSpace**}}', '{{**NameClass**}}'], [$moduloBack, $Clase], $controler);
         $component = str_replace(['{{**NameClass**}}', '{{**Formulario**}}', '{{**titModulo**}}',
             '{{**Lista**}}', '{{**dataRel**}}', '{{**RelMounted**}}'], [$Clase, $formulario, $modTit, $campos, $dataRel, $relMounted], $component);

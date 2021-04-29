@@ -18,5 +18,6 @@ class {{**NameClass**}} extends Model
             {{**Rules**}}
         ];
     }
+{{**BackRel**}}
 
 }
