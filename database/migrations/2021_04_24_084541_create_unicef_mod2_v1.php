@@ -23,6 +23,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -36,6 +39,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->integer('dpto_id')->unsigned();
             $table->foreign('dpto_id')->references('id')->on('dptos')->onDelete('cascade');
@@ -47,6 +53,10 @@ class CreateUnicefMod2V1 extends Migration
         $nTable = 'distritos';
         //Schema::dropIfExists($nTable);
         Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+
             $table->integer('municipio_id')->unsigned();
             $table->foreign('municipio_id')->references('id')->on('municipios')->onDelete('cascade');
         });
@@ -59,6 +69,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->integer('distrito_id')->unsigned();
             $table->foreign('distrito_id')->references('id')->on('distritos')->onDelete('cascade');
@@ -75,6 +88,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -88,6 +104,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -101,6 +120,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -114,6 +136,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -127,6 +152,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -140,6 +168,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -153,6 +184,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -167,6 +201,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->string('name', 250);
             $table->tinyInteger('orden')->default(0);;
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -181,6 +218,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->string('name', 250);
             $table->tinyInteger('orden')->default(0);;
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -195,6 +235,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->string('name', 250);
             $table->tinyInteger('orden')->default(0);;
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -203,7 +246,11 @@ class CreateUnicefMod2V1 extends Migration
         $nTable = 'beneficiarios';
         //Schema::dropIfExists($nTable);
         Schema::table($nTable, function (Blueprint $table) {
-            $table->string('manzano', 10)->nullable();
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+
+          $table->string('manzano', 10)->nullable();
             $table->string('lote', 10)->nullable();
             $table->string('safsi', 10)->nullable();
             $table->tinyInteger('nfamilias')->default(1);
@@ -247,6 +294,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->tinyInteger('edad')->nullable();
             $table->char('genero', 1)->nullable();
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->integer('beneficiario_id')->unsigned();
             $table->foreign('beneficiario_id')->references('id')->on('beneficiarios');
@@ -262,6 +312,99 @@ class CreateUnicefMod2V1 extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        $nTable = 'entidades';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'categ';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'servicios';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'rutas';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'preguntas';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'ruteos';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'evaluaciones';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'solicitud_servicios';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'respuestas';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'roles';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'permisos';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+        $nTable = 'grupos';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+      $nTable = 'usuarios';
+        Schema::table($nTable, function (Blueprint $table) {
+          $table->integer('created_by')->unsigned()->nullable();
+          $table->integer('updated_by')->unsigned()->nullable();
+          $table->integer('deleted_by')->unsigned()->nullable();
+        });
+
+
 
         Schema::enableForeignKeyConstraints();
     }
@@ -292,24 +435,25 @@ class CreateUnicefMod2V1 extends Migration
             $table->dropColumn('c_otra');
             $table->dropColumn('c_otra_p');
 
-            $table->dropColumn('dpto_id');
+
             $table->dropForeign(['dpto_id']);
-            $table->dropColumn('municipio_id');
+            $table->dropColumn('dpto_id');
             $table->dropForeign(['municipio_id']);
-            $table->dropColumn('zona_id');
+            $table->dropColumn('municipio_id');
             $table->dropForeign(['zona_id']);
-            $table->dropColumn('descom_id');
+            $table->dropColumn('zona_id');
             $table->dropForeign(['descom_id']);
-            $table->dropColumn('epsa_id');
+            $table->dropColumn('descom_id');
             $table->dropForeign(['epsa_id']);
-            $table->dropColumn('tipo_bano_id');
+            $table->dropColumn('epsa_id');
             $table->dropForeign(['tipo_bano_id']);
-            $table->dropColumn('doc_firmado_id');
+            $table->dropColumn('tipo_bano_id');
             $table->dropForeign(['doc_firmado_id']);
-            $table->dropColumn('info_metodo_id');
+            $table->dropColumn('doc_firmado_id');
             $table->dropForeign(['info_metodo_id']);
-            $table->dropColumn('prob_sol_existente_id');
+            $table->dropColumn('info_metodo_id');
             $table->dropForeign(['prob_sol_existente_id']);
+            $table->dropColumn('prob_sol_existente_id');
         });
 
         Schema::dropIfExists('prob_sol_existentes');
@@ -327,8 +471,8 @@ class CreateUnicefMod2V1 extends Migration
         Schema::dropIfExists('dptos');
 
         Schema::table('distritos', function (Blueprint $table) {
-            $table->dropColumn('municipio_id');
-            $table->dropForeign(['municipio_id']);
+          $table->dropForeign(['municipio_id']);
+          $table->dropColumn('municipio_id');
         });
 
         Schema::enableForeignKeyConstraints();

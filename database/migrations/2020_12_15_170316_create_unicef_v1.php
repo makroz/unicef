@@ -23,7 +23,6 @@ class CreateUnicefV1 extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->char('status', 1)->default('1');
-
             $table->timestamps();
             $table->softDeletes();
         });
@@ -85,9 +84,9 @@ class CreateUnicefV1 extends Migration
             $table->char('nivel', 1)->default('0');
             $table->char('status', 1)->default('1');
 
-            $table->integer('distritos_id')->unsigned();
+            $table->integer('distritos_id')->unsigned()->nullable();
             $table->foreign('distritos_id')->references('id')->on('distritos');
-            $table->integer('entidades_id')->unsigned();
+            $table->integer('entidades_id')->unsigned()->nullable();
             $table->foreign('entidades_id')->references('id')->on('entidades');
             $table->integer('rutas_id')->unsigned()->nullable();
             $table->foreign('rutas_id')->references('id')->on('rutas');

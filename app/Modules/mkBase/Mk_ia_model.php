@@ -1,9 +1,10 @@
 <?php
 namespace App\Modules\mkBase;
 
-use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use Illuminate\Support\Facades\DB;
+use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait Mk_ia_model
@@ -14,6 +15,14 @@ trait Mk_ia_model
 
     //public $_cachedRelations=[];
     //protected $_cachedRelations = [];
+
+    public static function getUser(){
+      $user=Mk_auth::get()->getUser();
+      if (!empty($user->id)){
+        return $user->id;
+      }
+      return 0;
+    }
 
     public function getFill()
     {

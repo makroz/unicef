@@ -24,6 +24,9 @@ class CreateUnicefModreunionesV1 extends Migration
             $table->string('name', 250);
             $table->tinyInteger('orden')->default(0);;
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();
@@ -42,6 +45,9 @@ class CreateUnicefModreunionesV1 extends Migration
             $table->text('acciones');
             $table->tinyInteger('nparticipantes')->default(0);;
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->integer('beneficiario_id')->unsigned();
             $table->foreign('beneficiario_id')->references('id')->on('beneficiarios');
@@ -60,6 +66,9 @@ class CreateUnicefModreunionesV1 extends Migration
             $table->text('contenido');
             $table->text('hallazgos');
             $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->timestamps();
             $table->softDeletes();

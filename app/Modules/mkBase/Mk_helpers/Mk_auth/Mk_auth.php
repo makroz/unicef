@@ -88,6 +88,7 @@ class Mk_auth
         }
 
     }
+
     public function getUser()
     {
         return $user=$this->auth->usuario();

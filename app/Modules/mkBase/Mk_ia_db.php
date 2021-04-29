@@ -18,7 +18,7 @@ const _errorLogin         = -1000;
 const _errorNoAutenticado = -1001;
 
 const _maxRowTable             = 1000;
-const _cacheQueryDebugInactive = false;
+const _cacheQueryDebugInactive = true;
 const _cachedQuerys            = 'cachedQuerys_';
 const _cachedTime              = 30 * 24 * 60 * 60;
 
@@ -241,6 +241,7 @@ trait Mk_ia_db
             Mk_debug::msgApi(['Grabar:', $grabar]);
             if ((!$grabar) or ($grabar == 1)) {
                 Mk_debug::msgApi(['Entro a Save:', $request]);
+                $datos->created_by=$datos->getUser();
                 $r = $datos->save();
             } else {
                 $r = $grabar;
@@ -356,6 +357,7 @@ trait Mk_ia_db
 
             Mk_debug::msgApi(['request', $dataUpdate]);
             if (!empty($dataUpdate)) {
+                $dataUpdate['updated_by']=$datos->getUser();
                 $r = $datos->where($_key, '=', $id)
                     ->update(
                         $dataUpdate //$request->only($datos->getfill())
@@ -415,6 +417,10 @@ trait Mk_ia_db
                     ->forceDelete();
             } else {
                 $datos->runCascadingDeletes($id);
+                $datos->where($_key, '=', $id)
+                    ->update(
+                        ['deleted_by'=>$datos->getUser()] 
+                    );
                 $r = $datos->wherein($_key, $id)
                     ->delete();
             }
@@ -492,6 +498,7 @@ trait Mk_ia_db
         $r = $datos->wherein($_key, $id)
             ->update([
                 'status' => $newStatus,
+                'updated_by' => $datos->getUser()
             ]);
         $msg = '';
         if ($r == 0) {

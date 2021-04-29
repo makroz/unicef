@@ -41,6 +41,7 @@ class CreateModUsuariosV1 extends Migration
             $table->string('descrip', 200)->nullable();
 
             $table->char('status', 1)->default('1');
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -55,6 +56,7 @@ class CreateModUsuariosV1 extends Migration
             $table->string('descrip', 200)->nullable();
 
             $table->char('status', 1)->default('1');
+
             $table->timestamps();
             $table->softDeletes();
         });
