@@ -209,6 +209,17 @@ class CreateUnicefMod2V1 extends Migration
             $table->softDeletes();
         });
 
+        $nTable = 'beneficiarios_doc_firmados';
+        Schema::dropIfExists($nTable);
+        Schema::create($nTable, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->integer('beneficiario_id')->unsigned();
+            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');
+            $table->integer('doc_firmado_id')->unsigned();
+            $table->foreign('doc_firmado_id')->references('id')->on('doc_firmados')->onDelete('cascade');
+        });
+
         $nTable = 'info_metodos';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
@@ -226,22 +237,17 @@ class CreateUnicefMod2V1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable = 'prob_sol_existentes';
+        $nTable = 'beneficiarios_info_metodos';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
             $table->engine = 'InnoDB';
-
             $table->increments('id');
-            $table->string('name', 250);
-            $table->tinyInteger('orden')->default(0);;
-            $table->char('status', 1)->default('1');
-            $table->integer('created_by')->unsigned()->nullable();
-            $table->integer('updated_by')->unsigned()->nullable();
-            $table->integer('deleted_by')->unsigned()->nullable();
-
-            $table->timestamps();
-            $table->softDeletes();
+            $table->integer('beneficiario_id')->unsigned();
+            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');
+            $table->integer('info_metodo_id')->unsigned();
+            $table->foreign('info_metodo_id')->references('id')->on('info_metodos')->onDelete('cascade');
         });
+
 
         $nTable = 'beneficiarios';
         //Schema::dropIfExists($nTable);
@@ -276,12 +282,29 @@ class CreateUnicefMod2V1 extends Migration
             $table->foreign('epsa_id')->references('id')->on('epsas');
             $table->integer('tipo_bano_id')->unsigned()->nullable();
             $table->foreign('tipo_bano_id')->references('id')->on('tipo_banos');
-            $table->integer('doc_firmado_id')->unsigned()->nullable();
-            $table->foreign('doc_firmado_id')->references('id')->on('doc_firmados');
-            $table->integer('info_metodo_id')->unsigned()->nullable();
-            $table->foreign('info_metodo_id')->references('id')->on('info_metodos');
-            $table->integer('prob_sol_existente_id')->unsigned()->nullable();
-            $table->foreign('prob_sol_existente_id')->references('id')->on('prob_sol_existentes');
+            // $table->integer('doc_firmado_id')->unsigned()->nullable();
+            // $table->foreign('doc_firmado_id')->references('id')->on('doc_firmados');
+            // $table->integer('info_metodo_id')->unsigned()->nullable();
+            // $table->foreign('info_metodo_id')->references('id')->on('info_metodos');
+            // $table->integer('prob_sol_existente_id')->unsigned()->nullable();
+            // $table->foreign('prob_sol_existente_id')->references('id')->on('prob_sol_existentes');
+        });
+
+        $nTable = 'prob_sol_existentes';
+        Schema::dropIfExists($nTable);
+        Schema::create($nTable, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
+            $table->increments('id');
+            $table->text('problemas');
+            $table->text('soluciones')->nullable();
+            $table->char('status', 1)->default('1');
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+
+            $table->integer('beneficiario_id')->unsigned();
+            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');
+            $table->timestamps();
         });
 
         $nTable = 'familiares';
@@ -296,10 +319,9 @@ class CreateUnicefMod2V1 extends Migration
             $table->char('status', 1)->default('1');
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
-            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->integer('beneficiario_id')->unsigned();
-            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios');
+            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');;
             $table->integer('parentesco_id')->unsigned();
             $table->foreign('parentesco_id')->references('id')->on('parentescos');
             $table->integer('est_civil_id')->unsigned();
@@ -308,9 +330,7 @@ class CreateUnicefMod2V1 extends Migration
             $table->foreign('niv_estudio_id')->references('id')->on('niv_estudios');
             $table->integer('ocupacion_id')->unsigned();
             $table->foreign('ocupacion_id')->references('id')->on('ocupaciones');
-
             $table->timestamps();
-            $table->softDeletes();
         });
 
         $nTable = 'entidades';
@@ -469,6 +489,7 @@ class CreateUnicefMod2V1 extends Migration
         Schema::dropIfExists('zonas');
         Schema::dropIfExists('municipios');
         Schema::dropIfExists('dptos');
+        Schema::dropIfExists('familias');
 
         Schema::table('distritos', function (Blueprint $table) {
           $table->dropForeign(['municipio_id']);

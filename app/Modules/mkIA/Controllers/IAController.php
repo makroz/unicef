@@ -211,8 +211,8 @@ class IAController extends BaseController
                 }
                 
                 if ($col['typeF'] == 'selDB') {
-                  // echo "2 rel table ".$col['COLUMN_NAME'];
-                  // echo "2.1 rel table ".$refTable;
+                   echo "2 rel table ".$col['COLUMN_NAME'];
+                   echo "2.1 rel table ".$refTable;
                     $addInput = true;
                     $formul   = "
           <v-select
@@ -229,6 +229,20 @@ class IAController extends BaseController
 ";
                 }
 
+                if ($col['typeF'] == 'check') {
+                  $addInput = true;
+                  $formul   = "
+      <v-checkbox
+        v-model='item." . $col['COLUMN_NAME'] . "'
+        value='1'
+        label='" . $col['lForm'] . "'
+        :readonly=\"accion == 'show'\"
+      >
+      </v-checkbox>
+";
+              }
+
+                //
                 if ($addInput) {
                     $formulario .= '
         <v-flex>' . $formul . '        </v-flex>';
