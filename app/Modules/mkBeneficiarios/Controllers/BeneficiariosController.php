@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class BeneficiariosController extends Controller
 {
     use Mk_ia_db;
-    public $_autorizar='';
+    //public $_autorizar='';
     protected $__modelo='';
     public function __construct(Request $request)
     {

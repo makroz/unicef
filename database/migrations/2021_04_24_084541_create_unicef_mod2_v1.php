@@ -282,12 +282,6 @@ class CreateUnicefMod2V1 extends Migration
             $table->foreign('epsa_id')->references('id')->on('epsas');
             $table->integer('tipo_bano_id')->unsigned()->nullable();
             $table->foreign('tipo_bano_id')->references('id')->on('tipo_banos');
-            // $table->integer('doc_firmado_id')->unsigned()->nullable();
-            // $table->foreign('doc_firmado_id')->references('id')->on('doc_firmados');
-            // $table->integer('info_metodo_id')->unsigned()->nullable();
-            // $table->foreign('info_metodo_id')->references('id')->on('info_metodos');
-            // $table->integer('prob_sol_existente_id')->unsigned()->nullable();
-            // $table->foreign('prob_sol_existente_id')->references('id')->on('prob_sol_existentes');
         });
 
         $nTable = 'prob_sol_existentes';
@@ -301,10 +295,13 @@ class CreateUnicefMod2V1 extends Migration
             $table->char('status', 1)->default('1');
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
 
             $table->integer('beneficiario_id')->unsigned();
             $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
+            
         });
 
         $nTable = 'familiares';

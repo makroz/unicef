@@ -2,14 +2,14 @@
 namespace App\Modules\mkBase;
 
 use Exception;
-use \Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 use \App\Modules\mkBase\Mk_helpers\Mk_db;
 use \App\Modules\mkBase\Mk_helpers\Mk_debug;
 use \App\Modules\mkBase\Mk_helpers\Mk_forms;
-use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
+use \Illuminate\Http\Request;
 
 const _errorNoExiste      = -1;
 const _errorAlGrabar      = -10;
@@ -70,7 +70,7 @@ trait Mk_ia_db
         $datos = Cache::remember($prefix, _cachedTime, function () use ($prefix, $page, $perPage, $sortBy, $order, $buscarA, $recycled, $cols, $disabled) {
             $modelo = new $this->__modelo();
             $table  = $modelo->getTable();
-            Mk_debug::warning('Se cargo de la BD! '.$table, 'CACHE ACTIVO', 'BackEnd');
+            Mk_debug::warning('Se cargo de la BD! ' . $table, 'CACHE ACTIVO', 'BackEnd');
             if (!empty($cols)) {
                 $cols = explode(',', $cols);
                 $cols = array_merge([$modelo->getKeyName()], $cols);
@@ -80,7 +80,7 @@ trait Mk_ia_db
                 }
                 $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
             }
-            $modelo->isJoined($buscarA,$sortBy);
+            $modelo->isJoined($buscarA, $sortBy);
 
             $consulta = $modelo->orderBy(Mk_db::tableCol($sortBy, $modelo), $order);
 
@@ -95,7 +95,7 @@ trait Mk_ia_db
                     foreach ($modelo->_joins as $t => $d) {
                         //echo "onsearh: ".$d['onSearch']." joined:"+$d['joined'];
                         if ((empty($d['onSearch'])) || (($d['onSearch'] === true) && ($d['joined'] === true))) {
-                          //  echo "entro onsearh: ";
+                            //  echo "entro onsearh: ";
                             switch ($d['type']) {
                                 case 'left':
                                     $consulta = $consulta->leftJoin($t, ...$d['on']);
@@ -107,7 +107,7 @@ trait Mk_ia_db
                                     $consulta = $consulta->join($t, ...$d['on']);
                                     break;
                             }
-                            if(!empty($d['groupBy'])){
+                            if (!empty($d['groupBy'])) {
                                 $consulta = $consulta->groupBy($d['groupBy']);
                             }
                             if (!empty($d['fields'])) {
@@ -138,7 +138,7 @@ trait Mk_ia_db
                 $consulta = $consulta->with($modelo->_withRelations);
             }
             //$cols     = array_merge($cols, $colsJoin);
-            $colsJoin     = Mk_db::tableCol($colsJoin, $modelo);
+            $colsJoin = Mk_db::tableCol($colsJoin, $modelo);
             $cols     = Mk_db::tableCol($cols, $modelo);
             $consulta = $consulta->select($cols);
             if (!empty($modelo->_customFields)) {
@@ -241,8 +241,8 @@ trait Mk_ia_db
             Mk_debug::msgApi(['Grabar:', $grabar]);
             if ((!$grabar) or ($grabar == 1)) {
                 Mk_debug::msgApi(['Entro a Save:', $request]);
-                $datos->created_by=$datos->getUser();
-                $r = $datos->save();
+                $datos->created_by = $datos->getUser();
+                $r                 = $datos->save();
             } else {
                 $r = $grabar;
                 if ($grabar < 0) {
@@ -299,27 +299,50 @@ trait Mk_ia_db
             $this->proteger();
             $datos = new $this->__modelo;
             $key   = $datos->getKeyName();
-            $datos = $datos->where(
-                str_replace("'", "", DB::connection()->getPdo()->quote($request->where)),
-                str_replace("'", "", DB::connection()->getPdo()->quote($request->valor))
-            )
-                ->where($key, '!=', $id);
-            if (empty($request->existe)) {
-                $datos = $datos->first();
-                if (!$datos) {
-                    $id = -1;
-                } else {
-                    $id = $datos->$key;
-                }
-                return Mk_db::sendData($id, $datos);
-            } else {
-                $datos = $datos->select($key)->first();
-                if (!$datos) {
-                    $id = -1;
-                } else {
-                    $id = $datos->$key;
+
+            $cols = array_merge([$datos->getKeyName()], $datos->getFill());
+
+            $cols    = Mk_db::tableCol($cols, $datos);
+            $_custom = $datos->_customFields;
+            $_rel    = $datos->_withRelations;
+            $datos   = $datos->select($cols);
+            if (!empty($_custom)) {
+
+                foreach ($_custom as $field) {
+
+                    $datos = $datos->addSelect(DB::raw($field));
                 }
 
+            }
+            if (!empty($request->where) && !empty($request->valor)) {
+                $datos = $datos->where(
+                    str_replace("'", "", DB::connection()->getPdo()->quote($request->where)),
+                    str_replace("'", "", DB::connection()->getPdo()->quote($request->valor))
+                );
+            }
+            $datos = $datos->where($key, '=', $id);
+            if (isset($_rel)) {
+                $datos = $datos->with($_rel);
+            }
+            
+            $prefix = $this->addCacheList($this->__modelo, [$id, $request->existe, DB::connection()->getPdo()->quote($request->where), DB::connection()->getPdo()->quote($request->valor)]);
+            if (_cacheQueryDebugInactive) {
+                Cache::forget($prefix);
+                Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
+            }
+            $datos = Cache::remember($prefix, _cachedTime, function () use ($datos) {
+                return $datos->first();
+            });
+
+            if (!$datos) {
+                $id = -1;
+            } else {
+                $id = $datos->$key;
+            }
+            if (empty($request->existe)) {
+                return Mk_db::sendData($id, $datos);
+
+            } else {
                 return Mk_db::sendData($id);
             }
         } catch (\Throwable $th) {
@@ -357,8 +380,8 @@ trait Mk_ia_db
 
             Mk_debug::msgApi(['request', $dataUpdate]);
             if (!empty($dataUpdate)) {
-                $dataUpdate['updated_by']=$datos->getUser();
-                $r = $datos->where($_key, '=', $id)
+                $dataUpdate['updated_by'] = $datos->getUser();
+                $r                        = $datos->where($_key, '=', $id)
                     ->update(
                         $dataUpdate //$request->only($datos->getfill())
                     );
@@ -419,7 +442,7 @@ trait Mk_ia_db
                 $datos->runCascadingDeletes($id);
                 $datos->where($_key, '=', $id)
                     ->update(
-                        ['deleted_by'=>$datos->getUser()] 
+                        ['deleted_by' => $datos->getUser()]
                     );
                 $r = $datos->wherein($_key, $id)
                     ->delete();
@@ -432,7 +455,7 @@ trait Mk_ia_db
             } else {
                 $this->afterDel($id, $datos, $r);
                 DB::commit();
-                $this->clearCache(null,true);
+                $this->clearCache(null, true);
 
             }
         } catch (\Throwable $th) {
@@ -468,12 +491,12 @@ trait Mk_ia_db
             if ($r == 0) {
                 $r   = _errorNoExiste;
                 $msg = 'Registro ya NO EXISTE';
-                $this->clearCache(null,true);
+                $this->clearCache(null, true);
                 DB::rollback();
             } else {
                 $this->afterRestore($id, $datos, $r);
                 DB::commit();
-                $this->clearCache(null,true);
+                $this->clearCache(null, true);
             }
         } catch (\Throwable $th) {
             DB::rollback();
@@ -497,8 +520,8 @@ trait Mk_ia_db
 
         $r = $datos->wherein($_key, $id)
             ->update([
-                'status' => $newStatus,
-                'updated_by' => $datos->getUser()
+                'status'     => $newStatus,
+                'updated_by' => $datos->getUser(),
             ]);
         $msg = '';
         if ($r == 0) {
@@ -530,7 +553,7 @@ trait Mk_ia_db
         }
 
         $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page, $perPage, $filtros, $relations, $_customFields) {
-            Mk_debug::warning('Se cargo de la BD! '.$model, 'CACHE ACTIVO', 'BackEnd');
+            Mk_debug::warning('Se cargo de la BD! ' . $model, 'CACHE ACTIVO', 'BackEnd');
             $modelo = new $model();
             if ($_customFields == 1) {
                 $_customFields = !empty($modelo->_customFields) ? $modelo->_customFields : [];
@@ -578,7 +601,7 @@ trait Mk_ia_db
             return $datos;
         } else {
             $d         = $datos->toArray();
-            $total=count($d['data']);
+            $total     = count($d['data']);
             $d['data'] = $this->isCachedFront($d['data']);
             if ($_send) {
                 return Mk_db::sendData($total, $d['data'], '');
@@ -614,15 +637,15 @@ trait Mk_ia_db
         return _cachedQuerys . strtolower(basename($modelo));
     }
 
-    private function clearCache($modelCached=null,$cascade = false) //mientras pondremos a true hasta ver las relaciones de cache entre modulos
+    private function clearCache($modelCached = null, $cascade = false) //mientras pondremos a true hasta ver las relaciones de cache entre modulos
 
     {
         if ($cascade) {
-            $lista   = Mk_debug::getGlobal('cascadeDelete');
+            $lista = Mk_debug::getGlobal('cascadeDelete');
         }
-        if (empty($modelCached)){
-            $modelCached=$this->__modelo;
-            $modelo  = new $modelCached();
+        if (empty($modelCached)) {
+            $modelCached = $this->__modelo;
+            $modelo      = new $modelCached();
             if (!empty($modelo->_cachedRelations)) {
                 foreach ($modelo->_cachedRelations as $key => $relation) {
                     Mk_debug::msgApi(['ClearCache Request: ', request()->has($relation[1])]);
@@ -634,7 +657,7 @@ trait Mk_ia_db
         }
 
         $lista[] = $modelCached;
-        
+
         foreach ($lista as $key => $model) {
             $prefixList = $this->getCacheKey($model);
             $cached     = Cache::get($prefixList, []);

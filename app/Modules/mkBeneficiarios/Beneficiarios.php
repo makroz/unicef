@@ -11,11 +11,12 @@ class Beneficiarios extends Model
 
     protected $fillable = ['id','name','epsa','autoriza','protec','dir','nivel','status','distritos_id','entidades_id','rutas_id','manzano','lote','safsi','nfamilias','npersonas','c_gob_municipal','c_gob_municipal_p','c_ong','c_ong_p','c_familias','c_familias_p','c_otra','c_otra_p','dpto_id','municipio_id','zona_id','descom_id','epsa_id','tipo_bano_id'];
     protected $attributes = ['status' => '1','nfamilias' => '1','npersonas' => '1'];
-    public $listable = ['name','epsa','autoriza', 'protec', 'dir','nivel', 'rutas_id','distritos_id','entidades_id','status'];
+    public $_listTable = ['name','epsa','autoriza', 'protec', 'dir','nivel', 'rutas_id','distritos_id','entidades_id','status'];
 
     public $_customFields = ["ST_X(coord) as lat, ST_Y(coord) as lng"];
 
     //public $_withRelations = ['evaluaciones:beneficiarios_id,id'];
+    public $_withRelations = ['problemas'];
 
     public $_cachedRelations = [
         ['App\Modules\mkRutas\rutas','rutas_id']
@@ -64,6 +65,12 @@ class Beneficiarios extends Model
     public function evaluaciones()
     {
         return $this->hasMany('\App\Modules\mkEvaluaciones\evaluaciones');
+        
+    }
+
+    public function problemas()
+    {
+        return $this->hasMany('\App\Modules\mkBeneficiarios\prob_sol_existentes','beneficiario_id');
         
     }
 
