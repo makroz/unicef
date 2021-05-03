@@ -96,6 +96,39 @@ class BeneficiariosController extends Controller
         //$this->clearCache('beneficiarios_doc_firmados');
     }
 
+    if ($request->has('familiares') && is_array($request->familiares)) {
+
+      DB::delete('delete from familiares where beneficiario_id=?', [$id]);
+
+      if (count($request->familiares)>0) {
+          $values=[];
+          $data=[];
+          foreach ($request->familiares as $key=>$familiar) {
+            if (!empty($familiar['name'])) {
+                $data[]=$now;
+                $data[]=$now;
+                $data[]=$user_id;
+                $data[]=$user_id;
+                $data[]=$familiar['name'];
+                $data[]=$familiar['edad'];
+                $data[]=$familiar['genero'];
+                $data[]=1;
+                $data[]=$id;
+                $data[]=$familiar['parentesco_id'];
+                $data[]=$familiar['est_civil_id'];
+                $data[]=$familiar['niv_educativo_id'];
+                $data[]=$familiar['ocupacion_id'];
+                $values[]='(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+            }
+          }
+          if (count($data)>0) {
+              $values=join(',', $values);
+              DB::insert('insert into familiares (created_at,updated_at,created_by,updated_by,name,edad,genero,status,
+              beneficiario_id,parentesco_id,est_civil_id,niv_educativo_id,ocupacion_id) values '.$values, $data);
+          }
+      }
+      $this->clearCache('familiares');
+  }
 
         if ($request->has('problemas') && is_array($request->problemas)) {
 

@@ -314,8 +314,7 @@ class CreateUnicefMod2V1 extends Migration
             $table->tinyInteger('edad')->nullable();
             $table->char('genero', 1)->nullable();
             $table->char('status', 1)->default('1');
-            $table->integer('created_by')->unsigned()->nullable();
-            $table->integer('updated_by')->unsigned()->nullable();
+
 
             $table->integer('beneficiario_id')->unsigned();
             $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');;
@@ -323,11 +322,17 @@ class CreateUnicefMod2V1 extends Migration
             $table->foreign('parentesco_id')->references('id')->on('parentescos');
             $table->integer('est_civil_id')->unsigned();
             $table->foreign('est_civil_id')->references('id')->on('est_civiles');
-            $table->integer('niv_estudio_id')->unsigned();
-            $table->foreign('niv_estudio_id')->references('id')->on('niv_estudios');
+            $table->integer('niv_educativo_id')->unsigned();
+            $table->foreign('niv_educativo_id')->references('id')->on('niv_educativos');
             $table->integer('ocupacion_id')->unsigned();
             $table->foreign('ocupacion_id')->references('id')->on('ocupaciones');
+
+            $table->integer('created_by')->unsigned()->nullable();
+            $table->integer('updated_by')->unsigned()->nullable();
+            $table->integer('deleted_by')->unsigned()->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
         });
 
         $nTable = 'entidades';

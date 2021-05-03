@@ -153,7 +153,7 @@ trait Mk_ia_db
                 }
             }
 
-            Mk_debug::msgApi(['listar index perpage', $perPage]);
+            //Mk_debug::msgApi(['listar index perpage', $perPage]);
             if ($perPage < 0) {
                 $result = $consulta->get()->toArray();
                 $result = [
@@ -305,6 +305,7 @@ trait Mk_ia_db
             $cols    = Mk_db::tableCol($cols, $datos);
             $_custom = $datos->_customFields;
             $_rel    = $datos->_withRelations;
+            $_relExtra    = $datos->_withRelationsExtra;
             $datos   = $datos->select($cols);
             if (!empty($_custom)) {
 
@@ -324,6 +325,9 @@ trait Mk_ia_db
             if (isset($_rel)) {
                 $datos = $datos->with($_rel);
             }
+            if (isset($_relExtra)) {
+              $datos = $datos->with($_relExtra);
+          }
             
             $prefix = $this->addCacheList($this->__modelo, [$id, $request->existe, DB::connection()->getPdo()->quote($request->where), DB::connection()->getPdo()->quote($request->valor)]);
             if (_cacheQueryDebugInactive) {
@@ -624,7 +628,7 @@ trait Mk_ia_db
             array_push($cached, $prefix);
             Cache::put($prefixList, $cached, _cachedTime);
             Cache::forget($prefix);
-            //Mk_debug::msgApi(['Cache Lista Añadido: '.$prefix,Cache::get($prefixList, []),$cached]);
+            Mk_debug::Warning(['Cache Enlistado: ', $prefix]);
         }
         return $prefix;
     }

@@ -16,8 +16,8 @@ class Beneficiarios extends Model
     public $_customFields = ["ST_X(coord) as lat, ST_Y(coord) as lng"];
 
     //public $_withRelations = ['evaluaciones:beneficiarios_id,id'];
-    public $_withRelations = ['problemas'];
-
+    public $_withRelationsExtra = ['problemas','firmados','metodos','familiares'];
+    public $_pivot2Array = ['firmados','metodos'];
     public $_cachedRelations = [
         ['App\Modules\mkRutas\rutas','rutas_id']
     ];
@@ -64,15 +64,34 @@ class Beneficiarios extends Model
 
     public function evaluaciones()
     {
-        return $this->hasMany('\App\Modules\mkEvaluaciones\evaluaciones');
+        return $this->hasMany('\App\Modules\mkEvaluaciones\Evaluaciones');
         
     }
 
     public function problemas()
     {
-        return $this->hasMany('\App\Modules\mkBeneficiarios\prob_sol_existentes','beneficiario_id');
+        return $this->hasMany('\App\Modules\mkBeneficiarios\Prob_sol_existentes','beneficiario_id')->select(['id','problemas','soluciones','beneficiario_id']);
         
     }
+
+    public function familiares()
+    {
+        return $this->hasMany('\App\Modules\mkBeneficiarios\Familiares','beneficiario_id')->select(['id','name','edad','genero','est_civil_id','niv_educativo_id','ocupacion_id','parentesco_id','status','beneficiario_id']);
+        
+    }
+
+    public function firmados()
+    {
+        return $this->belongsToMany('\App\Modules\mkBeneficiarios\Doc_firmados',null,'beneficiario_id','doc_firmado_id')->select('doc_firmado_id as id');
+        
+    }
+
+    public function metodos()
+    {
+        return $this->belongsToMany('\App\Modules\mkBeneficiarios\Info_metodos',null,'beneficiario_id','info_metodo_id')->select('info_metodo_id as id');
+        
+    }
+    
 
 
 }
