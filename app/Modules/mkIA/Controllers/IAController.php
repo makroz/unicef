@@ -181,6 +181,21 @@ class IAController extends BaseController
                     $rulF = ":rules='[" . join(',', $lRulesF) . "]'";
                 }
 
+              if ($col['typeF'] == 'textarea') {
+                $addInput = true;
+                $formul   = "
+      <v-textarea
+        label='" . $col['lForm'] . "'
+        v-model='item." . $col['COLUMN_NAME'] . "'
+        $rulF
+        validate-on-blur
+        rows='2'
+        :readonly=\"accion == 'show'\"
+      >
+      </v-textarea>
+";
+            }
+
                 if ($col['typeF'] == 'text') {
                     $addInput = true;
                     $formul   = "

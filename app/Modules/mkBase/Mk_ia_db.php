@@ -628,7 +628,7 @@ trait Mk_ia_db
             array_push($cached, $prefix);
             Cache::put($prefixList, $cached, _cachedTime);
             Cache::forget($prefix);
-            Mk_debug::Warning(['Cache Enlistado: ', $prefix]);
+            Mk_debug::Warning(['Cache Enlistado: ', $prefixList]);
         }
         return $prefix;
     }
