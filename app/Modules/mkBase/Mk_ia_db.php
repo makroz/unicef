@@ -162,6 +162,7 @@ trait Mk_ia_db
                 ];
             } else {
                 $result = $consulta->paginate($perPage)->toArray();
+                //$modelo->simplePaginate($perPage, Mk_db::tableCol($cols, $modelo), 'page', $page);
             }
             return $result;
 
@@ -249,11 +250,12 @@ trait Mk_ia_db
                     $r = false;
                 }
             }
+            Mk_debug::warning(['Grabar es:', $grabar]);
             if ($r) {
-                if ($grabar == 1) {
+                //if ($grabar == 1) {
                     $_key = $datos->getKeyName();
                     $r    = $datos->$_key;
-                }
+                //}
                 $msg = '';
                 $this->afterSave($request, $datos, 0, $r);
                 DB::commit();
@@ -399,7 +401,7 @@ trait Mk_ia_db
                 DB::rollback();
             } else {
 
-                $this->afterSave($request, $datos, $r, $id);
+                $this->afterSave($request, $datos, 1, $id);
                 DB::commit();
                 $this->clearCache();
                 //modulo adicionales

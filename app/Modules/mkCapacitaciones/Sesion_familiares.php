@@ -11,7 +11,8 @@ class Sesion_familiares extends Model
 
     protected $fillable = ['id','fecha','contenido','hallazgos','alertas','acciones','nparticipantes','status','beneficiario_id'];
     protected $attributes = ['status' => '1'];
-    
+    public $_withRelations = ['apoyos.apoyos'];
+    //public $_pivot2Array = ['apoyos:apoyos.apoyos'];
 
     public function getRules($request){
         return [
@@ -28,6 +29,12 @@ class Sesion_familiares extends Model
             'deleted_by' => 'numeric',
             'beneficiario_id' => 'numeric|required_with:beneficiario_id'
         ];
+    }
+
+    public function apoyos()
+    {
+        return $this->hasOne('\App\Modules\mkBeneficiarios\Beneficiarios','id','beneficiario_id')->select('id');
+        
     }
 
 

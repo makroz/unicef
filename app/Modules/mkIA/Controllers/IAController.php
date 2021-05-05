@@ -114,6 +114,8 @@ class IAController extends BaseController
         $campos     = "";
         $formulario = "";
         $attributes = [];
+        $rImport='';
+        $rComponent='';
 
         $relMounted = '';
         $dataRel    = '';
@@ -256,6 +258,20 @@ class IAController extends BaseController
       </v-checkbox>
 ";
               }
+
+              if ($col['typeF'] == 'date') {
+
+                $addInput = true;
+                $formul   = "
+      <mk-date
+      v-model='item." . $col['COLUMN_NAME'] . "'
+      label='" . $col['lForm'] . "'
+      $rulF
+      :accion='accion'
+      >
+      </mk-date>
+";
+            }
 
                 //
                 if ($addInput) {

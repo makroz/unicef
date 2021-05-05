@@ -34,7 +34,6 @@ import MkModuloMix from "@/components/mkComponentes/mixins/MkModuloMix";
 
 export default {
   middleware: ["authAccess"],
-
   mixins: [MkModuloMix],
   name: "{{**NameClass**}}",
   data() {

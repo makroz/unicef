@@ -30,16 +30,16 @@ class UsuariosController extends Controller
         }
     }
 
-    public function afterSave(Request $request, $modelo, $error=0, $id=0)
+    public function afterSave(Request $request, $modelo, $action=0, $id=0)
     {
 
-        Mk_debug::msgApi(['afterSave:',$request,  $error, $id]);
-        if ($error>=0) {
+        //Mk_debug::msgApi(['afterSave:',$request,  $action, $id]);
+        if ($action>=0) {
             $_key=$modelo->getKeyName();
             $modelo->$_key=$id;
 
             if (isset($request->paramsExtra['permisos'])) {
-                if ($id>0) {//modificar
+                if ($action>0) {//modificar
                         $modelo->permisos()->detach();
                 }
                 foreach ($request->paramsExtra['permisos'] as $key => $value) {
@@ -50,7 +50,7 @@ class UsuariosController extends Controller
                 Mk_auth::forgetUser($id);
             }
             if (isset($request->paramsExtra['grupos'])) {
-                if ($id>0) {//modificar
+                if ($action>0) {//modificar
                     $modelo->grupos()->detach();
                 }
                 foreach ($request->paramsExtra['grupos'] as $key => $value) {

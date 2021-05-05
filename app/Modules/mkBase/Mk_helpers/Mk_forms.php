@@ -2,9 +2,11 @@
 
 namespace App\Modules\mkBase\Mk_helpers;
 
-use Request;
-use Session;
-use Cache;
+
+
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
@@ -16,13 +18,18 @@ class Mk_forms
     public static function getSession($name, $default='')
     {
         $token=Mk_auth::get()->getTokenCoockie();
+        $r='vacio';
         if ($token=='') {
-            return Session::get($name, $default);
+            //Mk_debug::warning(Session::get($name, $default), 'Sesion', 'GetToken*'.$token);
+            $r=Session::get($name, $default);
         } else {
-            return Cache::remember("{$token}.{$name}", self::$timeSession, function () use ($default) {
+          
+          $r=Cache::remember("{$token}.{$name}", self::$timeSession, function () use ($default) {
                 return $default;
             });
         }
+        //Mk_debug::warning($r, 'Sesion', 'Get*'.$token);
+        return $r;
     }
 
 
@@ -34,6 +41,7 @@ class Mk_forms
         } else {
             Cache::put("{$token}.{$name}",$value,self::$timeSession);
         }
+        //Mk_debug::warning("$name, $value", 'Sesion', 'Set*'.$token);
         return true;
     }
     public static function getParam($name, $default='')

@@ -17,7 +17,7 @@ class Beneficiarios extends Model
 
     //public $_withRelations = ['evaluaciones:beneficiarios_id,id'];
     public $_withRelationsExtra = ['problemas','firmados','metodos','familiares'];
-    public $_pivot2Array = ['firmados','metodos'];
+    public $_pivot2Array = ['firmados','metodos','apoyos'];
     public $_cachedRelations = [
         ['App\Modules\mkRutas\rutas','rutas_id']
     ];
@@ -91,6 +91,13 @@ class Beneficiarios extends Model
         return $this->belongsToMany('\App\Modules\mkBeneficiarios\Info_metodos',null,'beneficiario_id','info_metodo_id')->select('info_metodo_id as id');
         
     }
+
+    public function apoyos()
+    {
+        return $this->belongsToMany('\App\Modules\mkCapacitaciones\Lista_apoyos','requiere_apoyos','beneficiario_id','lista_apoyo_id')->select('lista_apoyo_id as id');
+        
+    }
+
     
 
 

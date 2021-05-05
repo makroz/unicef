@@ -38,7 +38,7 @@ class CreateUnicefModreunionesV1 extends Migration
             $table->engine = 'InnoDB';
 
             $table->increments('id');
-            $table->datetime('fecha');
+            $table->date('fecha');
             $table->text('contenido');
             $table->text('hallazgos');
             $table->text('alertas');
@@ -62,7 +62,7 @@ class CreateUnicefModreunionesV1 extends Migration
             $table->engine = 'InnoDB';
 
             $table->increments('id');
-            $table->datetime('fecha');
+            $table->date('fecha');
             $table->text('contenido');
             $table->text('hallazgos');
             $table->char('status', 1)->default('1');

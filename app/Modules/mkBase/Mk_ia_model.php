@@ -118,7 +118,8 @@ trait Mk_ia_model
         $attributes = $this->attributesToArray();
         $attributes = array_merge($attributes, $this->relationsToArray());
         //Mk_debug::msgApi(['2array',$attributes]);
-        if (!empty($this->_withRelations)&&!empty($this->_pivot2Array)) {
+        //if (!empty($this->_withRelations)&&!empty($this->_pivot2Array)) {
+          if (!empty($this->_pivot2Array)) {
            
             foreach ($this->_pivot2Array as $key1 => $value1) {
                 $dat=explode(':', $value1.':id');
@@ -132,7 +133,9 @@ trait Mk_ia_model
                         $i=[];
                         foreach ($attributes[$rel] as $key => $value) {
                             if (is_array($value)) {
-                                $i[]=$value[$piv];
+                              //if (!empty($value[$piv])) {
+                                  $i[]=$value[$piv];
+                             // }
                             } else {
                                 if ($key==$piv) {
                                     $i=$value;

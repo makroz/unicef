@@ -20,9 +20,9 @@ class GruposController extends Controller
         return true;
     }
 
-    public function afterSave(Request $request, $modelo, $error=0, $id=0)
+    public function afterSave(Request $request, $modelo, $action=0, $id=0)
     {
-        if ($error>=0) {
+        if ($action>=0) {
             $_key=$modelo->getKeyName();
             $modelo->$_key=$id;
             

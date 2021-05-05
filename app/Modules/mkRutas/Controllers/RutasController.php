@@ -22,11 +22,11 @@ class RutasController extends Controller
         return true;
     }
 
-    public function afterSave(Request $request, $modelo, $error=0, $id=0)
+    public function afterSave(Request $request, $modelo, $action=0, $id=0)
     {
         if ($request->has('beneficiarios')){
             $ids=join(',',$request->beneficiarios);
-            if ($id>0){
+            if ($action>0){
                 DB::update('update beneficiarios set rutas_id = null where rutas_id = ?', [$id]);
             }
             if (!empty($ids)){
