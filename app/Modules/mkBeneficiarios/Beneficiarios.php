@@ -9,7 +9,7 @@ class Beneficiarios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['id','name','epsa','autoriza','protec','dir','nivel','status','distritos_id','entidades_id','rutas_id','manzano','lote','safsi','nfamilias','npersonas','c_gob_municipal','c_gob_municipal_p','c_ong','c_ong_p','c_familias','c_familias_p','c_otra','c_otra_p','dpto_id','municipio_id','zona_id','descom_id','epsa_id','tipo_bano_id'];
+    protected $fillable = ['id','name','jefe_hogar','epsa','autoriza','protec','dir','nivel','status','distritos_id','entidades_id','rutas_id','manzano','lote','safsi','nfamilias','npersonas','c_gob_municipal','c_gob_municipal_p','c_ong','c_ong_p','c_familias','c_familias_p','c_otra','c_otra_p','dpto_id','municipio_id','zona_id','descom_id','epsa_id','tipo_bano_id'];
     protected $attributes = ['status' => '1','nfamilias' => '1','npersonas' => '1'];
     public $_listTable = ['name','epsa','autoriza', 'protec', 'dir','nivel', 'rutas_id','distritos_id','entidades_id','status'];
 
