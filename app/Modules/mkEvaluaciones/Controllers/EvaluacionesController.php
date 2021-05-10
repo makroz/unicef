@@ -78,7 +78,7 @@ class EvaluacionesController extends Controller
 
             if ($action!=0) {
                 $benef=$request->benef;
-                DB::delete('delete from solicitud_servicios where evaluaciones_id=? and beneficiarios_id=? and estado=1', [$id,$benef]);
+                DB::delete('delete from solicitud_servicios where evaluaciones_id=? and beneficiarios_id=? and estado=0', [$id,$benef]);
             }
 
             if (count($request->servicios)>0) {

@@ -2,11 +2,12 @@
 
 namespace App\Modules\mkBeneficiarios\Controllers;
 
-use App\Modules\mkBase\Controller;
-use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
-use App\Modules\mkBase\Mk_ia_db;
 use Illuminate\Http\Request;
+use App\Modules\mkBase\Mk_ia_db;
+use App\Modules\mkBase\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
 class BeneficiariosController extends Controller
 {
@@ -146,5 +147,69 @@ class BeneficiariosController extends Controller
         }
 
     }
+
+    public function listas(Request $request)
+    {
+      $this->proteger('show');
+      $r=[];
+      $modelo = 'App\Modules\mkRutas\Rutas';
+      $cols = 'id,name';
+      $r['Rutas'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Rutas');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Distritos';
+      $cols = 'id,name';
+      $r['Distritos'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Distritos');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Entidades';
+      $cols = 'id,name';
+      $r['Entidades'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Entidades');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Dptos';
+      $cols = 'id,name';
+      $r['Dptos'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Dptos');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Zonas';
+      $cols = 'id,name';
+      $r['Zonas'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Zonas');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Descoms';
+      $cols = 'id,name';
+      $r['Descoms'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Descoms');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Epsas';
+      $cols = 'id,name';
+      $r['Epsas'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Epsas');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Tipo_banos';
+      $cols = 'id,name';
+      $r['Tipo_banos'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Tipo_banos');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Doc_firmados';
+      $cols = 'id,name';
+      $r['Doc_firmados'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Doc_firmados');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Info_metodos';
+      $cols = 'id,name';
+      $r['Info_metodos'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Info_metodos');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Parentescos';
+      $cols = 'id,name';
+      $r['Parentescos'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Parentescos');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Est_civiles';
+      $cols = 'id,name';
+      $r['Est_civiles'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Est_civiles');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Niv_educativos';
+      $cols = 'id,name';
+      $r['Niv_educativos'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Niv_educativos');
+
+      $modelo = 'App\Modules\mkBeneficiarios\Ocupaciones';
+      $cols = 'id,name';
+      $r['Ocupaciones'] = $this->getDatosDbCache($request, $modelo, $cols, ['send' => false],'Ocupaciones');
+         $result = [$r];
+        return Mk_db::sendData(count($result), $result, '');
+    }
+
 
 }

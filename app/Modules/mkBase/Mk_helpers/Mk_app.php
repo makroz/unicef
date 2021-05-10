@@ -56,6 +56,7 @@ class Mk_app
         Route::group(['prefix' => $prefix], function () use ($modulo, $rutasExtras, $nameSpace) {
             Route::post('/delete', $nameSpace . $modulo . 'Controller@destroy');
             Route::post('/restore', $nameSpace . $modulo . 'Controller@restore');
+            Route::post('/listData', $nameSpace . $modulo . 'Controller@listData');
             Route::post('/setStatus', $nameSpace . $modulo . 'Controller@setStatus');
             foreach ($rutasExtras as $key => $lruta) {
                 $method = $lruta[0];

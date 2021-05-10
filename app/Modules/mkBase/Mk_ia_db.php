@@ -182,17 +182,26 @@ trait Mk_ia_db
             return Mk_db::sendData($datos['total'], $datos['data'], '', $_debug, true);
         }
     }
-    public function isCachedFront($data, $ct = 1)
+    public function isCachedFront($data, $nct = 1,$mod='')
     {
-        $_ct = '_ct_';
-        if ($ct != 1) {
-            $_ct = '_ct2_';
+
+      if ($mod!=''){
+        if ($mod == md5(json_encode($data))) {
+          $data = '_ct_';
         }
-        if (request()->has($_ct)) {
-            if (request()->input($_ct, '') == md5(json_encode($data))) {
-                $data = '_ct_';
-            }
-        }
+      }else{
+          $_ct = '_ct_';
+          if ($nct != 1) {
+              $_ct = '_ct2_';
+          }
+
+
+          if (request()->has($_ct)) {
+              if (request()->input($_ct, '') == md5(json_encode($data))) {
+                  $data = '_ct_';
+              }
+          }
+      }
         return $data;
     }
     public function beforeDel($id, $modelo)
@@ -542,15 +551,30 @@ trait Mk_ia_db
             return Mk_db::sendData($r, $this->index($request, false), $msg);
         }
     }
+    public function listData(Request $request)
+    {
+      //return Mk_db::sendData(2, $request->lista, '');
+      $this->proteger('show');
+      $r=[];
+      foreach ($request->lista as $key => $lista) {
+        $modelo = 'App\Modules\\'.$lista['modulo'].'\\'.$lista['mod'];
+        $cols = $lista['campos'];
+        $_customFields=!empty($lista['_customFields']) ? $lista['_customFields'] : false;
+        $rel=!empty($lista['rel']) ? $lista['rel'] : false;
+        $r[$lista['mod']] = $this->getDatosDbCache($request, $modelo, $cols, ['rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
+      }
+      return Mk_db::sendData(2, $r, '');
+    }
 
-    public function getDatosDbCache(Request $request, $model, $cols = '', $options = [])
+    public function getDatosDbCache(Request $request, $model, $cols = '', $options = [],$mod='',$debug=true)
     {
         $filtros       = !empty($options['filtros']) ? $options['filtros'] : [];
         $relations     = !empty($options['relations']) ? $options['relations'] : [];
-        $_send         = !empty($options['send']) ? $options['send'] : true;
+        $_send         = !empty($options['_send']) ? $options['_sent'] : false;
         $perPage       = !empty($options['perPage']) ? $options['perPage'] : _maxRowTable;
         $page          = !empty($options['page']) ? $options['page'] : 1;
         $_customFields = !empty($options['_customFields']) ? $options['_customFields'] : false;
+        $rel = !empty($options['rel']) ? $options['rel'] : false;
 
         $prefix = $this->addCacheList($model, [$page, $perPage, 'id', 'desc', '', 0, $cols, $options]);
         if (_cacheQueryDebugInactive) {
@@ -558,14 +582,28 @@ trait Mk_ia_db
             Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
         }
 
-        $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page, $perPage, $filtros, $relations, $_customFields) {
+        $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page, $perPage, $filtros, $relations, $_customFields,$rel) {
             Mk_debug::warning('Se cargo de la BD! ' . $model, 'CACHE ACTIVO', 'BackEnd');
             $modelo = new $model();
             if ($_customFields == 1) {
                 $_customFields = !empty($modelo->_customFields) ? $modelo->_customFields : [];
             }
-            $cols = explode(',', $cols);
-            $cols = array_merge([$modelo->getKeyName()], $cols);
+
+            if ($cols=='*') {
+              $cols='';
+            }
+            if (!empty($cols)) {
+              $cols = explode(',', $cols);
+              $cols = array_merge([$modelo->getKeyName()], $cols);
+          } else {
+              if (!$modelo->_listTable) {
+                  $modelo->_listTable = $modelo->getFill();
+              }
+              $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
+          }
+
+            // $cols = explode(',', $cols);
+            // $cols = array_merge([$modelo->getKeyName()], $cols);
             foreach ($filtros as $key => $filtro) {
                 if ($filtro[0] != 'OR') {
                     $modelo = $modelo->where($filtro[0], $filtro[1], $filtro[2]);
@@ -578,10 +616,17 @@ trait Mk_ia_db
                 }
             }
 
+            if ($rel) {
+              Mk_debug::warning('Entro a rel', 'CACHE', $rel);
+              if (isset($modelo->_withRelations)) {
+                $modelo = $modelo->with($modelo->_withRelations);
+              }
+            }
             if ($relations) {
                 Mk_debug::warning('Entro a relation', 'CACHE', $relations);
                 $modelo = $modelo->with($relations);
             }
+
 
             //$cols=array_merge($cols, $colsJoin);
             $cols   = Mk_db::tableCol($cols, $modelo);
@@ -608,9 +653,9 @@ trait Mk_ia_db
         } else {
             $d         = $datos->toArray();
             $total     = count($d['data']);
-            $d['data'] = $this->isCachedFront($d['data']);
+            $d['data'] = $this->isCachedFront($d['data'],1,$mod);
             if ($_send) {
-                return Mk_db::sendData($total, $d['data'], '');
+                return Mk_db::sendData($total, $d['data'], '',$debug);
             } else {
                 return $d['data'];
             }

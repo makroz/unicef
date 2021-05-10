@@ -100,7 +100,7 @@ class RuteosController extends Controller
 
         $rutas = $this->getDatosDbCache($request, $modelo, $cols, ['filtros' => $filtros, 'relations' => ['beneficiarios:rutas_id,id'], 'send' => false]);
         $modelo = 'App\Modules\mkRutas\Ruteos';
-        $cantRutas = count($rutas['data']);
+        $cantRutas = count($rutas);
 
         $fecha_actual = date("d-m-Y");
         $ds = date('N');
@@ -123,7 +123,7 @@ class RuteosController extends Controller
             'send' => false,
         ];
 
-        foreach ($rutas['data'] as $key => $ruta) {
+        foreach ($rutas as $key => $ruta) {
             $filtros = [
                 //['created_at', '>=', $f1],
                 ['created_at', '>=', $f2],
@@ -141,9 +141,9 @@ class RuteosController extends Controller
             );
 
             $disp=[];
-            $cantRuteos = count($ruteos['data']);
+            $cantRuteos = count($ruteos);
             if ($cantRuteos > 0) {
-                foreach ($ruteos['data'] as $key => $ruteo) {
+                foreach ($ruteos as $key => $ruteo) {
                     Mk_debug::msgApi(['Fechas:',$userId,$ruteo['id'],Mk_date::dateToUTC($ruteo['created_at']),Mk_date::dateToUTC($ruteo['fec_cerrado']),Mk_date::dateToUTC($ruteo['created_at']) >= Mk_date::dateToUTC($ruteo['fec_cerrado'])]);
                     if (empty($ruteo['fec_cerrado'])) {
                         if (Mk_date::dateToLocal($ruteo['created_at']) >= Mk_date::dateToLocal($f1)){
@@ -158,7 +158,7 @@ class RuteosController extends Controller
             } 
         }
 
-        foreach ($rutas['data'] as $key => $ruta) {
+        foreach ($rutas as $key => $ruta) {
             $filtros = [
                 ['created_at', '>=', $f1],
                 //['created_at', '<=', $f2],
@@ -174,7 +174,7 @@ class RuteosController extends Controller
                 $options
             );
 
-            $cantRuteos = count($ruteos['data']);
+            $cantRuteos = count($ruteos);
             if ($cantRuteos == 0) {
                     $rDispon[] = $ruta;
             }
