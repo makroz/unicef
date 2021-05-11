@@ -388,12 +388,13 @@ trait Mk_ia_db
                 $validatedData = $request->validate($rules);
             }
 
-            Mk_debug::msgApi(['request antesd', $request]);
+            
             //$newDatos=new stdobjet();
             $dataUpdate = $request->only($datos->getfill());
+            Mk_debug::msgApi(['request antesd', $dataUpdate]);
             $this->beforeSave($request, $dataUpdate, $id);
 
-            Mk_debug::msgApi(['request', $dataUpdate]);
+            Mk_debug::msgApi(['requestDESP', $dataUpdate]);
             if (!empty($dataUpdate)) {
                 $dataUpdate['updated_by'] = $datos->getUser();
                 $r                        = $datos->where($_key, '=', $id)
