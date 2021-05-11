@@ -1,8 +1,8 @@
 <?php
 namespace App\Modules\mkBase\Mk_helpers\Mk_auth;
 
-use \Cache;
-use \Request;
+use Illuminate\Support\Facades\Cache;
+use \Illuminate\Http\Request;
 use App\Modules\mkBase\Mk_helpers\Mk_db;
 use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use Illuminate\Support\Facades\DB;

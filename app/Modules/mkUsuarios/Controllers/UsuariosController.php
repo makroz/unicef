@@ -28,6 +28,7 @@ class UsuariosController extends Controller
         }
         if (!empty($modelo['pass'])) {
             $modelo['pass'] = sha1($modelo['pass']);
+            Mk_auth::forgetUser($id);
         }
     }
 
