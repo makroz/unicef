@@ -561,7 +561,8 @@ trait Mk_ia_db
         $cols = $lista['campos'];
         $_customFields=!empty($lista['_customFields']) ? $lista['_customFields'] : false;
         $rel=!empty($lista['rel']) ? $lista['rel'] : false;
-        $r[$lista['mod']] = $this->getDatosDbCache($request, $modelo, $cols, ['rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
+        $filtros       = !empty($lista['filtros']) ? $lista['filtros'] : [];
+        $r[$lista['mod']] = $this->getDatosDbCache($request, $modelo, $cols, ['filtros'=>$filtros,'rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
       }
       return Mk_db::sendData(2, $r, '');
     }
@@ -570,7 +571,7 @@ trait Mk_ia_db
     {
         $filtros       = !empty($options['filtros']) ? $options['filtros'] : [];
         $relations     = !empty($options['relations']) ? $options['relations'] : [];
-        $_send         = !empty($options['_send']) ? $options['_sent'] : false;
+        $_send         = !empty($options['send']) ? $options['send'] : false;
         $perPage       = !empty($options['perPage']) ? $options['perPage'] : _maxRowTable;
         $page          = !empty($options['page']) ? $options['page'] : 1;
         $_customFields = !empty($options['_customFields']) ? $options['_customFields'] : false;
@@ -589,21 +590,26 @@ trait Mk_ia_db
                 $_customFields = !empty($modelo->_customFields) ? $modelo->_customFields : [];
             }
 
-            if ($cols=='*') {
-              $cols='';
-            }
-            if (!empty($cols)) {
+            // if ($cols=='*') {
+            //   $cols='';
+            // }
+            if (!empty($cols) && $cols!='*') {
               $cols = explode(',', $cols);
               $cols = array_merge([$modelo->getKeyName()], $cols);
           } else {
-              if (!$modelo->_listTable) {
+              if ($cols=='*') {
                   $modelo->_listTable = $modelo->getFill();
+              }else{
+                  if (!$modelo->_listTable) {
+                      $modelo->_listTable = $modelo->getFill();
+                  }
               }
               $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
           }
 
             // $cols = explode(',', $cols);
             // $cols = array_merge([$modelo->getKeyName()], $cols);
+            //Mk_debug::warning('filtros', $model, $filtros);
             foreach ($filtros as $key => $filtro) {
                 if ($filtro[0] != 'OR') {
                     $modelo = $modelo->where($filtro[0], $filtro[1], $filtro[2]);

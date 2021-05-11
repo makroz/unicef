@@ -43,7 +43,7 @@ class RutasController extends Controller
             ['roles_id','=','2',],
             ['status','<>',0]
         ];
-        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros]);
+        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'send' => true]);
         
     }
 
@@ -55,7 +55,7 @@ class RutasController extends Controller
             ['OR',['rutas_id','=',null],['rutas_id','=',$id]],
             ['status','<>',0]
         ];
-        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'_customFields'=>1]);
+        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'_customFields'=>1,'send' => true]);
         
     }
     
