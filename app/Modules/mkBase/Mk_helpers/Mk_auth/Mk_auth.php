@@ -1,11 +1,12 @@
 <?php
 namespace App\Modules\mkBase\Mk_helpers\Mk_auth;
 
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Cache;
-use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
 use App\Modules\mkBase\Mk_helpers\Mk_db;
 use App\Modules\mkBase\Mk_helpers\Mk_debug;
-use Illuminate\Support\Facades\DB;
 use App\Modules\mkBase\Mk_helpers\Mk_singleton;
 
 class Mk_auth

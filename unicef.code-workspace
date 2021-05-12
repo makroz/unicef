@@ -6,6 +6,31 @@
 	],
 	"settings": {
 		"intelephense.compatibility.correctForBaseClassStaticUnionTypes":false,
-		"intelephense.diagnostics.undefinedMethods":false
+    "intelephense.diagnostics.undefinedMethods": false,
+    "intelephense.files.exclude": [
+      "**/.git/**",
+      "**/.svn/**",
+      "**/.hg/**",
+      "**/CVS/**",
+      "**/.DS_Store/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/vendor/**/{Tests,tests}/**",
+      "**/.history/**",
+      "**/vendor/**/vendor/**",
+      "**/stubs/",
+      "**\\stubs\\",
+      "**/stubs/**",
+      "**\\stubs\\**",
+      "**/app/Modules/mkIA/stubs/",
+      "**/app/Modules/mkIA/stubs/**",
+      "/app/Modules/mkIA/stubs/",
+      "/app/Modules/mkIA/stubs/**",
+      "app/Modules/mkIA/stubs/",
+      "app/Modules/mkIA/stubs/**",
+      "**/app/Modules/mkIA/stubs/model.php",
+      "/app/Modules/mkIA/stubs/model.php",
+      "app/Modules/mkIA/stubs/model.php"
+    ]
 	}
 }
