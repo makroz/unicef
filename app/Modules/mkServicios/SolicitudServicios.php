@@ -9,7 +9,7 @@ class SolicitudServicios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['cant', 'estado', 'status',
+    protected $fillable = ['cant', 'estado', 'status','created_at','created_by',
         'fecha_1', 'usuarios_id_1',
         'fecha_2', 'usuarios_id_2',
         'fecha_3', 'usuarios_id_3',

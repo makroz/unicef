@@ -85,9 +85,9 @@ class EvaluacionesController extends Controller
                 $values=[];
                 $data=[];
                 foreach ($request->servicios as $key=>$servicio) {
-                    $data[]=$now;
-                    $data[]=$now;
                     $data[]=$user_id;
+                    $data[]=$user_id;
+                    $data[]=$now;
                     $data[]=$now;
                     $data[]=$id;
                     $data[]=$key;
@@ -98,7 +98,7 @@ class EvaluacionesController extends Controller
                     $values[]='(?,?,?,?,?,?,?,?,?,?)';
                 }
                 $values=join(',', $values);
-                DB::insert('insert into solicitud_servicios (created_at,updated_at,usuarios_id_1,fecha_1,evaluaciones_id,servicios_id,beneficiarios_id,cant,estado,status) values '.$values, $data);
+                DB::insert('insert into solicitud_servicios (created_by,updated_by,created_at,updated_at,evaluaciones_id,servicios_id,beneficiarios_id,cant,estado,status) values '.$values, $data);
             }
             $this->clearCache('solicitud_servicios');
         }

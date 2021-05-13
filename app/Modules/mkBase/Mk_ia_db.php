@@ -262,10 +262,10 @@ trait Mk_ia_db
             }
             Mk_debug::warning(['Grabar es:', $grabar]);
             if ($r) {
-                //if ($grabar == 1) {
+              if ((!$grabar) or ($grabar == 1)) {
                     $_key = $datos->getKeyName();
                     $r    = $datos->$_key;
-                //}
+              }
                 $msg = '';
                 $this->afterSave($request, $datos, 0, $r);
                 DB::commit();

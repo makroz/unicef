@@ -26,17 +26,17 @@ class SolicitudServiciosController extends Controller
             $user_id=Mk_auth::get()->getUser()->id;
         }
         
-        if (@is_array($request->paramsExtra['servicios'])){
+        if (!empty($request->servicios) && is_array($request->servicios)){
             $data = [];
             $now=date('Y-m-d H:i:s');
-            $evaluaciones_id=$request->evaluaciones_id?$request->evaluaciones_id:null;
-            foreach ($request->paramsExtra['servicios'] as $servicios){
-                
-                $data[]=[
+            if ($id==0) {
+                $evaluaciones_id=$request->evaluaciones_id?$request->evaluaciones_id:null;
+                foreach ($request->servicios as $servicios) {
+                    $data[]=[
+                  'created_by'=>$user_id,
+                  'updated_by'=> $user_id,
                     'created_at'=>$now,
                     'updated_at'=> $now,
-                    'usuarios_id_1'=>$user_id,
-                    'fecha_1'=>$now,
                     'evaluaciones_id'=>$evaluaciones_id,
                     'servicios_id'=>$servicios['id'],
                     'beneficiarios_id'=>$request->beneficiarios_id,
@@ -44,11 +44,23 @@ class SolicitudServiciosController extends Controller
                     'estado'=>0,
                     'status'=>1,
                 ];
-            }
+                }
 //            Mk_debug::msgApi(['data:',$data]);
-            $r=$modelo::insert($data);
+                $r=$modelo::insert($data);
+            }else{
+              $estado=$request->estado;
+              foreach ($request->servicios as $servicios) {
+                $data=[
+                    'fecha_'.$estado=>$now,
+                    'usuarios_id_'.$estado=>$user_id,
+                    'estado'=>$estado,
+                    'updated_at'=> $now,
+                ];
+                $r=$this->__modelo::where('id', $servicios['sol_id'])->update($data);
+              }
+            }
             if ($r){
-                $r=count($request->paramsExtra['servicios'])+1;
+                $r=count($request->servicios)+1;
             }else{
                 $r=-1;
             }

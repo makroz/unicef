@@ -30,7 +30,8 @@
       "app/Modules/mkIA/stubs/**",
       "**/app/Modules/mkIA/stubs/model.php",
       "/app/Modules/mkIA/stubs/model.php",
-      "app/Modules/mkIA/stubs/model.php"
+      "app/Modules/mkIA/stubs/model.php",
+      "*/stubs/*"
     ]
 	}
 }
