@@ -22,7 +22,8 @@ class CreateModUsuariosV1 extends Migration
             $table->engine ='InnoDB';
 
             $table->smallIncrements('id');
-            $table->string('name', 20);
+            $table->string('slug', 20)->unique();
+            $table->string('name', 100);
             $table->string('descrip', 200)->nullable();
 
             $table->char('status', 1)->default('1');
@@ -94,8 +95,8 @@ class CreateModUsuariosV1 extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->smallInteger('roles_id')->unsigned();
-            $table->foreign('roles_id')->references('id')->on('roles')->onUpdate('cascade');
+            $table->string('roles_slug');
+            $table->foreign('roles_slug')->references('slug')->on('roles');
         });
 
 

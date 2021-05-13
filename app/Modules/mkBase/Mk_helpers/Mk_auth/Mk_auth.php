@@ -183,12 +183,12 @@ class Mk_auth
         try {
             $modelo=new $this->modelo();
             if (empty($id)) {
-                $datos=$modelo->select(['usuarios.id','usuarios.name','usuarios.email','usuarios.status','roles.id as rol_id','roles.name as rol'])
+                $datos=$modelo->select(['usuarios.id','usuarios.name','usuarios.email','usuarios.status','roles.id as rol_id','roles.slug as rol_slug','roles.name as rol'])
                 ->where('email', $username)->where('pass',  sha1($password))
-            ->leftJoin('roles', 'roles.id', '=', 'roles_id')->with('grupos')->first();
+            ->leftJoin('roles', 'roles.slug', '=', 'roles_slug')->with('grupos')->first();
             }else{
-                $datos=$modelo->select(['usuarios.id','usuarios.name','usuarios.email','usuarios.status','roles.id as rol_id','roles.name as rol'])->where('usuarios.id', $id)
-            ->leftJoin('roles', 'roles.id', '=', 'roles_id')->with('grupos')->first();
+                $datos=$modelo->select(['usuarios.id','usuarios.name','usuarios.email','usuarios.status','roles.id as rol_id','roles.slug as rol_slug','roles.name as rol'])->where('usuarios.id', $id)
+            ->leftJoin('roles', 'roles.slug', '=', 'roles_slug')->with('grupos')->first();
             }
         } catch (\Throwable $th) {
             $user=[];

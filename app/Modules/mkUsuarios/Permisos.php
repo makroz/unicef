@@ -21,6 +21,11 @@ class Permisos extends Model
     ];
     }
 
+    public function setSlugAttribute($value)
+    {
+        $this->attributes['slug'] = strtolower($value);
+    }
+
     public function usuarios()
     {
         return $this->belongsToMany('App\Modules\mkUsuarios\Usuarios', 'usuarios_permisos')

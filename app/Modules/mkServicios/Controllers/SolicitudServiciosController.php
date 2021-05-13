@@ -54,6 +54,7 @@ class SolicitudServiciosController extends Controller
                     'fecha_'.$estado=>$now,
                     'usuarios_id_'.$estado=>$user_id,
                     'estado'=>$estado,
+                    'updated_by'=> $user_id,
                     'updated_at'=> $now,
                 ];
                 $r=$this->__modelo::where('id', $servicios['sol_id'])->update($data);

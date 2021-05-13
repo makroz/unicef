@@ -333,7 +333,9 @@ trait Mk_ia_db
                     str_replace("'", "", DB::connection()->getPdo()->quote($request->valor))
                 );
             }
-            $datos = $datos->where($key, '=', $id);
+            if (empty($request->existe)) {
+                $datos = $datos->where($key, '=', $id);
+            }
             if (isset($_rel)) {
                 $datos = $datos->with($_rel);
             }

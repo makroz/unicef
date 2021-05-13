@@ -9,7 +9,7 @@ class Usuarios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['name','email','pass', 'roles_id','status'];
+    protected $fillable = ['name','email','pass', 'roles_slug','status'];
     protected $attributes = ['status' => 1];
     protected $hidden = ['pass'];
 
@@ -23,7 +23,7 @@ class Usuarios extends Model
             'name' => 'required_with:name',
             'email' => 'required_with:email|email|unique:usuarios,email,'.$request->input('id'),
             'pass' => 'sometimes|required|min:8',
-            'roles_id' => 'integer',
+            'roles_slug' => 'required_with:roles_slug',
             'status' => 'in:0,1'
         ];
     }
@@ -41,7 +41,7 @@ class Usuarios extends Model
 
     public function roles()
     {
-        return $this->hasOne('App\Modules\mkUsuarios\Roles');
+        return $this->hasOne('App\Modules\mkUsuarios\Roles','roles_slug');
     }
 
 }

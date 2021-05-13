@@ -9,13 +9,19 @@ class Roles extends Model
 {
     use Mk_ia_model;
 //
-    protected $fillable = ['name', 'descrip','status'];
-    protected $attributes = ['status' => 1,];
+    protected $fillable = ['name', 'slug','descrip','status'];
+    protected $attributes = ['status' => 1];
     public function getRules($request){
         return [
         'name' => 'required_with:name',
+        'slug' => 'required_with:slug|unique:roles,slug,'.$request->input('id'),
         'status' => 'in:0,1'
         ];
+    }
+
+    public function setSlugAttribute($value)
+    {
+        $this->attributes['slug'] = strtolower($value);
     }
 
 

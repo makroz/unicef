@@ -35,17 +35,17 @@ class RutasController extends Controller
             $this->clearCache('beneficiarios');
         }
     }
-    public function monitores(Request $request)
-    { 
-        $modelo = 'App\Modules\mkUsuarios\Usuarios';
-        $cols='id,name';
-        $filtros=[
-            ['roles_id','=','2',],
-            ['status','<>',0]
-        ];
-        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'send' => true]);
+    // public function monitores(Request $request)
+    // { 
+    //     $modelo = 'App\Modules\mkUsuarios\Usuarios';
+    //     $cols='id,name';
+    //     $filtros=[
+    //         ['roles_slug','=','monitor',],
+    //         ['status','<>',0]
+    //     ];
+    //     return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'send' => true]);
         
-    }
+    // }
 
     public function beneficiarios(Request $request,$id)
     { 
