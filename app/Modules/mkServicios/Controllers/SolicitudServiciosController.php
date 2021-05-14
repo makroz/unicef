@@ -19,7 +19,7 @@ class SolicitudServiciosController extends Controller
         parent::__construct($request);
         return true;
     }
-    public function beforeSave(Request $request, $modelo, $id=0)
+    public function beforeSave(Request $request, &$modelo, $id=0)
     {
         $user_id=0;
         if (Mk_auth::get()->isLogin()){
@@ -29,7 +29,7 @@ class SolicitudServiciosController extends Controller
         if (!empty($request->servicios) && is_array($request->servicios)){
             $data = [];
             $now=date('Y-m-d H:i:s');
-            if ($id==0) {
+            if (empty($id)) {
                 $evaluaciones_id=$request->evaluaciones_id?$request->evaluaciones_id:null;
                 foreach ($request->servicios as $servicios) {
                     $data[]=[
@@ -59,9 +59,11 @@ class SolicitudServiciosController extends Controller
                 ];
                 $r=$this->__modelo::where('id', $servicios['sol_id'])->update($data);
               }
+              $modelo=[];
             }
             if ($r){
                 $r=count($request->servicios)+1;
+                
             }else{
                 $r=-1;
             }
