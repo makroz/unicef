@@ -561,12 +561,14 @@ trait Mk_ia_db
       $this->proteger('show');
       $r=[];
       foreach ($request->lista as $key => $lista) {
-        $modelo = 'App\Modules\\'.$lista['modulo'].'\\'.$lista['mod'];
-        $cols = $lista['campos'];
+        $modulo=!empty($lista['modulo'])?$lista['modulo']:'mk'.$lista['mod'];
+        $modelo = 'App\Modules\\'.$modulo.'\\'.$lista['mod'];
+        $cols = !empty($lista['campos'])?$lista['campos']:'';
         $_customFields=!empty($lista['_customFields']) ? $lista['_customFields'] : false;
         $rel=!empty($lista['rel']) ? $lista['rel'] : false;
         $filtros       = !empty($lista['filtros']) ? $lista['filtros'] : [];
-        $r[$lista['mod']] = $this->getDatosDbCache($request, $modelo, $cols, ['filtros'=>$filtros,'rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
+        $l =!empty($lista['l']) ? $lista['l'] : $lista['mod'];
+        $r[$l] = $this->getDatosDbCache($request, $modelo, $cols, ['filtros'=>$filtros,'rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
       }
       return Mk_db::sendData(2, $r, '');
     }
