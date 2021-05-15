@@ -110,9 +110,9 @@ class CreateModUsuariosV1 extends Migration
             $table->softDeletes();
 
             $table->integer('usuarios_id')->unsigned();
-            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('usuarios_id')->references('id')->on('usuarios')->onDelete('cascade');
             $table->integer('permisos_id')->unsigned();
-            $table->foreign('permisos_id')->references('id')->on('permisos')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('permisos_id')->references('id')->on('permisos')->onDelete('cascade');
         });
 
         $nTable='usuarios_grupos';
