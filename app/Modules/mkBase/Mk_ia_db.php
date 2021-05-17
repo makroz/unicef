@@ -397,7 +397,7 @@ trait Mk_ia_db
             Mk_debug::msgApi(['request antesd', $dataUpdate]);
             $this->beforeSave($request, $dataUpdate, $id);
 
-            Mk_debug::msgApi(['requestDESP', $dataUpdate]);
+            Mk_debug::msgApi(['requestDESP', $dataUpdate,$id]);
             if (!empty($dataUpdate)) {
                 $dataUpdate['updated_by'] = $datos->getUser();
                 $r                        = $datos->where($_key, '=', $id)

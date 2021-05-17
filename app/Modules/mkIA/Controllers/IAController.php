@@ -327,6 +327,7 @@ class IAController extends BaseController
         //echo '<br>MEnu <hr>';
         $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
 
+        
         // strrpos()
         $p = strpos($menu, "name: '{$modulo}'");
         if ($p !== false) {
@@ -354,7 +355,7 @@ class IAController extends BaseController
             "                 }\n" .
             "             ]\n" .
             $menu2;
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', $menu);
+       // file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', $menu);
         //}
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront/$modulo.vue", $component);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/$Clase.php", $model);
