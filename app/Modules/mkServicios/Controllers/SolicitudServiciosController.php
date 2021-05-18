@@ -47,28 +47,31 @@ class SolicitudServiciosController extends Controller
                 $r = $modelo::insert($data);
             } else {
                 $estado = $request->estado;
-                $data   = [];
-                $data[] = $now;
-                $data[] = $now;
-                $data[] = $user_id;
-                $data[] = $user_id;
-                $data[] = $request->ref;
-                $data[] = $request->obs;
-                $data[] = $request->forma_pago;
-                $data[] = empty($request->imgFile) ? 0 : 1;
-                $data[] = $user_id;
-                $data[] = $id;
-                $data[] = 1;
-                $values = '(?,?,?,?,?,?,?,?,?,?,?)';
-                DB::insert('insert into orden_servicios (created_at,updated_at,created_by,updated_by,ref,obs,forma_pago_id,foto,recolector_id,beneficiario_id,status) values ' . $values, $data);
-                $id     = DB::getPdo()->lastInsertId();
+
+                if ($request->estado == 3) {
+                    $data   = [];
+                    $data[] = $now;
+                    $data[] = $now;
+                    $data[] = $user_id;
+                    $data[] = $user_id;
+                    $data[] = $request->ref;
+                    $data[] = $request->obs;
+                    $data[] = $request->forma_pago_id;
+                    $data[] = empty($request->imgFile) ? 0 : 1;
+                    $data[] = $user_id;
+                    $data[] = $id;
+                    $data[] = 1;
+                    $values = '(?,?,?,?,?,?,?,?,?,?,?)';
+                    DB::insert('insert into orden_servicios (created_at,updated_at,created_by,updated_by,ref,obs,forma_pago_id,foto,recolector_id,beneficiario_id,status) values ' . $values, $data);
+                    $id = DB::getPdo()->lastInsertId();
+                }
                 foreach ($request->servicios as $servicios) {
                     $data = [
                         'fecha_' . $estado       => $now,
                         'usuarios_id_' . $estado => $user_id,
                         'estado'                 => ($estado == 3 && empty($servicios['realizado'])) ? 9 : $estado,
-                        'obs'                    => !empty($servicios['obs'])?$servicios['obs']:null,
-                        'orden_servicios_id'     => $id,
+                        'obs'                    => !empty($servicios['obs']) ? $servicios['obs'] : null,
+                        'orden_servicios_id'     => ($estado == 3 && $id > 0) ? $id : null,
                         'updated_by'             => $user_id,
                         'updated_at'             => $now,
                     ];
@@ -91,13 +94,13 @@ class SolicitudServiciosController extends Controller
                         }
                         if (count($data) > 0) {
                             $values = join(',', $values);
-                            DB::insert('insert into meteriales_usados (created_at,updated_at,created_by,updated_by,material_id,cant,solicitud_servicio_id) values ' . $values, $data);
+                            DB::insert('insert into materiales_usados (created_at,updated_at,created_by,updated_by,material_id,cant,solicitud_servicio_id) values ' . $values, $data);
                         }
 
                     }
 
                 }
-               
+
                 $modelo = [];
             }
             if ($r) {

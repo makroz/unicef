@@ -248,7 +248,8 @@ trait Mk_ia_db
                 $validatedData = $request->validate($rules);
             }
             $datos->fill($request->only($datos->getfill()));
-            $grabar = $this->beforeSave($request, $datos, 0);
+            $id=0;
+            $grabar = $this->beforeSave($request, $datos, $id);
             Mk_debug::msgApi(['Grabar:', $grabar]);
             if ((!$grabar) or ($grabar == 1)) {
                 Mk_debug::msgApi(['Entro a Save:', $request]);
@@ -566,9 +567,10 @@ trait Mk_ia_db
         $cols = !empty($lista['campos'])?$lista['campos']:'';
         $_customFields=!empty($lista['_customFields']) ? $lista['_customFields'] : false;
         $rel=!empty($lista['rel']) ? $lista['rel'] : false;
+        $relations=!empty($lista['relations']) ? $lista['relations'] : false;
         $filtros       = !empty($lista['filtros']) ? $lista['filtros'] : [];
         $l =!empty($lista['l']) ? $lista['l'] : $lista['mod'];
-        $r[$l] = $this->getDatosDbCache($request, $modelo, $cols, ['filtros'=>$filtros,'rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
+        $r[$l] = $this->getDatosDbCache($request, $modelo, $cols, ['relations'=>$relations,'filtros'=>$filtros,'rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
       }
       return Mk_db::sendData(2, $r, '');
     }
