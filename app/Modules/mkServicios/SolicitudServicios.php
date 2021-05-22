@@ -19,7 +19,7 @@ class SolicitudServicios extends Model
         'servicios_id', 'beneficiarios_id', 'evaluaciones_id','orden_servicios_id','obs','obs_verif',
     ];
     protected $attributes = ['status' => 1, 'estado' => 0];
-    public $_withRelations = ['materiales'];
+    public $_withRelations = ['materiales','qa'];
     public function getRules($request)
     {
         return [
@@ -33,6 +33,11 @@ class SolicitudServicios extends Model
     public function materiales()
     {
         return $this->belongsToMany('\App\Modules\mkServicios\Materiales','materiales_usados','solicitud_servicio_id','material_id')->select(['materiales_usados.id as id_usado','material_id as id','materiales_usados.cant']);
+        
+    }
+    public function qa()
+    {
+        return $this->belongsToMany('\App\Modules\mkServicios\Control_calidades','control_solicitudes','solicitud_servicio_id','control_calidad_id')->select(['control_solicitudes.id as id_control','control_calidad_id as id','control_solicitudes.puntos']);
         
     }
 

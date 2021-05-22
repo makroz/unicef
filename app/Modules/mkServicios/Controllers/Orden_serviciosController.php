@@ -32,16 +32,15 @@ class Orden_serviciosController extends Controller
             if (empty($id)) {
 
             } else {
-                if ($request->accion == 'verificar.') {
+                if ($request->act == 'verificar') {
                     $modelo['estado'] = 4;
-                    $estado           = $request->verificado;
                     $estUser          = 4;
 
                     foreach ($request->servicios as $servicios) {
                         $data = [
                             'fecha_' . $estUser       => $now,
                             'usuarios_id_' . $estUser => $user_id,
-                            'estado'                  => $estado,
+                            'estado'                  => $servicios['verificado'],
                             'obs_verif'               => !empty($servicios['obs_verif']) ? $servicios['obs_verif'] : null,
                             'updated_by'              => $user_id,
                             'updated_at'              => $now,
