@@ -16,7 +16,7 @@ class SolicitudServicios extends Model
         'fecha_4', 'usuarios_id_4',
         'fecha_5', 'usuarios_id_5',
         'fecha_6', 'usuarios_id_6',
-        'servicios_id', 'beneficiarios_id', 'evaluaciones_id','orden_servicios_id','obs',
+        'servicios_id', 'beneficiarios_id', 'evaluaciones_id','orden_servicios_id','obs','obs_verif',
     ];
     protected $attributes = ['status' => 1, 'estado' => 0];
     public $_withRelations = ['materiales'];

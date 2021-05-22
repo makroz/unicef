@@ -84,25 +84,25 @@ class CreateUnicefModC extends Migration
             $table->softDeletes();
         });
 
-        $nTable = 'meteriales_servicios';
-        Schema::dropIfExists($nTable);
-        Schema::create($nTable, function (Blueprint $table) {
-            $table->engine = 'InnoDB';
+        // $nTable = 'meteriales_servicios';
+        // Schema::dropIfExists($nTable);
+        // Schema::create($nTable, function (Blueprint $table) {
+        //     $table->engine = 'InnoDB';
 
-            $table->increments('id');
+        //     $table->increments('id');
 
-            $table->integer('material_id')->unsigned();
-            $table->foreign('material_id')->references('id')->on('materiales')->onDelete('cascade');
+        //     $table->integer('material_id')->unsigned();
+        //     $table->foreign('material_id')->references('id')->on('materiales')->onDelete('cascade');
 
-            $table->integer('servicio_id')->unsigned();
-            $table->foreign('servicio_id')->references('id')->on('servicios')->onDelete('cascade');
+        //     $table->integer('servicio_id')->unsigned();
+        //     $table->foreign('servicio_id')->references('id')->on('servicios')->onDelete('cascade');
 
-            $table->integer('created_by')->unsigned()->nullable();
-            $table->integer('updated_by')->unsigned()->nullable();
-            $table->integer('deleted_by')->unsigned()->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        //     $table->integer('created_by')->unsigned()->nullable();
+        //     $table->integer('updated_by')->unsigned()->nullable();
+        //     $table->integer('deleted_by')->unsigned()->nullable();
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
 
         $nTable = 'meteriales_usados';
         Schema::dropIfExists($nTable);
@@ -158,8 +158,8 @@ class CreateUnicefModC extends Migration
 
             $table->increments('id');
             $table->tinyInteger('puntos')->default(0);
-            $table->string('obs', 250)->nullable();
-            $table->char('status', 1)->default(1);
+            //$table->string('obs', 250)->nullable();
+            //$table->char('status', 1)->default(1);
 
             $table->integer('solicitud_servicio_id')->unsigned();
             $table->foreign('solicitud_servicio_id')->references('id')->on('solicitud_servicios');
@@ -197,6 +197,7 @@ class CreateUnicefModC extends Migration
         $nTable = 'solicitud_servicios';
         Schema::table($nTable, function (Blueprint $table) {
             $table->string('obs', 250)->nullable();
+            $table->string('obs_verif', 250)->nullable();
             $table->integer('orden_servicios_id')->unsigned()->nullable();
             $table->foreign('orden_servicios_id')->references('id')->on('orden_servicios');
 
@@ -215,6 +216,7 @@ class CreateUnicefModC extends Migration
 
         Schema::table('solicitud_servicios', function (Blueprint $table) {
             $table->dropColumn('obs');
+            $table->dropColumn('obs_verif');
             $table->dropForeign(['orden_servicios_id']);
             $table->dropColumn('orden_servicios_id');
 
@@ -223,7 +225,7 @@ class CreateUnicefModC extends Migration
         Schema::dropIfExists('control_solicitudes');
         Schema::dropIfExists('orden_servicios');
         Schema::dropIfExists('meteriales_usados');
-        Schema::dropIfExists('meteriales_servicios');
+        //Schema::dropIfExists('meteriales_servicios');
         Schema::dropIfExists('materiales');
         Schema::dropIfExists('control_calidades');
         Schema::dropIfExists('forma_pagos');
