@@ -9,7 +9,7 @@ class Reprogramados extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['id','obs','solicitud_servicio_id','recolector_id'];
+    protected $fillable = ['id','obs','solicitud_servicio_id','recolector_id','orden_servicio_id'];
     
     
 

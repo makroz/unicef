@@ -9,7 +9,8 @@ class Orden_servicios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['id','ref','foto','obs','estado','recolector_id','forma_pago_id','beneficiario_id','created_at'];
+    protected $fillable = ['id','ref','foto','obs','estado','recolector_id','forma_pago_id','beneficiario_id','created_at','status'];
+    
     
     
 

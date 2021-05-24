@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Modules\mkBase\Mk_ia_db;
 use App\Modules\mkBase\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use App\Modules\mkServicios\SolicitudServicios;
 use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 
@@ -46,10 +47,16 @@ class Orden_serviciosController extends Controller
                             'updated_at'              => $now,
                         ];
                         $r = SolicitudServicios::where('id', $servicios['sol_id'])->update($data);
+                        Mk_debug::msgApi(['r:', $r]);
 
-                        if ($request->verificado == 1) {
-                          $sol=DB::select('select usuario_id_3 as user from solicitud_servicios where id = ?', [$servicios['sol_id']]);
-                          $values = [];
+                        
+
+                        DB::delete('delete from reprogramados where solicitud_servicio_id=?', [$servicios['sol_id']]);
+                        if ($servicios['verificado'] == 1) {
+                          $sol=DB::select('select usuarios_id_3 as user from solicitud_servicios where id = ?', [$servicios['sol_id']]);
+                          //Mk_debug::msgApi(['sol:', $sol[0]->user]);
+                          
+                          //$values = [];
                           $data   = [];
                             $data[]   = $now;
                             $data[]   = $now;
@@ -57,16 +64,16 @@ class Orden_serviciosController extends Controller
                             $data[]   = $user_id;
                             $data[]   = $servicios['sol_id'];
                             $data[]   = !empty($servicios['obs_verif']) ? $servicios['obs_verif'] : null;
-                            $data[]   = $sol['user'];
-                            $values[] = '(?,?,?,?,?,?,?)';
-                            DB::insert('insert into reprogramados (created_at,updated_at,created_by,updated_by,solicitud_servicio_id,obs,recolector_id) values ' . $values, $data);
-                            $this->clearCache('SolicitudServicios');
-                            $this->clearCache('reprogramados');
-                            $this->clearCache('control_solicitudes');
+                            $data[]   = $sol[0]->user;
+                            $data[]   = $id;
+                            $values = '(?,?,?,?,?,?,?,?)';
+                            DB::insert('insert into reprogramados (created_at,updated_at,created_by,updated_by,solicitud_servicio_id,obs,recolector_id,orden_servicio_id) values ' . $values, $data);
+                            
                         }
-
+                        
+                        DB::delete('delete from control_solicitudes where solicitud_servicio_id=?', [$servicios['sol_id']]);
                         if (!empty($servicios['qa'])) {
-                            DB::delete('delete from control_solicitudes where solicitud_servicio_id=?', [$servicios['sol_id']]);
+                            
                             $values = [];
                             $data   = [];
                             foreach ($servicios['qa'] as $qa) {
@@ -84,8 +91,13 @@ class Orden_serviciosController extends Controller
                             if (count($data) > 0) {
                                 $values = join(',', $values);
                                 DB::insert('insert into control_solicitudes (created_at,updated_at,created_by,updated_by,solicitud_servicio_id,puntos,control_calidad_id) values ' . $values, $data);
+                                
+
                             }
                         }
+                        $this->clearCache('reprogramados');
+                        $this->clearCache('control_solicitudes');
+                        $this->clearCache('SolicitudServicios');
                     }
                     //$modelo = [];
                 }
