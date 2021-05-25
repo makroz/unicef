@@ -47,4 +47,10 @@ class SolicitudServicios extends Model
         
     }
 
+    public function nota()
+    {
+        return $this->belongsTo('\App\Modules\mkServicios\Orden_servicios','orden_servicios_id');
+    }
+    
+
 }
