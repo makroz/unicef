@@ -9,7 +9,7 @@ class Comercial extends Model
 {
     use Mk_ia_model;
     protected $table = "comercial";
-    protected $fillable = ['id','created_by','created_at'];
+    protected $fillable = ['id','created_by','created_at','estado'];
     
     
 

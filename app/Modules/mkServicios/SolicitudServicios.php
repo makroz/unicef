@@ -19,7 +19,7 @@ class SolicitudServicios extends Model
         'servicios_id', 'beneficiarios_id', 'evaluaciones_id','orden_servicios_id','obs','obs_verif','comercial_id',
     ];
     protected $attributes = ['status' => 1, 'estado' => 0];
-    public $_withRelations = ['materiales','qa'];
+    //public $_withRelations = ['materiales','qa'];
     public function getRules($request)
     {
         return [
