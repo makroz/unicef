@@ -104,7 +104,7 @@ class CreateUnicefModC extends Migration
         //     $table->softDeletes();
         // });
 
-        $nTable = 'meteriales_usados';
+        $nTable = 'materiales_usados';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
             $table->engine = 'InnoDB';
@@ -224,7 +224,7 @@ class CreateUnicefModC extends Migration
         Schema::dropIfExists('reprogramados');
         Schema::dropIfExists('control_solicitudes');
         Schema::dropIfExists('orden_servicios');
-        Schema::dropIfExists('meteriales_usados');
+        Schema::dropIfExists('materiales_usados');
         //Schema::dropIfExists('meteriales_servicios');
         Schema::dropIfExists('materiales');
         Schema::dropIfExists('control_calidades');

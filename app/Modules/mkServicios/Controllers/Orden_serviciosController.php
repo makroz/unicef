@@ -4,8 +4,9 @@ namespace App\Modules\mkServicios\Controllers;
 
 use App\Modules\mkBase\Controller;
 use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
-use App\Modules\mkBase\Mk_helpers\Mk_debug;
 use App\Modules\mkBase\Mk_ia_db;
+use App\Modules\mkServicios\Comercial;
+use App\Modules\mkServicios\Orden_servicios;
 use App\Modules\mkServicios\SolicitudServicios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,24 +29,87 @@ class Orden_serviciosController extends Controller
             $user_id = Mk_auth::get()->getUser()->id;
         }
         $now = date('Y-m-d H:i:s');
+
+        if ($request->act == 'comercial') {
+            $modelo  = [];
+            $estUser = 6;
+
+            $data   = [];
+            $data[] = $now;
+            $data[] = $now;
+            $data[] = $user_id;
+            $data[] = $user_id;
+            $values = '(?,?,?,?)';
+            DB::insert('insert into comercial (created_at,updated_at,created_by,updated_by) values ' . $values, $data);
+            $comercial = DB::getPdo()->lastInsertId();
+            $this->clearCache('comercial');
+
+            $data = [
+                'estado'       => $estUser,
+                'comercial_id' => $comercial,
+                'updated_by'   => $user_id,
+                'updated_at'   => $now,
+            ];
+            $r = Orden_servicios::where('estado', 5)->update($data);
+            $this->clearCache('orden_servicios');
+
+            $data = [
+                'fecha_' . $estUser       => $now,
+                'comercial_id'            => $comercial,
+                'usuarios_id_' . $estUser => $user_id,
+                'estado'                  => $estUser,
+                'updated_by'              => $user_id,
+                'updated_at'              => $now,
+            ];
+            $r = SolicitudServicios::where('estado', 5)->update($data);
+            $this->clearCache('SolicitudServicios');
+
+        }
+
         if (!empty($request->servicios) && is_array($request->servicios)) {
             $data = [];
             if (empty($id)) {
 
             } else {
-                if ($request->act == 'autorizar') {
-                  $modelo['estado'] = 5;
-                  $estUser          = 5;
+                if ($request->act == 'finalizar') {
+                    $modelo  = [];
+                    $estUser = 7;
 
-                  $data = [
-                    'fecha_' . $estUser       => $now,
-                    'usuarios_id_' . $estUser => $user_id,
-                    'estado'                  => $estUser,
-                    'updated_by'              => $user_id,
-                    'updated_at'              => $now,
-                ];
-                $r = SolicitudServicios::where('orden_servicios_id',$id)->where('estado',4)->update($data);
+                    $data = [
+                        'estado'     => $estUser,
+                        'updated_by' => $user_id,
+                        'updated_at' => $now,
+                    ];
+                    $r = Orden_servicios::wherein('comercial_id', $request->servicios)->update($data);
+                    $this->clearCache('orden_servicios');
+                    $r = Comercial::wherein('id', $request->servicios)->update($data);
+                    $this->clearCache('comercial');
+
+                    $data = [
+                        'fecha_' . $estUser       => $now,
+                        'usuarios_id_' . $estUser => $user_id,
+                        'estado'                  => $estUser,
+                        'updated_by'              => $user_id,
+                        'updated_at'              => $now,
+                    ];
+                    $r = SolicitudServicios::wherein('comercial_id', $request->servicios)->update($data);
+                    $this->clearCache('SolicitudServicios');
                 }
+                if ($request->act == 'autorizar') {
+                    $modelo['estado'] = 5;
+                    $estUser          = 5;
+
+                    $data = [
+                        'fecha_' . $estUser       => $now,
+                        'usuarios_id_' . $estUser => $user_id,
+                        'estado'                  => $estUser,
+                        'updated_by'              => $user_id,
+                        'updated_at'              => $now,
+                    ];
+                    $r = SolicitudServicios::where('orden_servicios_id', $id)->where('estado', 4)->update($data);
+                    $this->clearCache('SolicitudServicios');
+                }
+
                 if ($request->act == 'verificar') {
                     $modelo['estado'] = 4;
                     $estUser          = 4;
