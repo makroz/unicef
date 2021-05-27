@@ -29,11 +29,11 @@ class CreateUnicefModCV2 extends Migration
 
         $nTable = 'solicitud_servicios';
         Schema::table($nTable, function (Blueprint $table) {
-          $table->integer('usuarios_id_7')->unsigned()->nullable();
-          $table->datetime('fecha_7')->nullable();
+            $table->integer('usuarios_id_7')->unsigned()->nullable();
+            $table->datetime('fecha_7')->nullable();
             $table->integer('comercial_id')->unsigned()->nullable();
-            $table->char('verificado',1)->default(0);
-            $table->char('realizado',1)->default(0);
+            $table->char('verificado', 1)->default(0);
+            $table->char('realizado', 1)->default(0);
         });
 
         $nTable = 'comercial';
@@ -42,7 +42,7 @@ class CreateUnicefModCV2 extends Migration
             $table->engine = 'InnoDB';
 
             $table->increments('id');
-            $table->char('estado',1)->default(6);
+            $table->char('estado', 1)->default(6);
 
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
@@ -68,19 +68,19 @@ class CreateUnicefModCV2 extends Migration
             $table->dropColumn('orden_servicio_id');
         });
         Schema::table('solicitud_servicios', function (Blueprint $table) {
-          $table->dropColumn('comercial_id');
-          $table->dropColumn('verificado');
-          $table->dropColumn('realizado');
-          $table->dropColumn('usuarios_id_7');
-          $table->dropColumn('fecha_7');
+            $table->dropColumn('comercial_id');
+            $table->dropColumn('verificado');
+            $table->dropColumn('realizado');
+            $table->dropColumn('usuarios_id_7');
+            $table->dropColumn('fecha_7');
 
-      });
+        });
 
-      Schema::table('orden_servicios', function (Blueprint $table) {
-        $table->dropColumn('comercial_id');
-    });
+        Schema::table('orden_servicios', function (Blueprint $table) {
+            $table->dropColumn('comercial_id');
+        });
 
-      Schema::dropIfExists('comercial');
+        Schema::dropIfExists('comercial');
         Schema::enableForeignKeyConstraints();
     }
 

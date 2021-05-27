@@ -556,8 +556,48 @@ trait Mk_ia_db
             return Mk_db::sendData($r, $this->index($request, false), $msg);
         }
     }
+
+    public function loadMod($path = '')
+    {
+        //echo "Dir0:".$path;
+        if (empty($path)) {
+            $path = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+            $path = realpath($path);
+        }
+        //echo "<br>Dir:".$path;
+        //echo "Separador :".DIRECTORY_SEPARATOR.'<br>';
+        $modulos = [];
+        if (is_dir($path)) {
+            if ($dh = opendir($path. DIRECTORY_SEPARATOR)) {
+                while (($file = readdir($dh)) !== false) {
+                    $path = $path;
+                    if (is_dir($path . DIRECTORY_SEPARATOR . $file) && $file != "." && $file != "..") {
+
+                        if ($dh1 = opendir($path . DIRECTORY_SEPARATOR . $file)) {
+                            while (($file1 = readdir($dh1)) !== false) {
+                                //$path=$path ;
+                                if (!is_dir($path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . $file1) && $file != "." && $file != "..") {
+                                  $ind=explode('.',$file1);
+                                  $modulos[$ind[0]] = $file;
+                                }
+                            }
+                            closedir($dh1);
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        } else {
+          $modulos="No es ruta valida ".$path;
+        }
+        return $modulos;
+    }
+
     public function listData(Request $request)
     {
+      //$x=DB::table('usuarios')->getModel();
+      //Mk_debug::msgApi(['listada comercial',$this->loadMod()]);
+
       //return Mk_db::sendData(2, $request->lista, '');
       $this->proteger('show');
       $r=[];

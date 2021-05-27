@@ -9,8 +9,8 @@ class Materiales extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['id','name','status','medida_id'];
-    protected $attributes = ['status' => '1'];
+    protected $fillable = ['id','name','status','medida_id','stock','min_stock','costo','precio','lnota','mat_categ_id','ubicacion_id'];
+    protected $attributes = ['status' => '1','costo' => '0.00','precio' => '0.00','lnota' => '1'];
     
 
     public function getRules($request){
@@ -21,7 +21,14 @@ class Materiales extends Model
             'medida_id' => 'numeric|required_with:medida_id',
             'created_by' => 'numeric',
             'updated_by' => 'numeric',
-            'deleted_by' => 'numeric'
+            'deleted_by' => 'numeric',
+            'stock' => 'numeric|required_with:stock',
+            'min_stock' => 'numeric|required_with:min_stock',
+            'costo' => 'numeric|required_with:costo',
+            'precio' => 'numeric|required_with:precio',
+            'lnota' => 'required_with:lnota',
+            'mat_categ_id' => 'numeric',
+            'ubicacion_id' => 'numeric'
         ];
     }
 

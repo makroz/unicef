@@ -2,10 +2,11 @@
 
 namespace App\Modules\mkIA\Controllers;
 
-use App\Modules\mkBase\Mk_helpers\Mk_db;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
+use App\Modules\mkBase\Mk_helpers\Mk_db;
+use App\Modules\mkBase\Mk_helpers\Mk_debug;
+use Illuminate\Routing\Controller as BaseController;
 
 class IAController extends BaseController
 {
@@ -41,8 +42,8 @@ class IAController extends BaseController
     }
     public function index(Request $request)
     {
-//        echo config('DB_DATABASE'); 
-        $DB=env('DB_DATABASE');
+//        echo config('DB_DATABASE');
+        $DB     = env('DB_DATABASE');
         $tablas = [];
         $lista  = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '$DB'");
 
@@ -87,6 +88,43 @@ class IAController extends BaseController
         return Mk_db::sendData(count($result), $result, '');
     }
 
+    public function loadMod($path = '')
+    {
+        //echo "Dir0:".$path;
+        if (empty($path)) {
+            $path = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+            $path = realpath($path);
+        }
+        //echo "<br>Dir:".$path;
+        //echo "Separador :".DIRECTORY_SEPARATOR.'<br>';
+        $modulos = [];
+        if (is_dir($path)) {
+            if ($dh = opendir($path. DIRECTORY_SEPARATOR)) {
+                while (($file = readdir($dh)) !== false) {
+                    $path = $path;
+                    if (is_dir($path . DIRECTORY_SEPARATOR . $file) && $file != "." && $file != "..") {
+
+                        if ($dh1 = opendir($path . DIRECTORY_SEPARATOR . $file)) {
+                            while (($file1 = readdir($dh1)) !== false) {
+                                //$path=$path ;
+                                if (!is_dir($path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . $file1) && $file != "." && $file != "..") {
+                                  $ind=explode('.',$file1);
+                                    $modulos[$ind[0]] = $file;
+                                }
+                            }
+                            closedir($dh1);
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        } else {
+          $modulos="No es ruta valida ".$path;
+        }
+        return $modulos;
+    }
+
+
     public function store(Request $request)
     {
         // echo 'Hola mundo IA<hr>';
@@ -107,15 +145,17 @@ class IAController extends BaseController
         $controler = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Controller.php');
         $component = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Component.vue');
 
-        $backRel='';
+        $dirModules = $this->loadMod($_SERVER['DOCUMENT_ROOT'] . '../app/Modules');
+        //Mk_debug::msgApi(['listada comercial',$dirModules]);
+        $backRel    = '';
         $fillable   = [];
         $rules      = [];
         $lista      = $t['cols'];
         $campos     = "";
         $formulario = "";
         $attributes = [];
-        $rImport='';
-        $rComponent='';
+        $rImport    = '';
+        $rComponent = '';
 
         $relMounted = '';
         $dataRel    = '';
@@ -123,18 +163,13 @@ class IAController extends BaseController
             /* relaciones  */
             $relCol = '';
             if (!empty($col['relTable'])) {
-//              echo "0 rel table: ".$col['COLUMN_NAME'].' '.$col['relTable'];
                 $refTable = ucfirst($col['relTable']);
                 $colRel   = $col['relField'];
                 $relMounted .= "
-    this.l{$refTable} = await this.getListaBackend('{$refTable}', 'id,{$colRel}', '{$col['COLUMN_NAME']}')
-";
+                {mod: '{$refTable}',campos: 'id,{$colRel}',datos: { modulo: '{$dirModules[$refTable]}' },item: '{$col['COLUMN_NAME']}'},";
                 $dataRel .= "
-      l{$refTable}: [],
-";
-
+      l{$refTable}: [],";
                 $relCol = "lista: this.l{$refTable},";
-               // echo "1 rel table: $refTable";
             }
             /* relaciones  */
 
@@ -163,7 +198,7 @@ class IAController extends BaseController
             if ($col['form'] || $col['list']) {
                 $fillable[] = "'" . $col['COLUMN_NAME'] . "'";
             }
-
+            $lOptions='';
             if ($col['form']) {
 
                 //Formulario
@@ -183,9 +218,9 @@ class IAController extends BaseController
                     $rulF = ":rules='[" . join(',', $lRulesF) . "]'";
                 }
 
-              if ($col['typeF'] == 'textarea') {
-                $addInput = true;
-                $formul   = "
+                if ($col['typeF'] == 'textarea') {
+                    $addInput = true;
+                    $formul   = "
       <v-textarea
         label='" . $col['lForm'] . "'
         v-model='item." . $col['COLUMN_NAME'] . "'
@@ -196,7 +231,7 @@ class IAController extends BaseController
       >
       </v-textarea>
 ";
-            }
+                }
 
                 if ($col['typeF'] == 'text') {
                     $addInput = true;
@@ -226,10 +261,10 @@ class IAController extends BaseController
           </v-text-field>
 ";
                 }
-                
+
                 if ($col['typeF'] == 'selDB') {
-                   echo "2 rel table ".$col['COLUMN_NAME'];
-                   echo "2.1 rel table ".$refTable;
+                    echo "2 rel table " . $col['COLUMN_NAME'];
+                    echo "2.1 rel table " . $refTable;
                     $addInput = true;
                     $formul   = "
           <v-select
@@ -247,8 +282,9 @@ class IAController extends BaseController
                 }
 
                 if ($col['typeF'] == 'check') {
-                  $addInput = true;
-                  $formul   = "
+                  $lOptions="options: [1, 'Si', 'No'],";
+                    $addInput = true;
+                    $formul   = "
       <v-checkbox
         v-model='item." . $col['COLUMN_NAME'] . "'
         value='1'
@@ -257,12 +293,12 @@ class IAController extends BaseController
       >
       </v-checkbox>
 ";
-              }
+                }
 
-              if ($col['typeF'] == 'date') {
+                if ($col['typeF'] == 'date') {
 
-                $addInput = true;
-                $formul   = "
+                    $addInput = true;
+                    $formul   = "
       <mk-date
       v-model='item." . $col['COLUMN_NAME'] . "'
       label='" . $col['lForm'] . "'
@@ -271,7 +307,7 @@ class IAController extends BaseController
       >
       </mk-date>
 ";
-            }
+                }
 
                 //
                 if ($addInput) {
@@ -306,6 +342,7 @@ class IAController extends BaseController
           headers: true,
           type: '" . $tipo . "',
           search: " . ($col['search'] ? 'true' : 'false') . ",
+          $lOptions
           $relCol
         },";
             }
@@ -315,11 +352,18 @@ class IAController extends BaseController
         } else {
             $attributes = '';
         }
+        $attributes = "protected \$table = '{$tablaT}';
+        {$attributes}";
+        if (!empty($relMounted)) {
+          $relMounted="
+          let listas = await this.getDatasBackend(this.urlModulo, [{$relMounted}
+          ])";
+        }
 
         //protected $attributes = ['status' => 1];
         $fillable  = join(',', $fillable);
         $rules     = join(",\r\n" . $this->tabs(3), $rules);
-        $model     = str_replace(['{{**NameSpace**}}', '{{**NameClass**}}', '{{**Fillable**}}', '{{**Attributes**}}', '{{**Rules**}}','{{**BackRel**}}'], [$moduloBack, $Clase, $fillable, $attributes, $rules,$backRel], $model);
+        $model     = str_replace(['{{**NameSpace**}}', '{{**NameClass**}}', '{{**Fillable**}}', '{{**Attributes**}}', '{{**Rules**}}', '{{**BackRel**}}'], [$moduloBack, $Clase, $fillable, $attributes, $rules, $backRel], $model);
         $controler = str_replace(['{{**NameSpace**}}', '{{**NameClass**}}'], [$moduloBack, $Clase], $controler);
         $component = str_replace(['{{**NameClass**}}', '{{**Formulario**}}', '{{**titModulo**}}',
             '{{**Lista**}}', '{{**dataRel**}}', '{{**RelMounted**}}'], [$Clase, $formulario, $modTit, $campos, $dataRel, $relMounted], $component);
@@ -327,7 +371,6 @@ class IAController extends BaseController
         //echo '<br>MEnu <hr>';
         $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
 
-        
         // strrpos()
         $p = strpos($menu, "name: '{$modulo}'");
         if ($p !== false) {
@@ -355,7 +398,7 @@ class IAController extends BaseController
             "                 }\n" .
             "             ]\n" .
             $menu2;
-       // file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', $menu);
+        // file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', $menu);
         //}
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront/$modulo.vue", $component);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/$Clase.php", $model);
