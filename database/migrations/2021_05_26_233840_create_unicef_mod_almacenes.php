@@ -72,7 +72,7 @@ class CreateUnicefModAlmacenes extends Migration
             $table->integer('min_stock')->default('0');
             $table->decimal('costo', 10, 2)->default('0');
             $table->decimal('precio', 10, 2)->default('0');
-            $table->char('lnota', 1)->default('1');
+            $table->char('lnota', 1)->default('1')->nullable();
 
             $table->integer('mat_categ_id')->unsigned()->nullable();
             $table->foreign('mat_categ_id')->references('id')->on('mat_categ');
@@ -109,7 +109,8 @@ class CreateUnicefModAlmacenes extends Migration
 
             $table->increments('id');
             $table->tinyInteger('tipo')->unsigned();
-            $table->integer('cant');
+            $table->integer('ingreso')->unsigned()->default(0);
+            $table->integer('egreso')->unsigned()->default(0);
             $table->string('obs', 250)->nullable();
 
             $table->integer('movimiento_id')->unsigned()->nullable();

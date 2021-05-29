@@ -9,9 +9,9 @@ class Mov_det extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['id','tipo','cant','obs','movimiento_id','material_id','status'];
+    protected $fillable = ['id','tipo','ingreso','egreso','obs','movimiento_id','material_id','created_at','created_by'];
     protected $attributes = ['status' => '1'];
-    
+    protected $table = "mov_det";
 
     public function getRules($request){
         return [

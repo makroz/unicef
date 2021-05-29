@@ -11,7 +11,7 @@ class Movimientos extends Model
 
     protected $fillable = ['id','tipo','ref','obs','subtipo_id','status'];
     protected $attributes = ['status' => '1'];
-    
+    public $_withRelations = ['productos'];
 
     public function getRules($request){
         return [
@@ -23,6 +23,11 @@ class Movimientos extends Model
             'updated_by' => 'numeric',
             'deleted_by' => 'numeric'
         ];
+    }
+
+    public function productos()
+    {
+          return $this->hasMany('\App\Modules\mkAlmacenes\Mov_det','movimiento_id')->select('movimiento_id','ingreso','egreso','material_id');
     }
 
 
