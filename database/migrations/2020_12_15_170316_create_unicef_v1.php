@@ -182,6 +182,8 @@ class CreateUnicefV1 extends Migration
             $table->integer('usuarios_id')->unsigned();
             $table->foreign('usuarios_id')->references('id')->on('usuarios');
 
+            $table->unique(['ruteos_id','beneficiarios_id']);
+
             $table->timestamps();
             $table->softDeletes();
         });
