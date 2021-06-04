@@ -147,8 +147,10 @@ class RuteosController extends Controller
                     Mk_debug::msgApi(['Fechas:',$userId,$ruteo['id'],Mk_date::dateToUTC($ruteo['created_at']),Mk_date::dateToUTC($ruteo['fec_cerrado']),Mk_date::dateToUTC($ruteo['created_at']) >= Mk_date::dateToUTC($ruteo['fec_cerrado'])]);
                     if (empty($ruteo['fec_cerrado'])) {
                         if (Mk_date::dateToLocal($ruteo['created_at']) >= Mk_date::dateToLocal($f1)){
+                            $ruteo['active']=true;
                             $rOpen[] = $ruteo;
                         } else {
+                            $ruteo['active']=true;
                             $rRetrased[] = $ruteo;
                         }
                     }else {
@@ -176,6 +178,7 @@ class RuteosController extends Controller
 
             $cantRuteos = count($ruteos);
             if ($cantRuteos == 0) {
+                    $ruta['active']=true;
                     $rDispon[] = $ruta;
             }
         }
