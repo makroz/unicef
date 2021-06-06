@@ -15,10 +15,10 @@ class CreateUnicefV1 extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        $nTable='distritos';
+        $nTable = 'distritos';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->string('name', 250);
@@ -27,10 +27,10 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='entidades';
+        $nTable = 'entidades';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->string('name', 250);
@@ -40,10 +40,10 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='categ';
+        $nTable = 'categ';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->string('name', 250);
@@ -54,10 +54,10 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='servicios';
+        $nTable = 'servicios';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->string('name', 250);
@@ -69,10 +69,10 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='beneficiarios';
+        $nTable = 'beneficiarios';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->string('name', 250);
@@ -96,10 +96,10 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='rutas';
+        $nTable = 'rutas';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->string('name', 250);
@@ -113,15 +113,14 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-       
-        $nTable='preguntas';
+        $nTable = 'preguntas';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
-            $table->string('pregunta',250);
-            $table->char('tipo',1)->default('1');
+            $table->string('pregunta', 250);
+            $table->char('tipo', 1)->default('1');
             $table->tinyInteger('orden')->default(0);
             $table->char('status', 1)->default('1');
 
@@ -132,10 +131,10 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='ruteos';
+        $nTable = 'ruteos';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->datetime('fec_cerrado')->nullable();
@@ -161,10 +160,10 @@ class CreateUnicefV1 extends Migration
             $table->index('gps_open');
         });
 
-        $nTable='evaluaciones';
+        $nTable = 'evaluaciones';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             //$table->datetime('fecha');
@@ -172,7 +171,7 @@ class CreateUnicefV1 extends Migration
             $table->text('obs')->nullable();
             $table->datetime('fec_verif')->nullable();
             $table->integer('verif_id')->unsigned()->nullable();
-            $table->char('estado', 1)->default('0'); 
+            $table->char('estado', 1)->default('0');
             $table->char('status', 1)->default('1');
 
             $table->integer('ruteos_id')->unsigned();
@@ -182,16 +181,16 @@ class CreateUnicefV1 extends Migration
             $table->integer('usuarios_id')->unsigned();
             $table->foreign('usuarios_id')->references('id')->on('usuarios');
 
-            $table->unique(['ruteos_id','beneficiarios_id']);
+            $table->unique(['ruteos_id', 'beneficiarios_id']);
 
             $table->timestamps();
             $table->softDeletes();
         });
 
-        $nTable='solicitud_servicios';
+        $nTable = 'solicitud_servicios';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
             $table->integer('usuarios_id_1')->unsigned()->nullable();
@@ -206,7 +205,7 @@ class CreateUnicefV1 extends Migration
             $table->datetime('fecha_5')->nullable();
             $table->integer('usuarios_id_6')->unsigned()->nullable();
             $table->datetime('fecha_6')->nullable();
-            $table->tinyInteger('cant'); 
+            $table->tinyInteger('cant');
             $table->char('estado', 1)->default('0');
             $table->char('status', 1)->default('1');
 
@@ -221,29 +220,25 @@ class CreateUnicefV1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable='respuestas';
+        $nTable = 'respuestas';
         Schema::dropIfExists($nTable);
         Schema::create($nTable, function (Blueprint $table) {
-            $table->engine ='InnoDB';
+            $table->engine = 'InnoDB';
 
             $table->increments('id');
-            $table->integer('r_n')->nullable(); 
-            $table->decimal('r_d',10,2)->nullable(); 
-            $table->string('r_s',250)->nullable(); 
+            $table->integer('r_n')->nullable();
+            $table->decimal('r_d', 10, 2)->nullable();
+            $table->string('r_s', 250)->nullable();
             $table->char('status', 1)->default('1');
 
             $table->integer('preguntas_id')->unsigned();
             $table->foreign('preguntas_id')->references('id')->on('preguntas')->onDelete('cascade');
             $table->integer('evaluaciones_id')->unsigned();
             $table->foreign('evaluaciones_id')->references('id')->on('evaluaciones')->onDelete('cascade');
-//            $table->integer('beneficiarios_id')->unsigned();
-//            $table->foreign('beneficiarios_id')->references('id')->on('beneficiarios')->onUpdate('cascade');
 
             $table->timestamps();
             $table->softDeletes();
         });
-
-        
 
         Schema::enableForeignKeyConstraints();
     }

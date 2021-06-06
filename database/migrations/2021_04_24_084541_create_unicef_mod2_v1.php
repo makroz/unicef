@@ -316,7 +316,7 @@ class CreateUnicefMod2V1 extends Migration
             $table->char('status', 1)->default('1');
 
             $table->integer('beneficiario_id')->unsigned();
-            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');;
+            $table->foreign('beneficiario_id')->references('id')->on('beneficiarios')->onDelete('cascade');
             $table->integer('parentesco_id')->unsigned();
             $table->foreign('parentesco_id')->references('id')->on('parentescos');
             $table->integer('est_civil_id')->unsigned();
