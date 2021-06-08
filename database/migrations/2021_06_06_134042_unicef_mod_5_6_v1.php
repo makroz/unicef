@@ -175,7 +175,7 @@ class UnicefMod56V1 extends Migration
             $table->engine = 'InnoDB';
 
             $table->increments('id');
-            $table->integer('cant', 10)->unsigned()->default(0);
+            $table->integer('cant')->default(0);
 
             $table->integer('diario_id')->unsigned();
             $table->foreign('diario_id')->references('id')->on('check_diarios');
