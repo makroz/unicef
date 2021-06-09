@@ -14,7 +14,7 @@ class IAController extends BaseController
     {
         //Creo el directorio destino
 
-        mkdir($dirDestino, 0777, true);
+        @mkdir($dirDestino, 0777, true);
         //abro el directorio origen
 
         if ($vcarga = opendir($dirOrigen)) {
@@ -23,9 +23,9 @@ class IAController extends BaseController
                 if ($file != '.' && $file != '..') //quito el raiz y el padre
                 {
                     //echo «<b>$file</b>»; //muestro el nombre del archivo
-                    if (!is_dir($dirOrigen . $file)) //pregunto si no es directorio
+                    if (!is_dir($dirOrigen . DIRECTORY_SEPARATOR . $file)) //pregunto si no es directorio
                     {
-                        if (copy($dirOrigen . $file, $dirDestino . $file)) //como no es directorio, copio de origen a destino
+                        if (copy($dirOrigen . DIRECTORY_SEPARATOR . $file, $dirDestino . DIRECTORY_SEPARATOR . $file)) //como no es directorio, copio de origen a destino
                         {
                             //echo » COPIADO!»;
                         } else {
@@ -33,7 +33,7 @@ class IAController extends BaseController
                         }
                     } else {
                         //echo » — directorio — <br />»; //era directorio llamo a la función de nuevo con la nueva ubicación
-                        copia($dirOrigen . $file . » / », $dirDestino . $file . » / »);
+                        $this->copiaDir($dirOrigen . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR, $dirDestino . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR);
                     }
                     //echo «<br />»;
                 }
@@ -72,14 +72,14 @@ class IAController extends BaseController
     }
     public function index(Request $request)
     {
-      $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
+        // $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
 
-        $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
-        $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
-        $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
-        $menu = json_decode($menu);
-        dd($menu);
-//        echo config('DB_DATABASE');
+        //   $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
+        //   $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+        //   $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+        //   $menu = json_decode($menu);
+        //   dd($menu);
+        //        echo config('DB_DATABASE');
         $DB     = env('DB_DATABASE');
         $tablas = [];
         $lista  = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '$DB'");
@@ -175,11 +175,14 @@ class IAController extends BaseController
         $moduloBack  = $t['moduloB'];
         $moduloFront = $t['moduloF'];
         if ($moduloBack == 'Nuevo Modulo') {
+            $moduloBack = $t['idModB'];
             $this->copiaDir(__DIR__ . $d . '..' . $d . '..' . $d . '..' . $d . 'Modules' . $d . 'mkIA' . $d . 'stubs' . $d . 'modulosB',
                 __DIR__ . $d . '..' . $d . '..' . $d . '..' . $d . 'Modules' . $d . $moduloBack);
+
         }
         if ($moduloFront == 'Nuevo Modulo') {
-            mkdir($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront", 0777, true);
+            $moduloFront = $t['idModF'];
+            @mkdir($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront", 0777, true);
         }
 
         //$modulo=$t['nameMod'];
@@ -417,34 +420,37 @@ class IAController extends BaseController
 
         //echo '<br>MEnu <hr>';
         $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
-
         $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
-        $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
-        $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
-        $menu = json_decode($menu);
-
-        $existe=0;
-        foreach ($menu as $key => $modMenu){
-          if (!empty($modMenu->name)&& $modMenu->name==$moduloFront){
-            $existe=1;
-            foreach ($modMenu->items as $key1 => $modMenu1){
-                $existe=2;
-                if (!empty($modMenu1->name)&& $modMenu1->name==$modulo) {
-                  break;
+        try {
+            $menu = json_decode($menu);
+        } catch (\Throwable $th) {
+            $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+            $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+            $menu = json_decode($menu);
+        }
+        $existe = 0;
+        foreach ($menu as $key => $modMenu) {
+            if (!empty($modMenu->name) && $modMenu->name == $moduloFront) {
+                $existe = 1;
+                foreach ($modMenu->items as $key1 => $modMenu1) {
+                    if (!empty($modMenu1->name) && $modMenu1->name == $modulo) {
+                        $existe = 2;
+                        $menu[$key]->items[$key1] = json_decode('{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}');
+                        break;
+                    }
+                }
+                if ($existe == 1) {
+                    $menu[$key]->items[] = json_decode('{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}');
                 }
             }
-            if ($existe==1){
-              $modMenu->items[]=json_decode('{"name":"'.$modulo.'","title":"'.$modTit.'","href":"'."/{$moduloFront}/{$modulo}/".'"}');
-            }
-          }
         }
-        if ($existe==0){
-          $modMenu[]=json_decode('{"name":"'.$moduloFront.'","title":"'.ucfirst($moduloFront).'","icon":"face","items":[{"name":"'.$modulo.'","title":"'.$modTit.'","href":"'."/{$moduloFront}/{$modulo}/".'"}]}');
+        if ($existe == 0) {
+            $menu[] = json_decode('{"name":"' . $moduloFront . '","title":"' . ucfirst($moduloFront) . '","icon":"face","items":[{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}]}');
         }
 
         //dd($menu);
 
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', 'const Menu = '.json_encode($menu)."\n export default Menu");
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', 'const Menu = ' . print_r(json_encode($menu), true) . "\n export default Menu");
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront/$modulo.vue", $component);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/$Clase.php", $model);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/Controllers/$Clase" . "Controller.php", $controler);
