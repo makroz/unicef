@@ -2,15 +2,45 @@
 
 namespace App\Modules\mkIA\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Modules\mkBase\Mk_helpers\Mk_db;
-use App\Modules\mkBase\Mk_helpers\Mk_debug;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 
 class IAController extends BaseController
 {
 
+    public function copiaDir($dirOrigen, $dirDestino)
+    {
+        //Creo el directorio destino
+
+        mkdir($dirDestino, 0777, true);
+        //abro el directorio origen
+
+        if ($vcarga = opendir($dirOrigen)) {
+            while ($file = readdir($vcarga)) //lo recorro enterito
+            {
+                if ($file != '.' && $file != '..') //quito el raiz y el padre
+                {
+                    //echo «<b>$file</b>»; //muestro el nombre del archivo
+                    if (!is_dir($dirOrigen . $file)) //pregunto si no es directorio
+                    {
+                        if (copy($dirOrigen . $file, $dirDestino . $file)) //como no es directorio, copio de origen a destino
+                        {
+                            //echo » COPIADO!»;
+                        } else {
+                            //echo » ERROR!»;
+                        }
+                    } else {
+                        //echo » — directorio — <br />»; //era directorio llamo a la función de nuevo con la nueva ubicación
+                        copia($dirOrigen . $file . » / », $dirDestino . $file . » / »);
+                    }
+                    //echo «<br />»;
+                }
+            }
+            closedir($vcarga);
+        }
+    }
     public function tabs($n = 1)
     {
         $tab  = '    ';
@@ -42,6 +72,13 @@ class IAController extends BaseController
     }
     public function index(Request $request)
     {
+      $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
+
+        $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
+        $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+        $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+        $menu = json_decode($menu);
+        dd($menu);
 //        echo config('DB_DATABASE');
         $DB     = env('DB_DATABASE');
         $tablas = [];
@@ -63,8 +100,10 @@ class IAController extends BaseController
         }
 
         $modules  = $this->dirlist('Modules');
+        $modules  = ['Nuevo Modulo', ...$modules];
         $projects = $this->dirlist('..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'www');
         $modFront = $this->dirlist('..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'www' . DIRECTORY_SEPARATOR . 'unicef-Front' . DIRECTORY_SEPARATOR . 'pages');
+        $modFront = ['Nuevo Modulo', ...$modFront];
 
         $result = [
             'tablas'       => [
@@ -99,7 +138,7 @@ class IAController extends BaseController
         //echo "Separador :".DIRECTORY_SEPARATOR.'<br>';
         $modulos = [];
         if (is_dir($path)) {
-            if ($dh = opendir($path. DIRECTORY_SEPARATOR)) {
+            if ($dh = opendir($path . DIRECTORY_SEPARATOR)) {
                 while (($file = readdir($dh)) !== false) {
                     $path = $path;
                     if (is_dir($path . DIRECTORY_SEPARATOR . $file) && $file != "." && $file != "..") {
@@ -108,7 +147,7 @@ class IAController extends BaseController
                             while (($file1 = readdir($dh1)) !== false) {
                                 //$path=$path ;
                                 if (!is_dir($path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . $file1) && $file != "." && $file != "..") {
-                                  $ind=explode('.',$file1);
+                                    $ind              = explode('.', $file1);
                                     $modulos[$ind[0]] = $file;
                                 }
                             }
@@ -119,15 +158,15 @@ class IAController extends BaseController
                 closedir($dh);
             }
         } else {
-          $modulos="No es ruta valida ".$path;
+            $modulos = "No es ruta valida " . $path;
         }
         return $modulos;
     }
 
-
     public function store(Request $request)
     {
         // echo 'Hola mundo IA<hr>';
+        $d      = DIRECTORY_SEPARATOR;
         $t      = $request->tabla;
         $tablaT = $t['name'];
 
@@ -135,15 +174,23 @@ class IAController extends BaseController
 
         $moduloBack  = $t['moduloB'];
         $moduloFront = $t['moduloF'];
+        if ($moduloBack == 'Nuevo Modulo') {
+            $this->copiaDir(__DIR__ . $d . '..' . $d . '..' . $d . '..' . $d . 'Modules' . $d . 'mkIA' . $d . 'stubs' . $d . 'modulosB',
+                __DIR__ . $d . '..' . $d . '..' . $d . '..' . $d . 'Modules' . $d . $moduloBack);
+        }
+        if ($moduloFront == 'Nuevo Modulo') {
+            mkdir($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront", 0777, true);
+        }
+
         //$modulo=$t['nameMod'];
         $modulo = $tablaT;
 
         $modTit    = $t['titMod'];
         $proyecto  = 'unicef-Front'; //escoger en el front luego
         $Clase     = ucfirst($tablaT);
-        $model     = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Model.php');
-        $controler = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Controller.php');
-        $component = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Component.vue');
+        $model     = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Model.stub');
+        $controler = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Controller.stub');
+        $component = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../app/Modules/mkIA/stubs/Component.stub');
 
         $dirModules = $this->loadMod($_SERVER['DOCUMENT_ROOT'] . '../app/Modules');
         //Mk_debug::msgApi(['listada comercial',$dirModules]);
@@ -198,7 +245,7 @@ class IAController extends BaseController
             if ($col['form'] || $col['list']) {
                 $fillable[] = "'" . $col['COLUMN_NAME'] . "'";
             }
-            $lOptions='';
+            $lOptions = '';
             if ($col['form']) {
 
                 //Formulario
@@ -282,7 +329,7 @@ class IAController extends BaseController
                 }
 
                 if ($col['typeF'] == 'check') {
-                  $lOptions="options: [1, 'Si', 'No'],";
+                    $lOptions = "options: [1, 'Si', 'No'],";
                     $addInput = true;
                     $formul   = "
       <v-checkbox
@@ -355,7 +402,7 @@ class IAController extends BaseController
         $attributes = "protected \$table = '{$tablaT}';
         {$attributes}";
         if (!empty($relMounted)) {
-          $relMounted="
+            $relMounted = "
           let listas = await this.getDatasBackend(this.urlModulo, [{$relMounted}
           ])";
         }
@@ -371,35 +418,33 @@ class IAController extends BaseController
         //echo '<br>MEnu <hr>';
         $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
 
-        // strrpos()
-        $p = strpos($menu, "name: '{$modulo}'");
-        if ($p !== false) {
-            //$p=strpos($menu, "name: '{$modulo}'");
-            $menu1 = substr($menu, 0, $p);
-            $p     = strrpos($menu1, ",\n");
-            $menu1 = substr($menu, 0, $p);
+        $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
+        $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+        $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+        $menu = json_decode($menu);
 
-            $menu2 = substr($menu, $p);
-            $p     = strpos($menu2, "}\n");
-            $menu2 = substr($menu2, $p + 2);
-            $menu  = $menu1 . $menu2;
+        $existe=0;
+        foreach ($menu as $key => $modMenu){
+          if (!empty($modMenu->name)&& $modMenu->name==$moduloFront){
+            $existe=1;
+            foreach ($modMenu->items as $key1 => $modMenu1){
+                $existe=2;
+                if (!empty($modMenu1->name)&& $modMenu1->name==$modulo) {
+                  break;
+                }
+            }
+            if ($existe==1){
+              $modMenu->items[]=json_decode('{"name":"'.$modulo.'","title":"'.$modTit.'","href":"'."/{$moduloFront}/{$modulo}/".'"}');
+            }
+          }
         }
-//        if (strpos($menu, "/{$moduloFront}/{$modulo}/")===false) {
-        $p     = strpos($menu, "component: '$moduloFront'");
-        $p     = strpos($menu, "]", $p);
-        $menu1 = substr($menu, 0, $p - 13);
-        $menu2 = substr($menu, $p + 2);
-        $menu  = $menu1 .
-            ",\n" .
-            "                {\n" .
-            "                     name: '{$modulo}',\n" .
-            "                     title: '{$modTit}',\n" .
-            "                     href: '/{$moduloFront}/{$modulo}/'\n" .
-            "                 }\n" .
-            "             ]\n" .
-            $menu2;
-        // file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', $menu);
-        //}
+        if ($existe==0){
+          $modMenu[]=json_decode('{"name":"'.$moduloFront.'","title":"'.ucfirst($moduloFront).'","icon":"face","items":[{"name":"'.$modulo.'","title":"'.$modTit.'","href":"'."/{$moduloFront}/{$modulo}/".'"}]}');
+        }
+
+        //dd($menu);
+
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', 'const Menu = '.json_encode($menu)."\n export default Menu");
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront/$modulo.vue", $component);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/$Clase.php", $model);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/Controllers/$Clase" . "Controller.php", $controler);
