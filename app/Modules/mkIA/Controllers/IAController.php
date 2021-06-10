@@ -219,7 +219,7 @@ class IAController extends BaseController
                 {mod: '{$refTable}',campos: 'id,{$colRel}',datos: { modulo: '{$dirModules[$refTable]}' },item: '{$col['COLUMN_NAME']}'},";
                 $dataRel .= "
       l{$refTable}: [],";
-                $relCol = "lista: this.l{$refTable},";
+                $relCol = "lista: 'l{$refTable}',";
             }
             /* relaciones  */
 
@@ -313,8 +313,8 @@ class IAController extends BaseController
                 }
 
                 if ($col['typeF'] == 'selDB') {
-                    echo "2 rel table " . $col['COLUMN_NAME'];
-                    echo "2.1 rel table " . $refTable;
+                    // echo "2 rel table " . $col['COLUMN_NAME'];
+                    // echo "2.1 rel table " . $refTable;
                     $addInput = true;
                     $formul   = "
           <v-select
@@ -330,6 +330,33 @@ class IAController extends BaseController
           </v-select>
 ";
                 }
+
+                if ($col['typeF'] == 'sel') {
+                  $refTable=ucfirst($col['COLUMN_NAME']);
+                  $dataRel .= "
+        l{$refTable}: [
+";
+          foreach ($col['selList'] as $key => $val) {
+            $dataRel .="          { id: '".$val['value']."', name: '".$val['text']."' },
+";
+          }
+          $dataRel .="        ],";
+                  $relCol = "lista: 'l{$refTable}',";
+                  $addInput = true;
+                  $formul   = "
+        <v-select
+          :items='l{$refTable}'
+          item-text='name'
+          item-value='id'
+          label='" . $col['lForm'] . "'
+          v-model='item." . $col['COLUMN_NAME'] . "'
+          $rulF
+          validate-on-blur
+          :readonly=\"accion == 'show'\"
+        >
+        </v-select>
+";
+              }
 
                 if ($col['typeF'] == 'check') {
                     $lOptions = "options: [1, 'Si', 'No'],";
@@ -380,7 +407,7 @@ class IAController extends BaseController
             }
             if ($col['list'] && $col['COLUMN_NAME'] != 'status') {
                 $tipo = $col['typeF'];
-                if ($tipo == 'selDB') {
+                if ($tipo == 'selDB' || $tipo == 'sel') {
                     $tipo = 'num';
                 }
                 $campos = $campos . "
@@ -422,7 +449,15 @@ class IAController extends BaseController
         $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
         $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
         try {
-            $menu = json_decode($menu);
+            $menu1 = json_decode($menu);
+            if (empty($menu1)) {
+              $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
+              $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+              $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+              $menu = json_decode($menu);
+            }else {
+              $menu=$menu1;
+            }
         } catch (\Throwable $th) {
             $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
             $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);

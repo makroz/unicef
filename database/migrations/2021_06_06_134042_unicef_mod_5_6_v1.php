@@ -98,8 +98,6 @@ class UnicefMod56V1 extends Migration
             $table->string('tel', 250)->nullable();
             $table->char('lic', 1)->default('P');
             $table->date('fec_nac')->nullable();
-            $table->tinyInteger('orden')->default(0);
-            $table->char('tipo', 1)->default('c'); //c=check, n=numero,d=decimal, t=texto, s=si/no
 
             $table->char('status', 1)->default('1');
             $table->integer('created_by')->unsigned()->nullable();
@@ -232,6 +230,11 @@ class UnicefMod56V1 extends Migration
             $table->softDeletes();
         });
 
+        $nTable = 'beneficiarios';
+        Schema::table($nTable, function (Blueprint $table) {
+            $table->integer('orden')->default(0);
+        });
+
         Schema::enableForeignKeyConstraints();
 
     }
@@ -254,6 +257,10 @@ class UnicefMod56V1 extends Migration
         Schema::dropIfExists('check_materiales');
         Schema::dropIfExists('check_det');
         Schema::dropIfExists('check_eventos');
+        Schema::table('beneficiarios', function (Blueprint $table) {
+          $table->dropColumn('orden');
+        });
+
         Schema::enableForeignKeyConstraints();
     }
 }
