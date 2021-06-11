@@ -624,14 +624,16 @@ trait Mk_ia_db
         $page          = !empty($options['page']) ? $options['page'] : 1;
         $_customFields = !empty($options['_customFields']) ? $options['_customFields'] : false;
         $rel = !empty($options['rel']) ? $options['rel'] : false;
+        $sortBy        = !empty($options['sortBy']) ? $options['sortBy'] : 'id';
+        $sortDir        = !empty($options['sortDir']) ? $options['sortDir'] : 'desc';
 
-        $prefix = $this->addCacheList($model, [$page, $perPage, 'id', 'desc', '', 0, $cols, $options]);
+        $prefix = $this->addCacheList($model, [$page, $perPage, $sortBy, $sortDir, '', 0, $cols, $options,$rel]);
         if (_cacheQueryDebugInactive) {
             Cache::forget($prefix);
             Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
         }
 
-        $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page, $perPage, $filtros, $relations, $_customFields,$rel) {
+        $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page,$sortBy, $sortDir, $perPage, $filtros, $relations, $_customFields,$rel) {
             Mk_debug::warning('Se cargo de la BD! ' . $model, 'CACHE ACTIVO', 'BackEnd');
             $modelo = new $model();
             if ($_customFields == 1) {
@@ -658,6 +660,15 @@ trait Mk_ia_db
             // $cols = explode(',', $cols);
             // $cols = array_merge([$modelo->getKeyName()], $cols);
             //Mk_debug::warning('filtros', $model, $filtros);
+            if ($rel) {
+              Mk_debug::warning('Entro a rel', 'CACHE', $rel,$model);
+              if (isset($modelo->_withRelations)) {
+                Mk_debug::warning('Entro a relaciones', 'CACHE', $modelo->_withRelations);
+                $modelo = $modelo->with($modelo->_withRelations);
+              }
+            }
+            
+            $modelo = $modelo->orderBy(Mk_db::tableCol($sortBy, $modelo), $sortDir);
             foreach ($filtros as $key => $filtro) {
                 if ($filtro[0] != 'OR') {
                     $modelo = $modelo->where($filtro[0], $filtro[1], $filtro[2]);
@@ -670,12 +681,7 @@ trait Mk_ia_db
                 }
             }
 
-            if ($rel) {
-              Mk_debug::warning('Entro a rel', 'CACHE', $rel);
-              if (isset($modelo->_withRelations)) {
-                $modelo = $modelo->with($modelo->_withRelations);
-              }
-            }
+            
             if ($relations) {
                 Mk_debug::warning('Entro a relation', 'CACHE', $relations);
                 $modelo = $modelo->with($relations);

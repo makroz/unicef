@@ -93,12 +93,14 @@ class EvaluacionesController extends Controller
                     $data[]=$key;
                     $data[]=$benef;
                     $data[]=$servicio;
-                    $data[]=0;
                     $data[]=1;
-                    $values[]='(?,?,?,?,?,?,?,?,?,?)';
+                    $data[]=1;
+                    $data[]=$user_id;
+                    $data[]=$now;
+                    $values[]='(?,?,?,?,?,?,?,?,?,?,?,?)';
                 }
                 $values=join(',', $values);
-                DB::insert('insert into solicitud_servicios (created_by,updated_by,created_at,updated_at,evaluaciones_id,servicios_id,beneficiarios_id,cant,estado,status) values '.$values, $data);
+                DB::insert('insert into solicitud_servicios (created_by,updated_by,created_at,updated_at,evaluaciones_id,servicios_id,beneficiarios_id,cant,estado,status,usuarios_id_1,fecha_1) values '.$values, $data);
             }
             $this->clearCache('solicitud_servicios');
         }

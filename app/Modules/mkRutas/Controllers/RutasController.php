@@ -27,10 +27,14 @@ class RutasController extends Controller
         if ($request->has('beneficiarios')){
             $ids=join(',',$request->beneficiarios);
             if ($action>0){
-                DB::update('update beneficiarios set rutas_id = null where rutas_id = ?', [$id]);
+                DB::update('update beneficiarios set rutas_id = null, orden=0 where rutas_id = ?', [$id]);
             }
-            if (!empty($ids)){
-                DB::update("update beneficiarios set rutas_id = ? where id in ($ids)", [$id]);
+            if (!empty($ids)) {
+                $orden=0;
+                foreach ($request->beneficiarios as $item) {
+                    DB::update("update beneficiarios set rutas_id = ?, orden={$orden} where id=$item", [$id]);
+                    $orden++;
+                }
             }
             $this->clearCache('beneficiarios');
         }
@@ -55,7 +59,7 @@ class RutasController extends Controller
             ['OR',['rutas_id','=',null],['rutas_id','=',$id]],
             ['status','<>',0]
         ];
-        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'_customFields'=>1,'send' => true]);
+        return $this->getDatosDbCache($request,$modelo,$cols,['filtros'=>$filtros,'_customFields'=>1,'sortBy'=>'orden','send' => true]);
         
     }
     

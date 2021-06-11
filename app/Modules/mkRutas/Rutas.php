@@ -44,7 +44,7 @@ class Rutas extends Model
     }
 
     public function beneficiarios(){
-        return $this->hasMany('App\Modules\mkBeneficiarios\Beneficiarios');
+        return $this->hasMany('App\Modules\mkBeneficiarios\Beneficiarios')->orderBy('orden');
     }
 
 }

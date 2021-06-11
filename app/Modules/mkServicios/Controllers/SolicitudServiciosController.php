@@ -39,8 +39,10 @@ class SolicitudServiciosController extends Controller
                         'servicios_id'     => $servicios['id'],
                         'beneficiarios_id' => $request->beneficiarios_id,
                         'cant'             => $servicios['cant'],
-                        'estado'           => 0,
+                        'estado'           => 1,
                         'status'           => 1,
+                        'fecha_1'          => $now,
+                        'usuarios_id_1'    => $user_id,
                     ];
                 }
 //            Mk_debug::msgApi(['data:',$data]);
