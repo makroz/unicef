@@ -77,6 +77,9 @@ class UnicefMod56V1 extends Migration
             $table->tinyInteger('orden')->default(0);
             $table->char('tipo', 1)->default('c'); //c=check, n=numero, t=texto, s=si/no
 
+            $table->integer('categ_id')->unsigned();
+            $table->foreign('categ_id')->references('id')->on('check_categ');
+
             $table->char('status', 1)->default('1');
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
@@ -144,7 +147,7 @@ class UnicefMod56V1 extends Migration
             $table->time('salida');
             $table->time('regreso')->nullable();
             $table->integer('km_salida')->unsigned()->nullable();
-            $table->integer('km_refreso')->unsigned()->nullable();
+            $table->integer('km_regreso')->unsigned()->nullable();
             $table->text('obs')->nullable();
 
             $table->integer('recolector_id')->unsigned();
@@ -153,9 +156,9 @@ class UnicefMod56V1 extends Migration
             $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
             $table->integer('chofer_id')->unsigned();
             $table->foreign('chofer_id')->references('id')->on('choferes');
-            $table->integer('salida_id')->unsigned();
+            $table->integer('salida_id')->unsigned()->nullable();
             $table->foreign('salida_id')->references('id')->on('usuarios');
-            $table->integer('llegada_id')->unsigned();
+            $table->integer('llegada_id')->unsigned()->nullable();
             $table->foreign('llegada_id')->references('id')->on('usuarios');
 
             $table->char('status', 1)->default('1');
@@ -230,11 +233,6 @@ class UnicefMod56V1 extends Migration
             $table->softDeletes();
         });
 
-        $nTable = 'beneficiarios';
-        Schema::table($nTable, function (Blueprint $table) {
-            $table->integer('orden')->default(0);
-        });
-
         Schema::enableForeignKeyConstraints();
 
     }
@@ -257,10 +255,6 @@ class UnicefMod56V1 extends Migration
         Schema::dropIfExists('check_materiales');
         Schema::dropIfExists('check_det');
         Schema::dropIfExists('check_eventos');
-        Schema::table('beneficiarios', function (Blueprint $table) {
-          $table->dropColumn('orden');
-        });
-
         Schema::enableForeignKeyConstraints();
     }
 }

@@ -12,7 +12,8 @@ class Materiales extends Model
     protected $fillable = ['id','name','status','medida_id','stock','min_stock','costo','precio','lnota','mat_categ_id','ubicacion_id'];
     protected $attributes = ['status' => '1','costo' => '0.00','precio' => '0.00','lnota' => '1'];
     
-
+    protected $hidden = ['pivot'];
+    
     public function getRules($request){
         return [
             'id' => 'nullable|required_with:id|numeric',

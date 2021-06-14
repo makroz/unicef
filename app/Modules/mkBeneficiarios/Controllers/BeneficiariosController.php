@@ -59,7 +59,7 @@ class BeneficiariosController extends Controller
                     DB::insert('insert into beneficiarios_info_metodos (info_metodo_id,beneficiario_id) values ' . $values, $data);
                 }
             }
-            //$this->clearCache('beneficiarios_doc_firmados');
+            $this->clearCache('beneficiarios_info_metodos');
         }
 
         if ($request->has('firmados') && is_array($request->firmados)) {
@@ -81,7 +81,7 @@ class BeneficiariosController extends Controller
                     DB::insert('insert into beneficiarios_doc_firmados (doc_firmado_id,beneficiario_id) values ' . $values, $data);
                 }
             }
-            //$this->clearCache('beneficiarios_doc_firmados');
+            $this->clearCache('beneficiarios_doc_firmados');
         }
 
         if ($request->has('familiares') && is_array($request->familiares)) {

@@ -386,6 +386,20 @@ class IAController extends BaseController
 ";
                 }
 
+                if ($col['typeF'] == 'time') {
+
+                  $addInput = true;
+                  $formul   = "
+    <mk-time
+    v-model='item." . $col['COLUMN_NAME'] . "'
+    label='" . $col['lForm'] . "'
+    $rulF
+    :accion='accion'
+    >
+    </mk-time>
+";
+              }
+
                 //
                 if ($addInput) {
                     $formulario .= '

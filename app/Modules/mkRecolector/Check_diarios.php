@@ -9,18 +9,20 @@ class Check_diarios extends Model
 {
     use Mk_ia_model;
 
-    protected $fillable = ['id','fecha','salida','regreso','km_salida','km_refreso','obs','recolector_id','vehiculo_id','chofer_id','salida_id','llegada_id','status'];
+    protected $hidden = ['pivot'];
+
+    protected $fillable = ['id','fecha','salida','regreso','km_salida','km_regreso','obs','recolector_id','vehiculo_id','chofer_id','salida_id','llegada_id','status'];
     protected $table = 'check_diarios';
         protected $attributes = ['status' => '1'];
     
-
+    public $_withRelations = ['materiales','eventos','checks'];
     public function getRules($request){
         return [
             'id' => 'nullable|required_with:id|numeric',
             'fecha' => 'required_with:fecha',
             'salida' => 'required_with:salida',
             'km_salida' => 'numeric',
-            'km_refreso' => 'numeric',
+            'km_regreso' => 'numeric',
             'recolector_id' => 'numeric|required_with:recolector_id',
             'vehiculo_id' => 'numeric|required_with:vehiculo_id',
             'chofer_id' => 'numeric|required_with:chofer_id',
@@ -31,6 +33,19 @@ class Check_diarios extends Model
             'updated_by' => 'numeric',
             'deleted_by' => 'numeric'
         ];
+    }
+
+    public function materiales()
+    {
+      return $this->belongsToMany('\App\Modules\mkServicios\Materiales','check_materiales','diario_id','material_id')->select('material_id as id','cant');
+    }
+    public function eventos()
+    {
+      return $this->belongsToMany('\App\Modules\mkRecolector\Eventos','check_eventos','diario_id','evento_id')->select('evento_id as id','detalle');
+    }
+    public function checks()
+    {
+      return $this->belongsToMany('\App\Modules\mkRecolector\Checks','check_det','diario_id','check_id')->select('check_id as id','resp');
     }
 
 
