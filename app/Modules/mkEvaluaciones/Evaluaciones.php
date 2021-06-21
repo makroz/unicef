@@ -17,6 +17,7 @@ class Evaluaciones extends Model
         'usuarios_id',
         'estado',
         'status',
+        'created_at',
     ];
     protected $attributes = [
         'status' => 1,

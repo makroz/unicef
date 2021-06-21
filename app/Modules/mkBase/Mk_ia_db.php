@@ -3,14 +3,13 @@ namespace App\Modules\mkBase;
 
 use Exception;
 use Illuminate\Support\Facades\Cache;
-use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use \App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 use \App\Modules\mkBase\Mk_helpers\Mk_db;
 use \App\Modules\mkBase\Mk_helpers\Mk_debug;
 use \App\Modules\mkBase\Mk_helpers\Mk_forms;
-
+use \Illuminate\Http\Request;
 
 const _errorNoExiste      = -1;
 const _errorAlGrabar      = -10;
@@ -120,10 +119,12 @@ trait Mk_ia_db
             }
 
             if ($disabled == 1) {
-                if ($where != '') {
-                    $where = '(' . $where . ")and({$table}.status<>'0')";
-                } else {
-                    $where = "({$table}.status<>'0')";
+                if (in_array("status", $modelo->fillable)) {
+                    if ($where != '') {
+                        $where = '(' . $where . ")and({$table}.status<>'0')";
+                    } else {
+                        $where = "({$table}.status<>'0')";
+                    }
                 }
             }
 
@@ -183,26 +184,25 @@ trait Mk_ia_db
             return Mk_db::sendData($datos['total'], $datos['data'], '', $_debug, true);
         }
     }
-    public function isCachedFront($data, $nct = 1,$mod='')
+    public function isCachedFront($data, $nct = 1, $mod = '')
     {
 
-      if ($mod!=''){
-        if ($mod == md5(json_encode($data))) {
-          $data = '_ct_';
+        if ($mod != '') {
+            if ($mod == md5(json_encode($data))) {
+                $data = '_ct_';
+            }
+        } else {
+            $_ct = '_ct_';
+            if ($nct != 1) {
+                $_ct = '_ct2_';
+            }
+
+            if (request()->has($_ct)) {
+                if (request()->input($_ct, '') == md5(json_encode($data))) {
+                    $data = '_ct_';
+                }
+            }
         }
-      }else{
-          $_ct = '_ct_';
-          if ($nct != 1) {
-              $_ct = '_ct2_';
-          }
-
-
-          if (request()->has($_ct)) {
-              if (request()->input($_ct, '') == md5(json_encode($data))) {
-                  $data = '_ct_';
-              }
-          }
-      }
         return $data;
     }
     public function beforeDel($id, $modelo)
@@ -248,13 +248,15 @@ trait Mk_ia_db
                 $validatedData = $request->validate($rules);
             }
             $datos->fill($request->only($datos->getfill()));
-            $id=0;
+            $id     = 0;
             $grabar = $this->beforeSave($request, $datos, $id);
             Mk_debug::msgApi(['Grabar:', $grabar]);
             if ((!$grabar) or ($grabar == 1)) {
                 Mk_debug::msgApi(['Entro a Save:', $request]);
-                $datos->created_by = $datos->getUser();
-                $r                 = $datos->save();
+                if ($datos->timestamps) {
+                    $datos->created_by = $datos->getUser();
+                }
+                $r = $datos->save();
             } else {
                 $r = $grabar;
                 if ($grabar < 0) {
@@ -263,10 +265,10 @@ trait Mk_ia_db
             }
             Mk_debug::warning(['Grabar es:', $grabar]);
             if ($r) {
-              if ((!$grabar) or ($grabar == 1)) {
+                if ((!$grabar) or ($grabar == 1)) {
                     $_key = $datos->getKeyName();
                     $r    = $datos->$_key;
-              }
+                }
                 $msg = '';
                 $this->afterSave($request, $datos, 0, $r);
                 DB::commit();
@@ -315,11 +317,11 @@ trait Mk_ia_db
 
             $cols = array_merge([$datos->getKeyName()], $datos->getFill());
 
-            $cols    = Mk_db::tableCol($cols, $datos);
-            $_custom = $datos->_customFields;
-            $_rel    = $datos->_withRelations;
-            $_relExtra    = $datos->_withRelationsExtra;
-            $datos   = $datos->select($cols);
+            $cols      = Mk_db::tableCol($cols, $datos);
+            $_custom   = $datos->_customFields;
+            $_rel      = $datos->_withRelations;
+            $_relExtra = $datos->_withRelationsExtra;
+            $datos     = $datos->select($cols);
             if (!empty($_custom)) {
 
                 foreach ($_custom as $field) {
@@ -341,9 +343,9 @@ trait Mk_ia_db
                 $datos = $datos->with($_rel);
             }
             if (isset($_relExtra)) {
-              $datos = $datos->with($_relExtra);
-          }
-            
+                $datos = $datos->with($_relExtra);
+            }
+
             $prefix = $this->addCacheList($this->__modelo, [$id, $request->existe, DB::connection()->getPdo()->quote($request->where), DB::connection()->getPdo()->quote($request->valor)]);
             if (_cacheQueryDebugInactive) {
                 Cache::forget($prefix);
@@ -392,16 +394,17 @@ trait Mk_ia_db
                 $validatedData = $request->validate($rules);
             }
 
-            
             //$newDatos=new stdobjet();
             $dataUpdate = $request->only($datos->getfill());
             Mk_debug::msgApi(['request antesd', $dataUpdate]);
             $this->beforeSave($request, $dataUpdate, $id);
 
-            Mk_debug::msgApi(['requestDESP', $dataUpdate,$id]);
+            Mk_debug::msgApi(['requestDESP', $dataUpdate, $id]);
             if (!empty($dataUpdate)) {
-                $dataUpdate['updated_by'] = $datos->getUser();
-                $r                        = $datos->where($_key, '=', $id)
+                if ($datos->timestamps) {
+                    $dataUpdate['updated_by'] = $datos->getUser();
+                }
+                $r = $datos->where($_key, '=', $id)
                     ->update(
                         $dataUpdate //$request->only($datos->getfill())
                     );
@@ -568,7 +571,7 @@ trait Mk_ia_db
         //echo "Separador :".DIRECTORY_SEPARATOR.'<br>';
         $modulos = [];
         if (is_dir($path)) {
-            if ($dh = opendir($path. DIRECTORY_SEPARATOR)) {
+            if ($dh = opendir($path . DIRECTORY_SEPARATOR)) {
                 while (($file = readdir($dh)) !== false) {
                     $path = $path;
                     if (is_dir($path . DIRECTORY_SEPARATOR . $file) && $file != "." && $file != "..") {
@@ -577,8 +580,8 @@ trait Mk_ia_db
                             while (($file1 = readdir($dh1)) !== false) {
                                 //$path=$path ;
                                 if (!is_dir($path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . $file1) && $file != "." && $file != "..") {
-                                  $ind=explode('.',$file1);
-                                  $modulos[$ind[0]] = $file;
+                                    $ind              = explode('.', $file1);
+                                    $modulos[$ind[0]] = $file;
                                 }
                             }
                             closedir($dh1);
@@ -588,34 +591,34 @@ trait Mk_ia_db
                 closedir($dh);
             }
         } else {
-          $modulos="No es ruta valida ".$path;
+            $modulos = "No es ruta valida " . $path;
         }
         return $modulos;
     }
 
     public function listData(Request $request)
     {
-      //$x=DB::table('usuarios')->getModel();
-      //Mk_debug::msgApi(['listada comercial',$this->loadMod()]);
+        //$x=DB::table('usuarios')->getModel();
+        //Mk_debug::msgApi(['listada comercial',$this->loadMod()]);
 
-      //return Mk_db::sendData(2, $request->lista, '');
-      $this->proteger('show');
-      $r=[];
-      foreach ($request->lista as $key => $lista) {
-        $modulo=!empty($lista['modulo'])?$lista['modulo']:'mk'.$lista['mod'];
-        $modelo = 'App\Modules\\'.$modulo.'\\'.$lista['mod'];
-        $cols = !empty($lista['campos'])?$lista['campos']:'';
-        $_customFields=!empty($lista['_customFields']) ? $lista['_customFields'] : false;
-        $rel=!empty($lista['rel']) ? $lista['rel'] : false;
-        $relations=!empty($lista['relations']) ? $lista['relations'] : false;
-        $filtros       = !empty($lista['filtros']) ? $lista['filtros'] : [];
-        $l =!empty($lista['l']) ? $lista['l'] : $lista['mod'];
-        $r[$l] = $this->getDatosDbCache($request, $modelo, $cols, ['relations'=>$relations,'filtros'=>$filtros,'rel'=>$rel,'_customFields'=> $_customFields,'send' => false],$lista['ct']);
-      }
-      return Mk_db::sendData(2, $r, '');
+        //return Mk_db::sendData(2, $request->lista, '');
+        $this->proteger('show');
+        $r = [];
+        foreach ($request->lista as $key => $lista) {
+            $modulo        = !empty($lista['modulo']) ? $lista['modulo'] : 'mk' . $lista['mod'];
+            $modelo        = 'App\Modules\\' . $modulo . '\\' . $lista['mod'];
+            $cols          = !empty($lista['campos']) ? $lista['campos'] : '';
+            $_customFields = !empty($lista['_customFields']) ? $lista['_customFields'] : false;
+            $rel           = !empty($lista['rel']) ? $lista['rel'] : false;
+            $relations     = !empty($lista['relations']) ? $lista['relations'] : false;
+            $filtros       = !empty($lista['filtros']) ? $lista['filtros'] : [];
+            $l             = !empty($lista['l']) ? $lista['l'] : $lista['mod'];
+            $r[$l]         = $this->getDatosDbCache($request, $modelo, $cols, ['relations' => $relations, 'filtros' => $filtros, 'rel' => $rel, '_customFields' => $_customFields, 'send' => false], $lista['ct']);
+        }
+        return Mk_db::sendData(2, $r, '');
     }
 
-    public function getDatosDbCache(Request $request, $model, $cols = '', $options = [],$mod='',$debug=true)
+    public function getDatosDbCache(Request $request, $model, $cols = '', $options = [], $mod = '', $debug = true)
     {
         $filtros       = !empty($options['filtros']) ? $options['filtros'] : [];
         $relations     = !empty($options['relations']) ? $options['relations'] : [];
@@ -623,17 +626,17 @@ trait Mk_ia_db
         $perPage       = !empty($options['perPage']) ? $options['perPage'] : _maxRowTable;
         $page          = !empty($options['page']) ? $options['page'] : 1;
         $_customFields = !empty($options['_customFields']) ? $options['_customFields'] : false;
-        $rel = !empty($options['rel']) ? $options['rel'] : false;
+        $rel           = !empty($options['rel']) ? $options['rel'] : false;
         $sortBy        = !empty($options['sortBy']) ? $options['sortBy'] : 'id';
-        $sortDir        = !empty($options['sortDir']) ? $options['sortDir'] : 'desc';
+        $sortDir       = !empty($options['sortDir']) ? $options['sortDir'] : 'desc';
 
-        $prefix = $this->addCacheList($model, [$page, $perPage, $sortBy, $sortDir, '', 0, $cols, $options,$rel]);
+        $prefix = $this->addCacheList($model, [$page, $perPage, $sortBy, $sortDir, '', 0, $cols, $options, $rel]);
         if (_cacheQueryDebugInactive) {
             Cache::forget($prefix);
             Mk_debug::warning('Cache del BACKEND Desabilitado!', 'CACHE', 'BackEnd');
         }
 
-        $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page,$sortBy, $sortDir, $perPage, $filtros, $relations, $_customFields,$rel) {
+        $datos = Cache::remember($prefix, _cachedTime, function () use ($cols, $model, $page, $sortBy, $sortDir, $perPage, $filtros, $relations, $_customFields, $rel) {
             Mk_debug::warning('Se cargo de la BD! ' . $model, 'CACHE ACTIVO', 'BackEnd');
             $modelo = new $model();
             if ($_customFields == 1) {
@@ -643,31 +646,31 @@ trait Mk_ia_db
             // if ($cols=='*') {
             //   $cols='';
             // }
-            if (!empty($cols) && $cols!='*') {
-              $cols = explode(',', $cols);
-              $cols = array_merge([$modelo->getKeyName()], $cols);
-          } else {
-              if ($cols=='*') {
-                  $modelo->_listTable = $modelo->getFill();
-              }else{
-                  if (!$modelo->_listTable) {
-                      $modelo->_listTable = $modelo->getFill();
-                  }
-              }
-              $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
-          }
+            if (!empty($cols) && $cols != '*') {
+                $cols = explode(',', $cols);
+                $cols = array_merge([$modelo->getKeyName()], $cols);
+            } else {
+                if ($cols == '*') {
+                    $modelo->_listTable = $modelo->getFill();
+                } else {
+                    if (!$modelo->_listTable) {
+                        $modelo->_listTable = $modelo->getFill();
+                    }
+                }
+                $cols = array_merge([$modelo->getKeyName()], $modelo->_listTable);
+            }
 
             // $cols = explode(',', $cols);
             // $cols = array_merge([$modelo->getKeyName()], $cols);
             //Mk_debug::warning('filtros', $model, $filtros);
             if ($rel) {
-              Mk_debug::warning('Entro a rel', 'CACHE', $rel,$model);
-              if (isset($modelo->_withRelations)) {
-                Mk_debug::warning('Entro a relaciones', 'CACHE', $modelo->_withRelations);
-                $modelo = $modelo->with($modelo->_withRelations);
-              }
+                Mk_debug::warning('Entro a rel', 'CACHE', $rel, $model);
+                if (isset($modelo->_withRelations)) {
+                    Mk_debug::warning('Entro a relaciones', 'CACHE', $modelo->_withRelations);
+                    $modelo = $modelo->with($modelo->_withRelations);
+                }
             }
-            
+
             $modelo = $modelo->orderBy(Mk_db::tableCol($sortBy, $modelo), $sortDir);
             foreach ($filtros as $key => $filtro) {
                 if ($filtro[0] != 'OR') {
@@ -681,12 +684,10 @@ trait Mk_ia_db
                 }
             }
 
-            
             if ($relations) {
                 Mk_debug::warning('Entro a relation', 'CACHE', $relations);
                 $modelo = $modelo->with($relations);
             }
-
 
             //$cols=array_merge($cols, $colsJoin);
             $cols   = Mk_db::tableCol($cols, $modelo);
@@ -713,9 +714,9 @@ trait Mk_ia_db
         } else {
             $d         = $datos->toArray();
             $total     = count($d['data']);
-            $d['data'] = $this->isCachedFront($d['data'],1,$mod);
+            $d['data'] = $this->isCachedFront($d['data'], 1, $mod);
             if ($_send) {
-                return Mk_db::sendData($total, $d['data'], '',$debug);
+                return Mk_db::sendData($total, $d['data'], '', $debug);
             } else {
                 return $d['data'];
             }
