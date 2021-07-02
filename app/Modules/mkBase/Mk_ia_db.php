@@ -119,7 +119,7 @@ trait Mk_ia_db
             }
 
             if ($disabled == 1) {
-                if (in_array("status", $modelo->fillable)) {
+                if (in_array("status", $modelo->getFill())) {
                     if ($where != '') {
                         $where = '(' . $where . ")and({$table}.status<>'0')";
                     } else {

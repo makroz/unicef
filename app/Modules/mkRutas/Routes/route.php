@@ -12,6 +12,8 @@ Route::get('/ping', function () {
 Route::get('Rutas/beneficiarios/{id}', $fileController.'beneficiarios');
 $fileController=$namespace.'\\RuteosController@';
 Route::get('RuteosMonitor', $fileController.'rutas');
+Route::post('Reportes', $fileController.'reportes');
+Route::post('Dashboard', $fileController.'dashboard');
 Route::post('RuteosMonitor/setClose', $fileController.'setClose');
 
 

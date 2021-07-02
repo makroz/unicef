@@ -8,7 +8,7 @@ use App\Modules\mkBase\Mk_helpers\Mk_auth\Mk_auth;
 class Auth implements IAuth
 {
     private $encrypt = array('HS256');
-    private $tiempo = 10; // Horas
+    private $tiempo = 24; // Horas
 
     // Crea un nuevo token guardando la información del usuario que hemos autenticado
     public function getToken(){

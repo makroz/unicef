@@ -30,8 +30,8 @@ class Evaluaciones extends Model
     // ];
     public $_withRelations = [
         'respuestas',
-        'beneficiario',
-        'usuario',
+//        'beneficiario',
+//        'usuario',
         'ruteos:id,rutas_id',
         'servicios',
     ];
