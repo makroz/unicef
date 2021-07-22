@@ -253,8 +253,8 @@ trait Mk_ia_db
             Mk_debug::msgApi(['Grabar:', $grabar]);
             if ((!$grabar) or ($grabar == 1)) {
                 Mk_debug::msgApi(['Entro a Save:', $request]);
-                if ($datos->timestamps) {
-                    $datos->created_by = $datos->getUser();
+                if ($datos->timestamps && !isset($this->_notBy)) {
+                    $datos->created_by = $datos->getUser(isset($this->_autorizar));
                 }
                 $r = $datos->save();
             } else {
@@ -401,8 +401,8 @@ trait Mk_ia_db
 
             Mk_debug::msgApi(['requestDESP', $dataUpdate, $id]);
             if (!empty($dataUpdate)) {
-                if ($datos->timestamps) {
-                    $dataUpdate['updated_by'] = $datos->getUser();
+                if ($datos->timestamps && !isset($this->_notBy)) {
+                    $dataUpdate['updated_by'] = $datos->getUser(isset($this->_autorizar));
                 }
                 $r = $datos->where($_key, '=', $id)
                     ->update(
@@ -463,10 +463,12 @@ trait Mk_ia_db
                     ->forceDelete();
             } else {
                 $datos->runCascadingDeletes($id);
-                $datos->where($_key, '=', $id)
-                    ->update(
-                        ['deleted_by' => $datos->getUser()]
-                    );
+                if ($datos->timestamps && !isset($this->_notBy)) {
+                    $datos->where($_key, '=', $id)
+                        ->update(
+                            ['deleted_by' => $datos->getUser(isset($this->_autorizar))]
+                        );
+                }
                 $r = $datos->wherein($_key, $id)
                     ->delete();
             }
@@ -541,11 +543,18 @@ trait Mk_ia_db
         $datos = new $this->__modelo();
         $_key  = $datos->getKeyName();
 
-        $r = $datos->wherein($_key, $id)
-            ->update([
-                'status'     => $newStatus,
-                'updated_by' => $datos->getUser(),
-            ]);
+        if ($datos->timestamps && !isset($this->_notBy)) {
+            $r = $datos->wherein($_key, $id)
+                ->update([
+                    'status'     => $newStatus,
+                    'updated_by' => $datos->getUser(isset($this->_autorizar)),
+                ]);
+        } else {
+            $r = $datos->wherein($_key, $id)
+                ->update([
+                    'status' => $newStatus,
+                ]);
+        }
         $msg = '';
         if ($r == 0) {
             $r   = _errorNoExiste;

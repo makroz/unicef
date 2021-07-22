@@ -15,7 +15,7 @@ class Auth implements IAuth
         if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
             return null;
         }
-        return $token=$_SERVER['HTTP_AUTHORIZATION'];
+        return $_SERVER['HTTP_AUTHORIZATION'];
 
     }
     public function autenticar($usuario)
@@ -58,19 +58,21 @@ class Auth implements IAuth
         return true;
     }
 
-    public function usuario()
+    public function usuario($auth=true)
     {
-        if ($this->estaAutenticado()){
-            $token=$this->getToken();
+        if ($auth){
+          $this->estaAutenticado();
+        } 
 
+            $token=$this->getToken();
+            if (empty($token)){
+              return null;
+            }
             return JWT::decode(
                 $token,
                 __SECRET_KEY__,
                 $this->encrypt
             )->data;
-
-        }
-        return null;
     }
 
     public function destruir()

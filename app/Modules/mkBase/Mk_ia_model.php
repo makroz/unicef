@@ -16,8 +16,8 @@ trait Mk_ia_model
     //public $_cachedRelations=[];
     //protected $_cachedRelations = [];
 
-    public static function getUser(){
-      $user=Mk_auth::get()->getUser();
+    public static function getUser($auth=true){
+      $user=Mk_auth::get()->getUser($auth);
       if (!empty($user->id)){
         return $user->id;
       }

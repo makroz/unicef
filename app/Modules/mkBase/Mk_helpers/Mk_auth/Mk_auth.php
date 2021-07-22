@@ -22,7 +22,7 @@ class Mk_auth
     private $blockData=false;
     private $coockie='c_sid';
     private $modelo='\App\Modules\mkUsuarios\Usuarios';
-    private $timeCache=240;
+    private $timeCache=1440;
 
     use Mk_singleton;
 
@@ -90,9 +90,9 @@ class Mk_auth
 
     }
 
-    public function getUser()
+    public function getUser($auth=true)
     {
-        return $user=$this->auth->usuario();
+        return $this->auth->usuario($auth);
         //return $this->user;
     }
 
@@ -119,8 +119,7 @@ class Mk_auth
 
     public function getToken()
     {
-        $token=$this->auth->getToken();
-        return $token;
+        return $this->auth->getToken();
     }
 
     public function getNewToken()
@@ -332,13 +331,13 @@ class Mk_auth
     public static function tokenPorCliente() {
         $aud = __SECRET_KEY__;
 
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $aud .= $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $aud .= $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $aud .= $_SERVER['REMOTE_ADDR'];
-        }
+        // if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        //     $aud .= $_SERVER['HTTP_CLIENT_IP'];
+        // } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        //     $aud .= $_SERVER['HTTP_X_FORWARDED_FOR'];
+        // } else {
+        //     $aud .= $_SERVER['REMOTE_ADDR'];
+        // }
 
         $aud .= @$_SERVER['HTTP_USER_AGENT'];
         $aud .= gethostname();

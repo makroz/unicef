@@ -47,9 +47,10 @@ class SolicitudServiciosController extends Controller
                 }
 //            Mk_debug::msgApi(['data:',$data]);
                 $r = $modelo::insert($data);
+                $this->clearCache('solicitud_servicios');
             } else {
                 $estado = $request->estado;
-
+                $idOS=0;
                 if ($request->estado == 3) {
                     $data   = [];
                     $data[] = $now;
@@ -65,7 +66,8 @@ class SolicitudServiciosController extends Controller
                     $data[] = 3;
                     $values = '(?,?,?,?,?,?,?,?,?,?,?)';
                     DB::insert('insert into orden_servicios (created_at,updated_at,created_by,updated_by,ref,obs,forma_pago_id,foto,recolector_id,beneficiario_id,estado) values ' . $values, $data);
-                    $id = DB::getPdo()->lastInsertId();
+                    $idOS = DB::getPdo()->lastInsertId();
+                    $this->clearCache('orden_servicios');
                 }
                 foreach ($request->servicios as $servicios) {
                     $data = [
@@ -73,11 +75,16 @@ class SolicitudServiciosController extends Controller
                         'usuarios_id_' . $estado => $user_id,
                         'estado'                 => ($estado == 3 && empty($servicios['realizado'])) ? 9 : $estado,
                         'obs'                    => !empty($servicios['obs']) ? $servicios['obs'] : null,
-                        'orden_servicios_id'     => ($estado == 3 && $id > 0) ? $id : null,
+                        //'orden_servicios_id'     => ($estado == 3 && $id > 0) ? $id : null,
                         'updated_by'             => $user_id,
                         'updated_at'             => $now,
                     ];
+                    if ($idOS>0){
+                      $data['orden_servicios_id'] =$idOS;
+                      $id=$idOS;
+                    }
                     $r = $this->__modelo::where('id', $servicios['sol_id'])->update($data);
+                    $this->clearCache('solicitud_servicios');
 
                     if ($request->estado == 3 && !empty($servicios['materiales'])) {
                         $values = [];
@@ -97,6 +104,7 @@ class SolicitudServiciosController extends Controller
                         if (count($data) > 0) {
                             $values = join(',', $values);
                             DB::insert('insert into materiales_usados (created_at,updated_at,created_by,updated_by,material_id,cant,solicitud_servicio_id) values ' . $values, $data);
+                            $this->clearCache('materiales_usados');
                         }
 
                     }

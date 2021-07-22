@@ -460,53 +460,56 @@ class IAController extends BaseController
             '{{**Lista**}}', '{{**dataRel**}}', '{{**RelMounted**}}'], [$Clase, $formulario, $modTit, $campos, $dataRel, $relMounted], $component);
 
         //echo '<br>MEnu <hr>';
-        $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
-        $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
-        try {
-            $menu1 = json_decode($menu);
-            if (empty($menu1)) {
-              $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
-              $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
-              $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
-              $menu = json_decode($menu);
-            }else {
-              $menu=$menu1;
-            }
-        } catch (\Throwable $th) {
-            $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
-            $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
-            $menu = json_decode($menu);
-        }
-        $existe = 0;
-        foreach ($menu as $key => $modMenu) {
-            if (!empty($modMenu->name) && $modMenu->name == $moduloFront) {
-                $existe = 1;
-                foreach ($modMenu->items as $key1 => $modMenu1) {
-                    if (!empty($modMenu1->name) && $modMenu1->name == $modulo) {
-                        $existe = 2;
-                        $menu[$key]->items[$key1] = json_decode('{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}');
-                        break;
-                    }
-                }
-                if ($existe == 1) {
-                    $menu[$key]->items[] = json_decode('{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}');
-                }
-            }
-        }
-        if ($existe == 0) {
-            $menu[] = json_decode('{"name":"' . $moduloFront . '","title":"' . ucfirst($moduloFront) . '","icon":"face","items":[{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}]}');
-        }
+        // $menu = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js');
+        
+        // $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
+        // echo "menu1:".$menu;
+        // try {
+        //     $menu1 = json_decode($menu);
+        //     if (empty($menu1)) {
+        //       $menu = str_replace(['export default Menu', 'const Menu = ', "\n"], '', $menu);
+        //       $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+        //       $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+        //       $menu = json_decode($menu);
+        //     }else {
+        //       $menu=$menu1;
+        //     }
+        // } catch (\Throwable $th) {
+        //     $menu = str_replace(['{', ",", ':', ',, {', "'"], ['{{', ',,', '::', ',{', '"'], $menu);
+        //     $menu = preg_replace(['/\s+/', '/\s*(?=,)|\s*(?=:)|[,]\s+|[:]\s+|[{]\s+/', '/\{(.+):/Ui', '/\,([^\{].+):/Ui'], [' ', '', '{"$1":', ',"$1":'], $menu);
+        //     $menu = json_decode($menu);
+        // }
+        // echo "menu:".$menu;
+        // $existe = 0;
+        // foreach ($menu as $key => $modMenu) {
+        //     if (!empty($modMenu->name) && $modMenu->name == $moduloFront) {
+        //         $existe = 1;
+        //         foreach ($modMenu->items as $key1 => $modMenu1) {
+        //             if (!empty($modMenu1->name) && $modMenu1->name == $modulo) {
+        //                 $existe = 2;
+        //                 $menu[$key]->items[$key1] = json_decode('{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}');
+        //                 break;
+        //             }
+        //         }
+        //         if ($existe == 1) {
+        //             $menu[$key]->items[] = json_decode('{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}');
+        //         }
+        //     }
+        // }
+        // if ($existe == 0) {
+        //     $menu[] = json_decode('{"name":"' . $moduloFront . '","title":"' . ucfirst($moduloFront) . '","icon":"face","items":[{"name":"' . $modulo . '","title":"' . $modTit . '","href":"' . "/{$moduloFront}/{$modulo}/" . '"}]}');
+        // }
 
-        //dd($menu);
+        // //dd($menu);
 
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', 'const Menu = ' . print_r(json_encode($menu), true) . "\n export default Menu");
+        // file_put_contents($_SERVER['DOCUMENT_ROOT'] . '../../unicef-Front/api/menu.js', 'const Menu = ' . print_r(json_encode($menu), true) . "\n export default Menu");
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../../unicef-Front/pages/$moduloFront/$modulo.vue", $component);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/$Clase.php", $model);
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "../app/Modules/$moduloBack/Controllers/$Clase" . "Controller.php", $controler);
         $result = [
-            'menu'       => [
-                'data' => $menu,
-            ],
+            // 'menu'       => [
+            //     'data' => $menu,
+            // ],
             'controler'  => [
                 'data' => $controler,
             ],
